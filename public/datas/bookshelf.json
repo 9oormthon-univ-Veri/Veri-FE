@@ -1,0 +1,26 @@
+[
+  {
+    "id": "bs1",
+    "coverUrl": "https://via.placeholder.com/80x120?text=Book1",
+    "title": "내게 남은 스물다섯 번의 계절",
+    "author": "슈테판 페퍼(지은이), 전은경(옮김이)"
+  },
+  {
+    "id": "bs2",
+    "coverUrl": "https://via.placeholder.com/80x120?text=Book2",
+    "title": "단 한번의 삶",
+    "author": "김영하"
+  },
+  {
+    "id": "bs3",
+    "coverUrl": "https://via.placeholder.com/80x120?text=Book3",
+    "title": "어린이는 멀리 간다",
+    "author": "김지은"
+  },
+  {
+    "id": "bs4",
+    "coverUrl": "https://via.placeholder.com/80x120?text=Book4",
+    "title": "내게 남은 스물다섯 번의 계절",
+    "author": "요시타케 신스케 (지은이)"
+  }
+]

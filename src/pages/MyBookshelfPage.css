@@ -1,0 +1,165 @@
+/* src/pages/MyBookshelfPage.css */
+.my-bookshelf-page-container {
+  padding: 0 15px 80px; /* 좌우 패딩, 하단은 TabBar 공간 확보 */
+  max-width: 450px; /* App.css의 max-width와 동일하게 설정 */
+  margin: 0 auto;
+  background-color: #f8f8f8; /* 페이지 배경색 */
+  min-height: 100vh; /* 뷰포트 높이 전체를 차지하도록 */
+  box-sizing: border-box; /* 패딩이 너비/높이에 포함되도록 */
+}
+
+.bookshelf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee; /* 헤더 하단 구분선 */
+  margin-bottom: 10px;
+}
+
+.bookshelf-header .header-left-arrow {
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+.bookshelf-header h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.bookshelf-header .header-right-dots {
+  font-size: 24px;
+  color: #a0a0a0;
+  cursor: pointer;
+}
+
+.sort-options {
+  text-align: right;
+  padding: 10px 0;
+  margin-bottom: 15px;
+}
+
+.sort-options .sort-button {
+  font-size: 13px;
+  color: #a0a0a0;
+  cursor: pointer;
+  border: 1px solid #eee;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.bookshelf-list-full {
+  display: flex;
+  flex-direction: column; /* 세로로 나열 */
+  gap: 15px; /* 아이템 간 간격 */
+}
+
+.bookshelf-item-full {
+  display: flex;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  align-items: flex-start; /* 상단 정렬 */
+}
+
+.book-cover-large {
+  flex-shrink: 0; /* 커버 이미지가 줄어들지 않도록 */
+  width: 90px; /* 이미지에서 보이는 크기 */
+  height: 130px; /* 이미지에서 보이는 크기 */
+  background-color: #f0f0f0; /* 이미지 없을 때 배경색 */
+  border-radius: 4px;
+  margin-right: 15px;
+  overflow: hidden; /* 이미지 넘침 방지 */
+}
+
+.book-cover-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+}
+
+.book-details-full {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.book-title-full {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.book-author-full {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.book-rating {
+  margin-bottom: 10px;
+}
+
+.book-rating .star {
+  font-size: 16px;
+  color: #ccc; /* 빈 별 색상 */
+  margin-right: 2px;
+}
+
+.book-rating .star.filled {
+  color: #ffc107; /* 채워진 별 색상 (노란색) */
+}
+
+.book-status-info {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #999;
+}
+
+.book-status {
+  background-color: #e0f2f7; /* 독서중 배경색 */
+  color: #007bff; /* 독서중 글자색 */
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.book-date {
+  color: #a0a0a0;
+}
+
+.add-book-button-container {
+  text-align: center;
+  margin-top: 30px;
+  padding-bottom: 20px; /* 하단 여백 추가 */
+}
+
+.add-book-button {
+  background-color: #007bff; /* 파란색 배경 */
+  color: #fff; /* 흰색 글자 */
+  border: none;
+  border-radius: 25px; /* 둥근 버튼 */
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.add-book-button:hover {
+  background-color: #0056b3;
+}
+
+/* 추가적으로, LibraryPage의 .my-bookshelf 섹션의 .bookshelf-item 내부에
+   책 표지 썸네일과 텍스트가 더 작은 스케일로 표시되도록 스타일이 필요합니다.
+   LibraryPage.css에서 .bookshelf-item 과 관련된 스타일을 확인해주세요.
+   혹은 LibraryPage.tsx의 .bookshelf-item 이 div 대신 Link 컴포넌트를 사용하고
+   클릭 시 상세 페이지로 이동하도록 할 수도 있습니다.
+*/

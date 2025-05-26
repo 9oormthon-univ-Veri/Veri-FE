@@ -1,0 +1,289 @@
+/* src/pages/LibraryPage.css */
+
+/* 전체 페이지 컨테이너 */
+.library-page-container {
+    padding: 0 15px 80px; /* 좌우 패딩 줄이고, 하단 패딩도 탭 바 높이에 맞춰 줄임 */
+    max-width: 450px; /* 앱의 최대 너비를 줄여서 더 컴팩트하게 만듦 */
+    margin: 0 auto;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* 헤더 스타일 */
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0; /* 패딩 줄임 */
+    color: #333;
+}
+
+.library-header .logo {
+    font-size: 20px; /* 폰트 크기 줄임 */
+    font-weight: bold;
+}
+
+.library-header .header-right .icon {
+    width: 20px; /* 아이콘 크기 줄임 */
+    height: 20px; /* 아이콘 크기 줄임 */
+    margin-left: 10px; /* 아이콘 간 간격 줄임 */
+    background-color: #333;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+}
+/* 실제 아이콘 경로에 맞게 mask-image URL을 수정해야 합니다. */
+/* 예: public/icons/bell.svg 또는 src/assets/icons/bell.svg */
+.library-header .header-right .icon:first-child { /* 첫 번째 아이콘 (알림) */
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>'); /* 임시 알림 아이콘 (원형) */
+}
+.library-header .header-right .icon:last-child { /* 마지막 아이콘 (검색) */
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>'); /* 임시 검색 아이콘 */
+}
+
+
+/* 환영 섹션 */
+.welcome-section {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 12px; /* 둥근 모서리 줄임 */
+    padding: 15px; /* 패딩 줄임 */
+    margin-top: 15px; /* 마진 줄임 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 그림자 약하게 */
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-section .profile-circle {
+    width: 40px; /* 크기 줄임 */
+    height: 40px; /* 크기 줄임 */
+    border-radius: 50%;
+    background-color: #ddd;
+    margin-right: 10px; /* 마진 줄임 */
+    flex-shrink: 0;
+}
+
+.welcome-section .welcome-text h2 {
+    font-size: 16px; /* 폰트 크기 줄임 */
+    font-weight: bold;
+    margin-bottom: 3px; /* 마진 줄임 */
+    color: #333;
+}
+
+.welcome-section .welcome-text p {
+    font-size: 12px; /* 폰트 크기 줄임 */
+    color: #888;
+    margin: 0;
+}
+
+.welcome-section .main-book-cover {
+    position: absolute;
+    right: -15px; /* 이미지 튀어나오는 정도 줄임 */
+    top: 50%;
+    transform: translateY(-50%) rotate(8deg); /* 회전 각도 줄임 */
+    width: 120px; /* 이미지 크기 줄임 */
+    height: 160px; /* 이미지 크기 줄임 */
+    border-radius: 6px; /* 둥근 모서리 줄임 */
+    box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.15); /* 그림자 약하게 */
+    overflow: hidden;
+}
+
+.welcome-section .main-book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 공통 섹션 스타일 */
+section {
+    background-color: #fff;
+    border-radius: 12px; /* 둥근 모서리 줄임 */
+    padding: 15px; /* 패딩 줄임 */
+    margin-top: 15px; /* 마진 줄임 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 그림자 약하게 */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px; /* 마진 줄임 */
+}
+
+.section-header h3 {
+    font-size: 15px; /* 폰트 크기 줄임 */
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.section-header .more-link,
+.section-header .more-text {
+    font-size: 11px; /* 폰트 크기 줄임 */
+    color: #a0a0a0;
+    cursor: pointer;
+}
+
+/* 카드 리스트 공통 스타일 (독서카드, 추천) */
+.card-list, .recommendation-list {
+    display: flex;
+    overflow-x: auto; /* 가로 스크롤 가능하도록 */
+    gap: 10px; /* 아이템 간 간격 줄임 */
+    padding-bottom: 8px; /* 패딩 줄임 (스크롤바 고려) */
+    -ms-overflow-style: none; /* IE 및 Edge에서 스크롤바 숨김 */
+    scrollbar-width: none; /* Firefox에서 스크롤바 숨김 */
+}
+
+/* 웹킷 기반 브라우저(Chrome, Safari)에서 스크롤바 숨김 */
+.card-list::-webkit-scrollbar,
+.recommendation-list::-webkit-scrollbar {
+    display: none;
+}
+
+/* 독서카드 아이템 스타일 */
+.reading-card-item {
+    flex-shrink: 0; /* 아이템이 줄어들지 않도록 */
+    width: 100px; /* 카드 아이템 너비 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 10px;
+}
+
+.reading-card-item .card-thumbnail {
+    width: 100%;
+    height: 120px; /* 썸네일 높이 */
+    background-color: #f0f0f0; /* 이미지 없을 때 배경색 */
+    border-radius: 4px;
+    margin-bottom: 5px;
+    overflow: hidden; /* 이미지 넘침 방지 */
+}
+
+.reading-card-item .card-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+}
+
+.reading-card-item .card-text {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.4;
+    height: 3.2em; /* 2줄 정도 표시 (font-size * line-height * 2) */
+    overflow: hidden;
+    text-overflow: ellipsis; /* 텍스트 넘칠 때 ... 처리 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 2줄까지만 표시 */
+    -webkit-box-orient: vertical;
+    margin: 0;
+}
+
+
+/* 나의 책장 섹션 - Grid 레이아웃 */
+.my-bookshelf .bookshelf-list {
+    display: grid; /* Grid 레이아웃 사용 */
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 최소 100px, 최대 1fr로 자동 채우기 */
+    gap: 15px; /* 아이템 간 간격 */
+    padding: 10px 0;
+    overflow-x: hidden; /* 가로 스크롤 방지 (grid는 auto-fill로 줄바꿈 되므로) */
+}
+
+.my-bookshelf .bookshelf-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 10px;
+    text-align: center;
+}
+
+.my-bookshelf .book-cover-thumbnail {
+    width: 100%; /* 부모 너비에 맞춤 */
+    padding-bottom: 150%; /* 2:3 비율 (높이 = 너비 * 1.5) */
+    position: relative;
+    background-color: #f0f0f0; /* 이미지 없을 때 배경색 */
+    border-radius: 4px;
+    margin-bottom: 8px;
+    overflow: hidden; /* 이미지 넘침 방지 */
+}
+
+.my-bookshelf .book-cover-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+}
+
+.my-bookshelf .book-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 4px 0;
+    white-space: nowrap; /* 한 줄로 표시 */
+    overflow: hidden;
+    text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
+}
+
+.my-bookshelf .book-author {
+    font-size: 11px;
+    color: #777;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 오늘의 추천 섹션 (별도 스타일이 필요하면 추가) */
+.todays-recommendation .recommended-book-item {
+    /* bookshelf-item과 동일한 스타일을 사용하거나,
+       필요에 따라 .recommended-book-item 전용 스타일 추가 */
+    flex-shrink: 0;
+    width: 100px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 10px;
+}
+
+.todays-recommendation .recommended-book-item .book-cover-thumbnail {
+    width: 100%;
+    padding-bottom: 150%; /* 2:3 비율 */
+    position: relative;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.todays-recommendation .recommended-book-item .book-cover-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.todays-recommendation .recommended-book-item .book-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.todays-recommendation .recommended-book-item .book-author {
+    font-size: 11px;
+    color: #888;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,40 +1,41 @@
 // src/components/TabBar.tsx
-import { useState } from 'react'; // 'React,' 부분을 삭제하고 useState만 임포트
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // 탭 아이템의 타입을 정의합니다.
 interface TabItem {
   id: string;
   name: string;
-  iconClass: string; // CSS 클래스를 통한 아이콘
-  isCamera: boolean; // 중앙의 특별한 '촬영' 탭인지 여부
+  iconClass: string;
+  path: string;
+  isDummy?: boolean; // 더미 탭인지 여부를 나타내는 속성 추가
 }
 
-// 탭 데이터 정의
-const tabsV1: TabItem[] = [
-  { id: 'library', name: '서재', iconClass: 'icon-book', isCamera: false },
-  { id: 'readingCard', name: '독서카드', iconClass: 'icon-card', isCamera: false },
-  { id: 'camera', name: '촬영', iconClass: 'icon-camera', isCamera: true },
-  { id: 'community', name: '커뮤니티', iconClass: 'icon-community', isCamera: false },
-  { id: 'myPage', name: '마이페이지', iconClass: 'icon-profile', isCamera: false },
+// 탭 데이터 정의 (카메라 탭 자리에 더미 탭 추가)
+const currentTabs: TabItem[] = [
+  { id: 'library', name: '서재', iconClass: 'icon-book', path: '/library' },
+  { id: 'readingCard', name: '독서카드', iconClass: 'icon-card', path: '/reading-card' },
+  { id: 'dummyCamera', name: '', iconClass: '', path: '/camera', isDummy: true }, // 더미 탭 추가
+  { id: 'community', name: '커뮤니티', iconClass: 'icon-community', path: '/community' },
+  { id: 'myPage', name: '마이페이지', iconClass: 'icon-profile', path: '/my-page' },
 ];
 
-const tabsV2: TabItem[] = [
-    { id: 'library', name: '서재', iconClass: 'icon-book', isCamera: false },
-    { id: 'readingCard', name: '독서카드', iconClass: 'icon-card', isCamera: false },
-    { id: 'camera', name: '촬영', iconClass: 'icon-camera', isCamera: true },
-    { id: 'bookmark', name: '책갈피', iconClass: 'icon-bookmark', isCamera: false },
-    { id: 'myPage', name: '마이페이지', iconClass: 'icon-profile', isCamera: false },
-  ];
-
-
 function TabBar() {
-  const currentTabs = tabsV1; 
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState<string>(currentTabs[0]?.id ?? 'library');
+  const initialActiveTabId = currentTabs.find(tab => tab.path === location.pathname)?.id ?? 'library';
+  const [activeTab, setActiveTab] = useState<string>(initialActiveTabId);
 
-  const handleTabClick = (tabId: string) => {
-    setActiveTab(tabId);
-    console.log(`탭 "${tabId}" 클릭됨`);
+
+  const handleTabClick = (tab: TabItem) => {
+    // 더미 탭은 클릭해도 아무 동작하지 않도록 방지
+    if (tab.isDummy) {
+      return;
+    }
+    setActiveTab(tab.id);
+    console.log(`탭 "${tab.name}" 클릭됨. 경로: ${tab.path}`);
+    navigate(tab.path);
   };
 
   return (
@@ -42,14 +43,14 @@ function TabBar() {
       {currentTabs.map((tab) => (
         <div
           key={tab.id}
-          className={`tab-item ${tab.isCamera ? 'camera-tab' : ''} ${activeTab === tab.id ? 'active' : ''}`}
-          onClick={() => handleTabClick(tab.id)}
+          // 더미 탭에는 'tab-item' 클래스와 'active' 클래스를 적용하지 않음
+          // 대신 'dummy-tab-item' 클래스를 적용하여 별도 스타일링
+          className={`${tab.isDummy ? 'dummy-tab-item' : 'tab-item'} ${activeTab === tab.id || location.pathname === tab.path ? 'active' : ''}`}
+          onClick={() => handleTabClick(tab)}
         >
-          {/* 아이콘: CSS background-mask 방식으로 처리 */}
-          <div className={`tab-item-icon ${tab.iconClass}`}></div>
-
-          {/* 텍스트 */}
-          <span>{tab.name}</span>
+          {/* 더미 탭은 아이콘과 텍스트를 렌더링하지 않음 */}
+          {!tab.isDummy && <div className={`tab-item-icon ${tab.iconClass}`}></div>}
+          {!tab.isDummy && <span>{tab.name}</span>}
         </div>
       ))}
     </div>
