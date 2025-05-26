@@ -1,0 +1,117 @@
+/* src/index.css */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f0f0; /* 배경색으로 좀 더 구분하기 쉽게 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* TabBar.tsx 관련 스타일 */
+.tab-bar-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 600px; /* 적당한 최대 너비 설정 */
+  height: 80px; /* 탭 바 높이 */
+  background-color: #fff;
+  border-radius: 15px; /* 둥근 모서리 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  padding: 0 10px;
+  box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+  position: absolute; /* 페이지 하단에 고정 */
+  bottom: 20px; /* 바닥에서 20px 위 */
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  cursor: pointer;
+  color: #a0a0a0; /* 기본 텍스트 색상 */
+  font-size: 12px;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  flex: 1; /* 동일한 너비로 분할 */
+}
+
+.tab-item.active {
+  color: #333; /* 활성화된 탭 텍스트 색상 */
+}
+
+.tab-item-icon {
+  width: 24px; /* 아이콘 크기 */
+  height: 24px;
+  margin-bottom: 4px;
+  background-color: #d0d0d0; /* 임시 아이콘 배경색 */
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tab-item.active .tab-item-icon {
+  background-color: #333; /* 활성화된 탭 아이콘 색상 */
+}
+
+/* 중앙 '촬영' 탭 스타일 */
+.tab-item.camera-tab {
+  position: relative; /* 자식 요소의 위치 지정을 위해 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff; /* 촬영 탭 텍스트는 흰색 */
+  font-weight: bold;
+  height: 100%; /* 부모와 높이 맞춤 */
+}
+
+.camera-tab .tab-item-icon {
+  background-color: #000; /* 촬영 탭 아이콘은 검은색 */
+  border-radius: 50%; /* 원형 배경 */
+  width: 55px; /* 더 큰 아이콘 */
+  height: 55px;
+  margin-bottom: 2px;
+  display: flex; /* 아이콘 중앙 정렬을 위해 */
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* 중앙 원형 아이콘의 위치 조정 */
+  top: -25px; /* 탭 바 위로 튀어나오게 (조정 가능) */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 */
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* SVG 아이콘 대신 사용할 임시 배경 이미지 (실제 앱에서는 SVG 또는 폰트 아이콘 사용) */
+.tab-item-icon.icon-book {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H6V4h12v16zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>');
+}
+.tab-item-icon.icon-card {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10z"/></svg>');
+}
+.tab-item-icon.icon-camera {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-11h2v3h3v2h-3v3h-2v-3H8v-2h3V9z"/></svg>');
+}
+.tab-item-icon.icon-community {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22 2H2v16h16l4 4V2zm-4 12H6V4h12v10z"/></svg>');
+}
+.tab-item-icon.icon-profile {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>');
+}
+/* 이미지에 맞게 폰트 아이콘에 다른 이미지를 적용 */
+.tab-item-icon.icon-bookmark {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>');
+}

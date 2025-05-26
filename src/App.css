@@ -1,0 +1,11 @@
+/* src/App.css */
+.App {
+  text-align: center;
+  padding-top: 50px;
+  min-height: 100vh; /* 전체 화면을 채우도록 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* 상단에 콘텐츠를 배치 */
+  position: relative; /* TabBar의 absolute 위치를 위한 기준 */
+}
