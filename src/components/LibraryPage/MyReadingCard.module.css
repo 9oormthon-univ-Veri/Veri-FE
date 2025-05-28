@@ -1,0 +1,144 @@
+/* src/pages/LibraryPage/MyReadingCard.module.css */
+
+/* --- 섹션 헤더 (LibraryPage.css와 동일한 스타일) --- */
+/* section-header는 LibraryPage 전체에서 사용될 수 있으므로, MyReadingCard.module.css에 포함 시 이름 충돌 가능성 있음.
+   이 컴포넌트 내에서만 사용된다면 아래처럼 이름을 바꿔서 사용.
+   만약 LibraryPage.css에 section-header가 전역적으로 정의되어 있고 그걸 사용하고 싶다면,
+   이 부분은 삭제하고 MyReadingCard.tsx에서 전역 클래스를 사용해야 합니다.
+   여기서는 이 컴포넌트 내에서만 사용하는 것으로 가정하고 정의합니다. */
+   .sectionHeader { /* MyReadingCard.module.css 내에서 고유한 이름으로 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px; /* LibraryPage.css의 section-header h3과 일치 */
+    /* LibraryPage.css의 section-header에는 padding이 없으나, 전체 LibraryPageContainer에 padding이 있음.
+       여기서는 섹션 자체에 padding을 추가하여 MyReadingCardSection이 독립적으로 예쁘게 보이도록 합니다. */
+    padding: 0 15px; /* LibraryPage.css의 .library-page-container padding과 통일 */
+}
+
+.sectionHeader h3 {
+    font-size: 15px; /* LibraryPage.css와 동일 */
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.moreLink { /* LibraryPage.css의 more-link와 동일한 스타일 */
+    font-size: 11px;
+    color: #a0a0a0;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    
+    /* LibraryPage.css에는 없지만, 이전 답변에서 버튼처럼 보이게 했던 스타일을 유지합니다. */
+    /* 만약 LibraryPage.css의 .section-header .more-link와 동일하게 텍스트 링크로만 원한다면 이 부분은 제거 */
+    /* display: inline-block; */
+    /* padding: 6px 12px; */
+    /* border: 1px solid #007bff; */
+    /* border-radius: 4px; */
+    /* background-color: transparent; */
+    /* box-sizing: border-box; */
+    /* transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out; */
+}
+
+/* .moreLink:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+} */
+
+
+/* --- 나의 독서카드 섹션 컨테이너 --- */
+.myReadingCards { /* LibraryPage.css의 section 공통 스타일과 유사하게 */
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px; /* LibraryPage.css의 섹션 공통 마진 */
+}
+
+
+/* --- 가로 스크롤 컨테이너 (LibraryPage.css와 동일한 스타일) --- */
+.horizontalScrollContainer { /* MyReadingCard.module.css 내에서 고유한 이름으로 */
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    gap: 10px; /* LibraryPage.css의 gap과 통일 */
+    padding-bottom: 8px; /* LibraryPage.css와 통일 */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    /* LibraryPage.css에는 없으나, MyReadingCard.module.css에서 섹션 내부 패딩을 제거했으므로 추가 */
+    padding-left: 0; /* 이전에 .card-list 에 적용되었던 padding 조절 */
+    padding-right: 0;
+}
+
+.horizontalScrollContainer::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* --- 개별 독서카드 아이템 (LibraryPage.css와 동일한 스타일) --- */
+.readingCardItem { /* MyReadingCard.module.css 내에서 고유한 이름으로 */
+    flex-shrink: 0;
+    width: 110px;
+    text-align: center;
+    /* display와 flex-direction은 MyReadingCard.tsx에서 설정하는 div 구조상 그대로 사용 */
+    display: flex;             /* 이미지-텍스트 세로 정렬을 위한 Flexbox */
+    flex-direction: column;    /* 세로 방향 정렬 */
+    /* align-items: center; */ /* 만약 썸네일과 텍스트가 중앙 정렬되어야 한다면 이 주석을 해제 */
+    
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 10px;
+    box-sizing: border-box; /* 패딩 포함 */
+    cursor: pointer;
+}
+
+.cardThumbnail {
+    width: 90px;
+    height: 120px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.cardThumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- 독서카드 텍스트 (내용 미리보기) (LibraryPage.css와 동일한 스타일) --- */
+.cardText { /* MyReadingCard.module.css 내에서 고유한 이름으로 */
+    font-size: 12px;
+    color: #555;
+    line-height: 1.4;
+    word-wrap: break-word; /* 긴 단어가 잘리지 않고 줄바꿈되도록 */
+    white-space: normal;   /* 기본 줄바꿈 동작 유지 */
+    -webkit-line-clamp: 3; /* 🌟 3줄까지만 표시하고 넘치면 말줄임표 (...) */
+    height: 4.2em;
+    -webkit-box-orient: vertical;
+    margin: 0;
+    padding: 0 2px;
+    font-weight: normal;
+}
+
+
+/* --- 로딩, 에러, 데이터 없음 메시지 --- */
+.loadingMessage,
+.errorMessage,
+.noCardsMessage {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    margin: 20px 0;
+    font-size: 0.95em;
+}
+
+.errorMessage {
+    color: #dc3545;
+}

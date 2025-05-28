@@ -1,35 +1,32 @@
 // src/pages/ReadingCardPage.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react'; // useMemo, useCallback 추가
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBackIosNew } from 'react-icons/md';
-import { BsThreeDotsVertical } from 'react-icons/bs'; // 더보기 (정렬 옵션 등)
-import { FiSearch } from 'react-icons/fi'; // 검색 아이콘
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FiSearch } from 'react-icons/fi';
 import './ReadingCardPage.css';
 
-// 독서카드 데이터 타입 (MyReadingCard.tsx와 유사하게 정의)
+// 독서카드 데이터 타입
 interface ReadingCardItemType {
   id: string;
-  bookTitle: string; // 책 제목
-  author: string; // 저자
-  contentPreview: string; // 독서 내용 미리보기
-  date: string; // 날짜
-  thumbnailUrl: string; // 썸네일 (선택 사항 - string 또는 undefined)
+  bookTitle: string;
+  author: string;
+  contentPreview: string;
+  date: string; // "YYYY-MM-DD" 형식이라고 가정
+  thumbnailUrl: string;
 }
 
-// 각 독서카드를 표시하는 컴포넌트 (SingleReadingCard와 유사)
-// props 타입에서 thumbnailUrl을 'string | undefined'로 명시
+// 각 독서카드를 표시하는 컴포넌트 (변경 없음)
 const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, bookTitle, author, contentPreview, date, thumbnailUrl }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // 상세 페이지로 이동 (예: 독서카드 상세 페이지 또는 관련 책 상세 페이지)
-    // 여기서는 독서카드 상세 페이지로 이동한다고 가정
     navigate(`/reading-card-detail/${id}`);
   };
 
   return (
     <div className="reading-card-item" onClick={handleClick}>
-      {thumbnailUrl && ( // thumbnailUrl이 있을 때만 이미지 렌더링
+      {thumbnailUrl && (
         <div className="card-image-container">
           <img src={thumbnailUrl} alt={bookTitle} />
         </div>
@@ -49,9 +46,11 @@ function ReadingCardPage() {
   const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // 1. 정렬 기준 상태 추가: 'latest' (최신순), 'oldest' (오래된순) 등
+  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest');
 
   useEffect(() => {
-    fetch('/datas/readingCards.json') // 독서카드 데이터를 불러올 JSON 파일 경로
+    fetch('/datas/readingCards.json')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -68,6 +67,28 @@ function ReadingCardPage() {
         setIsLoading(false);
       });
   }, []);
+
+  // 2. 정렬된 카드 목록을 계산하는 useMemo 훅
+  const sortedReadingCards = useMemo(() => {
+    // 원본 배열을 복사하여 정렬합니다. (원본 배열 변경 방지)
+    const sorted = [...readingCards].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      if (sortOrder === 'latest') {
+        return dateB.getTime() - dateA.getTime(); // 최신순 (내림차순)
+      } else { // 'oldest'
+        return dateA.getTime() - dateB.getTime(); // 오래된순 (오름차순)
+      }
+    });
+    return sorted;
+  }, [readingCards, sortOrder]); // readingCards나 sortOrder가 변경될 때만 재계산
+
+  // 3. 정렬 버튼 클릭 핸들러 (useCallback으로 최적화)
+  const handleSortClick = useCallback(() => {
+    // 현재 'latest'이면 'oldest'로, 'oldest'이면 'latest'로 토글
+    setSortOrder(prevOrder => (prevOrder === 'latest' ? 'oldest' : 'latest'));
+  }, []); // 의존성 배열이 비어있으므로 컴포넌트 마운트 시 한 번만 생성
 
   if (isLoading) {
     return <div className="reading-card-page-container loading-state">독서 카드를 불러오는 중...</div>;
@@ -86,18 +107,20 @@ function ReadingCardPage() {
         <h3>독서카드</h3>
         <div className="header-right-icons">
           <FiSearch size={24} color="#333" className="icon-search" />
-          {/* 정렬 옵션은 BsThreeDotsVertical 클릭 시 드롭다운 등으로 구현 가능 */}
           <BsThreeDotsVertical size={24} color="#333" className="icon-more" />
         </div>
       </header>
 
       <div className="sort-options">
-        <span className="sort-button">최신순 &gt;</span> {/* 이미지에 "최신순" 버튼 있음 */}
+        {/* 4. 버튼에 클릭 핸들러 연결 및 텍스트 동적 변경 */}
+        <span className="sort-button" onClick={handleSortClick}>
+          {sortOrder === 'latest' ? '최신순' : '오래된순'} &gt;
+        </span>
       </div>
 
       <div className="reading-card-list">
-        {readingCards.length > 0 ? (
-          readingCards.map((card) => (
+        {sortedReadingCards.length > 0 ? ( // 정렬된 카드 목록 사용
+          sortedReadingCards.map((card) => (
             <ReadingCardItem
               key={card.id}
               id={card.id}
@@ -105,7 +128,7 @@ function ReadingCardPage() {
               author={card.author}
               contentPreview={card.contentPreview}
               date={card.date}
-              thumbnailUrl={card.thumbnailUrl} // 여기서도 'undefined'가 전달될 수 있으므로 그대로 둡니다.
+              thumbnailUrl={card.thumbnailUrl}
             />
           ))
         ) : (
