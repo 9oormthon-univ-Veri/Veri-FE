@@ -1,17 +1,26 @@
 [
   {
     "id": "rc1",
-    "thumbnailUrl": "/images/card1.png",
-    "text": "프로이트는 말했다. “어느 날 문득 돌아보면, 투..."
+    "thumbnailUrl": "https://via.placeholder.com/60x80?text=Book1",
+    "bookTitle": "어린 왕자",
+    "author": "앙투안 드 생텍쥐페리",
+    "readingDate": "2024.05.20",
+    "contentPreview": "어린 왕자와 장미의 이야기는 순수함과 사랑의 본질을 다시 생각하게 합니다. 사막에서 만난 비행사와의 대화 속에서 삶의 소중한 가치들을 깨달았습니다. '가장 중요한 것은 눈에 보이지 않는다'는 메시지가 마음에 깊이 남습니다. 특히 B612 행성과 여우의 이야기는 오래도록 기억될 것입니다."
   },
   {
     "id": "rc2",
-    "thumbnailUrl": "/images/card2.png",
-    "text": "또 다른 독서 카드 내용입니다."
+    "thumbnailUrl": "https://via.placeholder.com/60x80?text=Book2",
+    "bookTitle": "아몬드",
+    "author": "손원평",
+    "readingDate": "2024.05.15",
+    "contentPreview": "감정을 느끼지 못하는 소년 윤재의 성장을 다룬 이야기. 감정이 없는 것이 과연 불행한 일일까? 인간관계와 공감에 대해 많은 생각을 하게 하는 책이었다. 곤이와의 관계 변화가 인상적이다."
   },
   {
     "id": "rc3",
-    "thumbnailUrl": "/images/card3.png",
-    "text": "세 번째 독서 카드 내용입니다."
+    "thumbnailUrl": "https://via.placeholder.com/60x80?text=Book3",
+    "bookTitle": "코스모스",
+    "author": "칼 세이건",
+    "readingDate": "2024.05.10",
+    "contentPreview": "우주와 생명의 경이로움을 과학적이고 서정적으로 풀어낸 책. 우주 속에서 인간의 존재를 다시금 되새기게 한다. 광대한 시간과 공간 속에서 우리가 얼마나 미미한 존재인지, 동시에 얼마나 특별한 존재인지 느끼게 해주었다. 우주에 대한 호기심을 자극하며 세상을 바라보는 시야를 넓혀주었다."
   }
 ]

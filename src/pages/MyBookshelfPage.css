@@ -1,14 +1,11 @@
 /* src/pages/MyBookshelfPage.css */
 
 .my-bookshelf-page-container {
-  padding: 0 15px; /* 좌우 패딩 */
-  max-width: 450px; /* 최대 너비 */
-  margin: 0 auto;
+  width: 100%;
+  padding: 0 15px 80px;
   background-color: #f8f8f8;
-  min-height: 100vh; /* 최소 높이: 뷰포트 전체 높이 */
+  min-height: 100vh;
   box-sizing: border-box;
-  display: flex; /* 내부 요소들을 세로로 정렬하기 위함 */
-  flex-direction: column; /* 세로 정렬 */
 }
 
 /* 헤더 스타일 */
@@ -17,10 +14,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 0;
-  border-bottom: 1px solid #eee; /* 하단 구분선 */
+  border-bottom: 1px solid #eee;
   margin-bottom: 15px;
-  background-color: #fff; /* 배경색 */
-  position: sticky; /* 상단에 고정 */
+  background-color: #fff;
+  position: sticky;
   top: 0;
   z-index: 10;
 }
@@ -28,35 +25,18 @@
 .bookshelf-header .header-left-arrow,
 .bookshelf-header .header-right-dots {
   cursor: pointer;
-  padding: 5px; /* 클릭 영역 확보 */
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.bookshelf-header .header-left-arrow .icon,
-.bookshelf-header .header-right-dots .icon {
-  width: 24px;
-  height: 24px;
-  /* 만약 SVG를 마스크로 사용한다면 */
-  background-color: #333; /* 아이콘 색상 */
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-}
-
-/* 아이콘 경로 예시 (public/icons 폴더에 SVG가 있다고 가정) */
-.bookshelf-header .header-left-arrow .icon {
-  mask-image: url('/icons/arrow-left.svg'); /* 실제 SVG 경로로 변경 */
-}
-.bookshelf-header .header-right-dots .icon {
-  mask-image: url('/icons/more-vertical.svg'); /* 실제 SVG 경로로 변경 */
-}
-
 
 .bookshelf-header h3 {
   font-size: 18px;
   font-weight: bold;
   color: #333;
   margin: 0;
-  flex-grow: 1; /* 중앙 정렬 */
+  flex-grow: 1;
   text-align: center;
 }
 
@@ -64,7 +44,7 @@
 .sort-options {
   text-align: right;
   margin-bottom: 15px;
-  background-color: #f8f8f8; /* 배경색 */
+  background-color: #f8f8f8;
   padding: 5px 0;
 }
 
@@ -81,177 +61,35 @@
   background-color: #eee;
 }
 
-/* 책 목록 전체 (세로 스크롤) */
-.bookshelf-list-full {
-  flex-grow: 1; /* 남은 공간을 모두 차지하여 스크롤 가능하게 함 */
-  display: flex;
-  flex-direction: column; /* 아이템들을 세로로 나열 */
-  gap: 15px; /* 아이템 간 간격 */
-  padding-bottom: 20px; /* 하단 여백 */
-  overflow-y: auto; /* 세로 스크롤 활성화 */
-  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-  /* 스크롤바 숨김 (선택 사항) */
-  -ms-overflow-style: none; /* IE 및 Edge에서 스크롤바 숨김 */
-  scrollbar-width: none; /* Firefox에서 스크롤바 숨김 */
-}
-
-.bookshelf-list-full::-webkit-scrollbar {
-  display: none; /* Chrome, Safari 스크롤바 숨김 */
-}
-
-
-/* 개별 책 아이템 스타일 (full 페이지용) */
-.bookshelf-item-full {
-  display: flex;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  padding: 15px;
-  align-items: flex-start; /* 아이템 상단 정렬 */
-}
-
-.bookshelf-item-full .book-cover-large {
-  width: 90px; /* 더 큰 커버 이미지 너비 */
-  height: 135px; /* 2:3 비율 (90 * 1.5) */
-  flex-shrink: 0; /* 줄어들지 않도록 */
-  margin-right: 15px;
-  background-color: #f0f0f0;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 커버 그림자 */
-}
-
-.bookshelf-item-full .book-cover-large img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.bookshelf-item-full .book-details-full {
-  flex-grow: 1; /* 남은 공간 차지 */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* 내용 분산 */
-  height: 100%; /* 부모 높이와 동일하게 */
-}
-
-.bookshelf-item-full .book-title-full {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 5px 0;
-  line-height: 1.4;
-  max-height: 2.8em; /* 2줄까지 표시 */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.bookshelf-item-full .book-author-full {
-  font-size: 13px;
-  color: #777;
-  margin: 0 0 8px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 별점 스타일 (MyBookshelfPage 전용) */
-.star-rating-full-page {
-  display: flex;
-  align-items: center;
-  font-size: 14px; /* 별 아이콘 크기 */
-  color: #fdd835;
-  margin-bottom: 8px; /* 아래 여백 */
-}
-
-.star-rating-full-page .star {
-  margin-right: 2px; /* 별 사이 간격 */
-}
-
-.star-rating-full-page .star.empty {
-  color: #e0e0e0;
-}
-/* 반 별은 MyBookshelfSection과 동일한 로직 사용 */
-.star-rating-full-page .star.half {
-  position: relative;
-  overflow: hidden;
-  color: #fdd835;
-}
-.star-rating-full-page .star.half::before {
-  content: '\2605';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 50%;
-  overflow: hidden;
-  color: #fdd835;
-}
-.star-rating-full-page .star.half::after {
-  content: '\2606';
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 50%;
-  overflow: hidden;
-  color: #e0e0e0;
-  z-index: 1;
-}
-
-
-.book-status-info {
-  display: flex;
-  justify-content: flex-end; /* 오른쪽으로 정렬 */
-  margin-top: auto; /* 하단에 붙도록 */
-}
-
-.book-status-info .book-status {
-  font-size: 11px;
-  color: #fff;
-  background-color: #a0a0a0; /* 회색 배경 */
-  padding: 3px 8px;
-  border-radius: 12px;
-  margin-right: 8px;
-  white-space: nowrap;
-}
-/* 독서중 / 독서완료 상태에 따른 색상 구분 */
-.book-status-info .book-status.독서중 {
-  background-color: #4CAF50; /* 초록색 */
-}
-.book-status-info .book-status.독서완료 {
-  background-color: #2196F3; /* 파란색 */
-}
-
-
-.book-status-info .book-date {
-  font-size: 11px;
-  color: #888;
-  white-space: nowrap;
-}
-
 /* 책 등록 버튼 */
 .add-book-button-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: calc(100% - 30px);
+  z-index: 1000;
+  background-color: transparent;
+  padding: 0;
   text-align: center;
-  padding: 20px 0;
-  background-color: #f8f8f8;
-  flex-shrink: 0; /* 페이지 하단에 고정되도록 */
 }
 
 .add-book-button {
-  background-color: #ff9800; /* 주황색 */
+  background-color: #ff9800;
   color: white;
   border: none;
-  border-radius: 25px; /* 둥근 버튼 */
+  border-radius: 25px;
   padding: 12px 25px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(255, 152, 0, 0.2);
-  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 150px;
 }
 
 .add-book-button:hover {
   background-color: #e68900;
+  transform: translateY(-2px);
 }

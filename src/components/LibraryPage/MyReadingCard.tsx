@@ -1,21 +1,31 @@
 // src/pages/LibraryPage/MyReadingCard.tsx
 import React, { useEffect, useState } from 'react';
 
+// src/pages/LibraryPage/MyReadingCard.tsx
 // 개별 독서카드 아이템의 타입
 interface ReadingCardItemType {
   id: string;
-  thumbnailUrl: string;
-  text: string;
+  thumbnailUrl: string; // 책 표지 썸네일
+  bookTitle: string;    // ✨ 추가: 책 제목
+  author: string;       // ✨ 추가: 저자
+  readingDate: string;  // ✨ 추가: 독서 날짜 (예: "YYYY.MM.DD")
+  contentPreview: string; // ✨ 변경: 'text' 대신 'contentPreview'로 구체화 (독서 내용 미리보기)
 }
 
 // 개별 독서카드 아이템을 렌더링하는 내부 컴포넌트
-const SingleReadingCard: React.FC<ReadingCardItemType> = ({ thumbnailUrl, text }) => {
+const SingleReadingCard: React.FC<ReadingCardItemType> = ({ thumbnailUrl, bookTitle, author, readingDate, contentPreview }) => {
   return (
     <div className="reading-card-item">
       <div className="card-thumbnail">
-        <img src={thumbnailUrl || 'https://via.placeholder.com/60x80?text=No+Image'} alt="카드 썸네일" />
+        {/* thumbnailUrl이 없을 경우를 대비한 폴백 이미지 */}
+        <img src={thumbnailUrl || 'https://via.placeholder.com/60x80?text=No+Image'} alt={bookTitle || '카드 썸네일'} />
       </div>
-      <p className="card-text">{text}</p>
+      <div className="card-info"> {/* 정보 표시를 위한 새로운 div 추가 */}
+        <h4 className="card-book-title">{bookTitle}</h4> {/* 책 제목 */}
+        <p className="card-author">{author}</p>         {/* 저자 */}
+        <p className="card-preview">{contentPreview}</p> {/* 독서 내용 미리보기 */}
+        <span className="card-date">{readingDate}</span> {/* 독서 날짜 */}
+      </div>
     </div>
   );
 };
@@ -29,7 +39,7 @@ const MyReadingCardSection: React.FC = () => {
   useEffect(() => {
     // public/datas/readingCards.json 경로로 fetch 요청
     // MyBookshelf.tsx와 동일한 패턴으로 fetch를 사용합니다.
-    fetch('/datas/readingCards.json') 
+    fetch('/datas/readingCards.json')
       .then(response => {
         if (!response.ok) {
           // 네트워크 응답이 200 OK가 아니면 에러 발생 (예: 404 Not Found)
@@ -64,7 +74,6 @@ const MyReadingCardSection: React.FC = () => {
         <h3>나의 독서카드</h3>
         <span className="more-link">책갈피 보러가기 &gt;</span>
       </div>
-      {/* 여기에 horizontal-scroll-container 클래스 추가 */}
       <div className="card-list horizontal-scroll-container">
         {readingCards.length > 0 ? (
           readingCards.map((card) => (
@@ -72,7 +81,10 @@ const MyReadingCardSection: React.FC = () => {
               key={card.id}
               id={card.id}
               thumbnailUrl={card.thumbnailUrl}
-              text={card.text}
+              bookTitle={card.bookTitle}
+              author={card.author}
+              readingDate={card.readingDate}
+              contentPreview={card.contentPreview}
             />
           ))
         ) : (

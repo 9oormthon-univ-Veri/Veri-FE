@@ -1,8 +1,8 @@
 // src/pages/LibraryPage.tsx
 import './LibraryPage.css'; // LibraryPage 전체 스타일
-import MyReadingCardSection from './LibraryPage/MyReadingCard';
-import MyBookshelfSection from './LibraryPage/MyBookshelf';
-import TodaysRecommendationSection from './LibraryPage/TodaysRecommendation'; // 새로 임포트
+import MyReadingCardSection from '../components/LibraryPage/MyReadingCard';
+import MyBookshelfSection from '../components/LibraryPage/MyBookshelf';
+import TodaysRecommendationSection from '../components/LibraryPage/TodaysRecommendation'; // 새로 임포트
 
 function LibraryPage() {
   return (

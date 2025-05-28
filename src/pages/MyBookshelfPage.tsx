@@ -1,7 +1,10 @@
 // src/pages/MyBookshelfPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MyBookshelfPage.css'; // 새로운 책장 페이지 전용 CSS
+import './MyBookshelfPage.css'; // 이 페이지 전용 CSS
+import { MdArrowBackIosNew } from 'react-icons/md';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import BookshelfList from '../components/MyBookshelfPage/BookshelfList'; // ✨ 임포트 경로 변경
 
 // 책 데이터 타입을 정의합니다.
 interface BookItem {
@@ -14,8 +17,8 @@ interface BookItem {
   date: string; // 날짜 (예: '2025.05.24')
 }
 
-// 별점 아이콘을 렌더링하는 헬퍼 컴포넌트
-const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
+// 별점 아이콘을 렌더링하는 헬퍼 컴포넌트 (다른 컴포넌트에서 재사용을 위해 export)
+export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
@@ -77,11 +80,11 @@ function MyBookshelfPage() {
     <div className="my-bookshelf-page-container">
       <header className="bookshelf-header">
         <div className="header-left-arrow" onClick={() => navigate(-1)}>
-          <img src="/icons/arrow-left.svg" alt="뒤로가기" className="icon" /> {/* 뒤로가기 아이콘 경로 예시 */}
+          <MdArrowBackIosNew size={24} color="#333" />
         </div>
         <h3>나의 책장</h3>
         <div className="header-right-dots">
-          <img src="/icons/more-vertical.svg" alt="더보기" className="icon" /> {/* 점 3개 메뉴 아이콘 경로 예시 */}
+          <BsThreeDotsVertical size={24} color="#333" />
         </div>
       </header>
 
@@ -89,28 +92,8 @@ function MyBookshelfPage() {
         <span className="sort-button" onClick={handleSortClick}>최신순 &gt;</span>
       </div>
 
-      <div className="bookshelf-list-full">
-        {books.length > 0 ? (
-          books.map((book) => (
-            <div key={book.id} className="bookshelf-item-full">
-              <div className="book-cover-large">
-                <img src={book.coverUrl || 'https://via.placeholder.com/80x120?text=No+Cover'} alt={book.title} />
-              </div>
-              <div className="book-details-full">
-                <h4 className="book-title-full">{book.title}</h4>
-                <p className="book-author-full">{book.author}</p>
-                <StarRatingFullPage rating={book.rating} /> {/* 별점 컴포넌트 사용 */}
-                <div className="book-status-info">
-                  <span className="book-status">{book.status}</span>
-                  <span className="book-date">{book.date}</span>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="no-books-message">책장에 등록된 책이 없습니다.</p>
-        )}
-      </div>
+      <BookshelfList books={books} /> {/* BookshelfList 컴포넌트 사용 */}
+
       <div className="add-book-button-container">
         <button className="add-book-button">
           + 책 등록

@@ -1,0 +1,84 @@
+/* src/components/BookDetail/ReadingCardSection.css */
+
+.reading-card-section {
+    background-color: #fff;
+    padding: 20px 15px;
+    margin: 15px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.reading-card-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.reading-card-section .section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.reading-card-section .see-all-cards {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+}
+
+.reading-card-section .see-all-cards span {
+    margin-right: 5px;
+}
+
+.reading-cards-preview-list {
+    display: flex;
+    gap: 10px; /* 카드 미리보기 간격 */
+    overflow-x: auto; /* 가로 스크롤 */
+    padding-bottom: 15px; /* 스크롤바 때문에 여백 */
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.reading-cards-preview-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.reading-cards-preview-list .loading-message,
+.reading-cards-preview-list .error-message,
+.reading-cards-preview-list .no-cards-message {
+    text-align: center;
+    color: #888;
+    padding: 10px 0;
+    width: 100%; /* 메시지가 전체 너비를 차지하도록 */
+    font-size: 14px;
+}
+
+.create-card-button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.create-card-button {
+    background-color: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.create-card-button:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-1px);
+}

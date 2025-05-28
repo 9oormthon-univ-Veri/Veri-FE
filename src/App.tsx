@@ -12,6 +12,7 @@ import CommunityPage from './pages/CommunityPage';
 import BookmarkPage from './pages/BookmarkPage';
 import MyPage from './pages/MyPage';
 import MyBookshelfPage from './pages/MyBookshelfPage'; // 새로 추가된 실제 책장 페이지 임포트
+import BookDetailPage from './pages/BookDetailPage'; // ✨ 새로 추가할 상세 페이지
 // import MyBookshelfImagePage from './pages/MyBookshelfImagePage'; // 이제 필요 없으므로 제거 또는 주석 처리
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/bookmark" element={<BookmarkPage />} />
         <Route path="/my-page" element={<MyPage />} />
         <Route path="/my-bookshelf" element={<MyBookshelfPage />} /> {/* 새 책장 페이지 라우트 추가 */}
+        <Route path="/book-detail/:id" element={<BookDetailPage />} /> {/* 책 상세 페이지 라우트 추가 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - 페이지를 찾을 수 없습니다</h2></div>} />
       </Routes>
 

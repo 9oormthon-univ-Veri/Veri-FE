@@ -11,9 +11,14 @@ interface BookshelfItemType {
 }
 
 // 개별 책장 아이템을 렌더링하는 내부 컴포넌트
-const SingleBookshelfItem: React.FC<BookshelfItemType> = ({ coverUrl, title, author }) => {
+// 'navigate' 함수를 prop으로 받도록 수정
+const SingleBookshelfItem: React.FC<BookshelfItemType & { navigate: (path: string) => void }> = ({ id, coverUrl, title, author, navigate }) => {
+  const handleClick = () => {
+    navigate(`/book-detail/${id}`); // 클릭 시 해당 책의 상세 페이지로 이동
+  };
+
   return (
-    <div className="bookshelf-item">
+    <div className="bookshelf-item" onClick={handleClick} style={{ cursor: 'pointer' }}> {/* 클릭 가능하도록 cursor 스타일 추가 */}
       <div className="book-cover-thumbnail">
         <img src={coverUrl || 'https://via.placeholder.com/80x120?text=No+Cover'} alt={title} />
       </div>
@@ -51,7 +56,7 @@ const MyBookshelfSection: React.FC = () => {
   }, []);
 
   const handleGoToBookshelf = () => {
-    navigate('/my-bookshelf');
+    navigate('/my-bookshelf'); // "책장으로 가기" 버튼 클릭 시 전체 책장 페이지로 이동
   };
 
   if (isLoading) {
@@ -62,30 +67,31 @@ const MyBookshelfSection: React.FC = () => {
     return <p style={{ color: 'red' }}>{error}</p>;
   }
 
-  return (
+  return ( // ✨ 이 return 문 바로 앞에 불필요한 문자가 있는지 확인하세요.
     <section className="my-bookshelf">
-    <div className="section-header">
-      <h3>나의 책장</h3>
-      <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
-    </div>
-    {/* 여기에 horizontal-scroll-container 클래스 추가 */}
-    <div className="bookshelf-list horizontal-scroll-container">
-      {bookshelfItems.length > 0 ? (
-        bookshelfItems.map((book) => (
-          <SingleBookshelfItem
-            key={book.id}
-            id={book.id}
-            coverUrl={book.coverUrl}
-            title={book.title}
-            author={book.author}
-          />
-        ))
-      ) : (
-        <p>등록된 책이 없습니다.</p>
-      )}
-    </div>
-  </section>
+      <div className="section-header">
+        <h3>나의 책장</h3>
+        <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
+      </div>
+      {/* 여기에 horizontal-scroll-container 클래스 추가 */}
+      <div className="bookshelf-list horizontal-scroll-container">
+        {bookshelfItems.length > 0 ? (
+          bookshelfItems.map((book) => (
+            <SingleBookshelfItem
+              key={book.id}
+              id={book.id}
+              coverUrl={book.coverUrl}
+              title={book.title}
+              author={book.author}
+              navigate={navigate}
+            />
+          ))
+        ) : (
+          <p>등록된 책이 없습니다.</p>
+        )}
+      </div>
+    </section>
   );
-};
+}; // ✨ 그리고 이 닫는 중괄호 이후에 불필요한 문자가 없는지 확인하세요.
 
 export default MyBookshelfSection;

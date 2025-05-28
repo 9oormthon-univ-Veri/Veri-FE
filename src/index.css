@@ -7,9 +7,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0; /* 배경색으로 좀 더 구분하기 쉽게 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* ✨ 이 세 줄을 제거하거나 주석 처리하세요 */
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
   min-height: 100vh;
 }
 
@@ -25,14 +26,14 @@ code {
   align-items: center;
   width: 100%;
   max-width: 600px; /* 적당한 최대 너비 설정 */
-  height: 80px; /* 탭 바 높이 */
+  height: 80px;
   background-color: #fff;
-  border-radius: 15px; /* 둥근 모서리 */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 0 10px;
-  box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
-  position: absolute; /* 페이지 하단에 고정 */
-  bottom: 20px; /* 바닥에서 20px 위 */
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 20px;
 }
 
 .tab-item {

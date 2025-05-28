@@ -1,0 +1,153 @@
+/* src/pages/ReadingCardPage.css */
+
+.reading-card-page-container {
+  width: 100%;
+  padding: 0 15px 80px; /* 좌우 패딩과 하단 탭바를 위한 패딩 */
+  background-color: #f8f8f8;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.reading-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  color: #333;
+}
+
+.reading-card-header h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.reading-card-header .header-right-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.reading-card-header .header-right-icons .icon-search,
+.reading-card-header .header-right-icons .icon-more {
+  cursor: pointer;
+}
+
+.sort-options {
+  display: flex;
+  justify-content: flex-end; /* "최신순" 버튼을 오른쪽에 정렬 */
+  padding: 10px 0;
+}
+
+.sort-options .sort-button {
+  font-size: 13px;
+  color: #777;
+  cursor: pointer;
+}
+
+.reading-card-list {
+  display: grid; /* Flexbox 대신 Grid 사용 */
+  grid-template-columns: repeat(2, 1fr); /* 2개의 열을 동일한 너비로 설정 */
+  gap: 15px; /* 카드 간 가로 및 세로 간격 */
+  padding-top: 10px;
+  padding-bottom: 20px; /* 스크롤 시 하단 여백 추가 */
+}
+
+.reading-card-item {
+  /* 그리드 아이템이므로 Flexbox 관련 display는 제거하거나 필요에 따라 재정의 */
+  /* display: flex;  <-- 이 줄은 이제 필요 없습니다. */
+  flex-direction: column; /* 내용을 세로로 정렬 */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  cursor: pointer;
+  /* align-items: flex-start;  <-- Flexbox 속성이므로 제거하거나 Grid에 맞게 조정 */
+  text-align: left; /* 텍스트 정렬은 그대로 유지 */
+  height: auto; /* 내용에 따라 높이 자동 조절 */
+  /* min-height: 200px;  // 필요하다면 최소 높이 지정 */
+}
+
+.reading-card-item .card-image-container {
+  width: 100%; /* 그리드 아이템 너비에 맞춰 100% */
+  padding-bottom: 120%; /* 이미지 비율 (세로로 길게) 4:5 비율 */
+  height: 0; /* padding-bottom을 사용하기 위해 height를 0으로 설정 */
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 0; /* 그리드 정렬이므로 더 이상 필요 없음 */
+  margin-bottom: 10px; /* 이미지 아래 내용과의 간격 */
+  background-color: #f0f0f0;
+  position: relative; /* 이미지를 절대 위치로 배치하기 위함 */
+}
+
+.reading-card-item .card-image-container img {
+  position: absolute; /* 부모 컨테이너에 맞춰 절대 위치 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reading-card-item .card-content {
+  /* flex-grow: 1; <-- Grid에서는 필요 없음 */
+  text-align: left;
+  /* overflow: hidden; */ /* 더 이상 필요 없음, 텍스트 줄임은 아래에서 처리 */
+  display: flex; /* 내부 콘텐츠를 Flex로 하여 하단에 날짜 정렬 */
+  flex-direction: column;
+  justify-content: space-between; /* 내용과 날짜를 상하로 분리 */
+  height: 100%; /* 부모 아이템 높이에 맞춤 */
+}
+
+.reading-card-item .card-book-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 4px 0;
+  /* white-space: nowrap;  */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+  display: -webkit-box; /* 여러 줄 말줄임표 */
+  -webkit-line-clamp: 2; /* 2줄까지만 표시 */
+  -webkit-box-orient: vertical;
+  word-break: break-word; /* 긴 단어 줄바꿈 */
+}
+
+.reading-card-item .card-author {
+  font-size: 12px;
+  color: #777;
+  margin: 0 0 8px 0;
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* 1줄만 표시 */
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.reading-card-item .card-preview {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0 0 8px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 3줄까지만 표시 (이미지 참고하여 조정) */
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.reading-card-item .card-date {
+  font-size: 11px;
+  color: #999;
+  display: block;
+  margin-top: auto; /* 하단으로 밀어냄 */
+}
+
+.no-cards-message {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  grid-column: 1 / -1; /* 그리드 전체 너비를 차지하도록 */
+}

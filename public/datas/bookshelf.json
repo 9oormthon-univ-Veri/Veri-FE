@@ -4,7 +4,7 @@
     "coverUrl": "https://via.placeholder.com/80x120?text=Book1",
     "title": "내게 남은 스물다섯 번의 계절",
     "author": "슈테판 페퍼(지은이), 전은경(옮김이)",
-    "rating": 4.5,
+    "rating": 4,
     "status": "독서중",
     "date": "2024.05.20"
   },
@@ -22,7 +22,7 @@
     "coverUrl": "https://via.placeholder.com/80x120?text=Book3",
     "title": "어린이는 멀리 간다",
     "author": "김지은",
-    "rating": 3.5,
+    "rating": 3,
     "status": "독서중",
     "date": "2024.05.10"
   },
@@ -40,7 +40,7 @@
     "coverUrl": "https://via.placeholder.com/80x120?text=Book5",
     "title": "데이터 분석가의",
     "author": "리사 드페인 콜만",
-    "rating": 4.5,
+    "rating": 4,
     "status": "독서중",
     "date": "2024.04.28"
   },

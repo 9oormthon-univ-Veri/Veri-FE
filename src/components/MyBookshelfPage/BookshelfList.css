@@ -1,0 +1,165 @@
+/* src/components/MyBookshelfPage/BookshelfList.css */
+
+/* 책 목록 전체 (세로 스크롤) */
+.bookshelf-list-full {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 아이템 간 간격 */
+    padding-bottom: 20px; /* 하단 여백 (이것은 리스트 내부의 여백) */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.bookshelf-list-full::-webkit-scrollbar {
+    display: none; /* Chrome, Safari 스크롤바 숨김 */
+}
+
+/* 개별 책 아이템 스타일 (full 페이지용) */
+.bookshelf-item-full {
+    display: flex;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    align-items: flex-start;
+    cursor: pointer; /* ✨ 클릭 가능하도록 커서 포인터 추가 */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* ✨ 호버 효과를 위한 트랜지션 */
+}
+
+.bookshelf-item-full:hover {
+    transform: translateY(-2px); /* ✨ 호버 시 살짝 위로 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ✨ 호버 시 그림자 강조 */
+}
+
+.bookshelf-item-full:active {
+    transform: translateY(0); /* 클릭 시 원래 위치로 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 클릭 시 그림자 원상복귀 */
+}
+
+.bookshelf-item-full .book-cover-large {
+    width: 90px; /* 더 큰 커버 이미지 너비 */
+    height: 135px; /* 2:3 비율 (90 * 1.5) */
+    flex-shrink: 0; /* 줄어들지 않도록 */
+    margin-right: 15px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 커버 그림자 */
+}
+
+.bookshelf-item-full .book-cover-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bookshelf-item-full .book-details-full {
+    flex-grow: 1; /* 남은 공간 차지 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내용 분산 */
+    height: 100%; /* 부모 높이와 동일하게 */
+}
+
+.bookshelf-item-full .book-title-full {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 5px 0;
+    line-height: 1.4;
+    max-height: 2.8em; /* 2줄까지 표시 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.bookshelf-item-full .book-author-full {
+    font-size: 13px;
+    color: #777;
+    margin: 0 0 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 별점 스타일 (BookshelfList 내부에서 사용) */
+.star-rating-full-page {
+    display: flex;
+    align-items: center;
+    font-size: 14px; /* 별 아이콘 크기 */
+    color: #fdd835;
+    margin-bottom: 8px; /* 아래 여백 */
+}
+
+.star-rating-full-page .star {
+    margin-right: 2px; /* 별 사이 간격 */
+}
+
+.star-rating-full-page .star.empty {
+    color: #e0e0e0;
+}
+.star-rating-full-page .star.half {
+    position: relative;
+    overflow: hidden;
+    color: #fdd835;
+}
+.star-rating-full-page .star.half::before {
+    content: '\2605';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #fdd835;
+}
+.star-rating-full-page .star.half::after {
+    content: '\2606';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #e0e0e0;
+    z-index: 1;
+}
+
+.book-status-info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: auto;
+}
+
+.book-status-info .book-status {
+    font-size: 11px;
+    color: #fff;
+    background-color: #a0a0a0;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.book-status-info .book-status.독서중 {
+    background-color: #4CAF50;
+}
+.book-status-info .book-status.독서완료 {
+    background-color: #2196F3;
+}
+
+.book-status-info .book-date {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.no-books-message {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-size: 16px;
+}
