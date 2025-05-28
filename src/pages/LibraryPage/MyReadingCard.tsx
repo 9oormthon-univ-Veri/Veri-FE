@@ -64,7 +64,8 @@ const MyReadingCardSection: React.FC = () => {
         <h3>나의 독서카드</h3>
         <span className="more-link">책갈피 보러가기 &gt;</span>
       </div>
-      <div className="card-list">
+      {/* 여기에 horizontal-scroll-container 클래스 추가 */}
+      <div className="card-list horizontal-scroll-container">
         {readingCards.length > 0 ? (
           readingCards.map((card) => (
             <SingleReadingCard

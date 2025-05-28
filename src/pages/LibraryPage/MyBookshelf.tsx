@@ -64,26 +64,27 @@ const MyBookshelfSection: React.FC = () => {
 
   return (
     <section className="my-bookshelf">
-      <div className="section-header">
-        <h3>나의 책장</h3>
-        <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
-      </div>
-      <div className="bookshelf-list">
-        {bookshelfItems.length > 0 ? (
-          bookshelfItems.map((book) => (
-            <SingleBookshelfItem
-              key={book.id}
-              id={book.id}
-              coverUrl={book.coverUrl}
-              title={book.title}
-              author={book.author}
-            />
-          ))
-        ) : (
-          <p>등록된 책이 없습니다.</p>
-        )}
-      </div>
-    </section>
+    <div className="section-header">
+      <h3>나의 책장</h3>
+      <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
+    </div>
+    {/* 여기에 horizontal-scroll-container 클래스 추가 */}
+    <div className="bookshelf-list horizontal-scroll-container">
+      {bookshelfItems.length > 0 ? (
+        bookshelfItems.map((book) => (
+          <SingleBookshelfItem
+            key={book.id}
+            id={book.id}
+            coverUrl={book.coverUrl}
+            title={book.title}
+            author={book.author}
+          />
+        ))
+      ) : (
+        <p>등록된 책이 없습니다.</p>
+      )}
+    </div>
+  </section>
   );
 };
 

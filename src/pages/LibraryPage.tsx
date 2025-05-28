@@ -1,8 +1,8 @@
 // src/pages/LibraryPage.tsx
-import React from 'react';
 import './LibraryPage.css'; // LibraryPage 전체 스타일
-import MyReadingCardSection from './LibraryPage/MyReadingCard'; // 수정된 이름으로 임포트
-import MyBookshelfSection from './LibraryPage/MyBookshelf'; // 수정된 이름으로 임포트
+import MyReadingCardSection from './LibraryPage/MyReadingCard';
+import MyBookshelfSection from './LibraryPage/MyBookshelf';
+import TodaysRecommendationSection from './LibraryPage/TodaysRecommendation'; // 새로 임포트
 
 function LibraryPage() {
   return (
@@ -39,23 +39,9 @@ function LibraryPage() {
       {/* 나의 책장 섹션 - 분리된 컴포넌트 사용 */}
       <MyBookshelfSection />
 
-      {/* 오늘의 추천 섹션 (이 부분도 필요하다면 비슷한 방식으로 분리할 수 있습니다) */}
-      <section className="todays-recommendation">
-        <div className="section-header">
-          <h3>오늘의 추천</h3>
-          <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
-        </div>
-        <div className="recommendation-list">
-          {/* 추천 책 아이템 반복 */}
-          {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="recommended-book-item">
-              <div className="book-cover-thumbnail"></div> {/* 책 표지 썸네일 */}
-              <p className="book-title">내게 남은 스물...</p>
-              <p className="book-author">슈테판 페퍼(지은...)</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* 오늘의 추천 섹션 - 분리된 컴포넌트 사용 */}
+      <TodaysRecommendationSection /> {/* 새로 추가된 컴포넌트 */}
+
     </div>
   );
 }

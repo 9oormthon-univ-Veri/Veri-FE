@@ -1,4 +1,5 @@
 // src/pages/MyBookshelfPage.tsx
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyBookshelfPage.css'; // 새로운 책장 페이지 전용 CSS
 
@@ -9,110 +10,106 @@ interface BookItem {
   author: string;
   coverUrl: string; // 책 표지 이미지 URL
   rating: number; // 별점 (0~5)
-  status: string; // 독서 상태 (예: '독서중')
-  date: string; // 날짜
+  status: string; // 독서 상태 (예: '독서중' 또는 '독서완료')
+  date: string; // 날짜 (예: '2025.05.24')
 }
 
-// 예시 책 데이터 (실제 프로젝트에서는 API 호출 등으로 가져옵니다)
-const dummyBooks: BookItem[] = [
-  {
-    id: 'book1',
-    title: '내게 남은 스물다섯 번의 계절',
-    author: '슈테판 페퍼 (지은이), 전은경 (옮김이)',
-    coverUrl: 'https://via.placeholder.com/80x120?text=Book1', // 임시 이미지
-    rating: 4,
-    status: '독서중',
-    date: '2025.05.24'
-  },
-  {
-    id: 'book2',
-    title: '단 한번의 삶',
-    author: '김영하',
-    coverUrl: 'https://via.placeholder.com/80x120?text=Book2',
-    rating: 3,
-    status: '독서중',
-    date: '2025.05.24'
-  },
-  {
-    id: 'book3',
-    title: '어린이는 멀리 간다',
-    author: '김지은',
-    coverUrl: 'https://via.placeholder.com/80x120?text=Book3',
-    rating: 4,
-    status: '독서중',
-    date: '2025.05.24'
-  },
-  {
-    id: 'book4',
-    title: '내게 남은 스물다섯 번의 계절',
-    author: '요시타케 신스케 (지은이), 고향욱 (옮김이)',
-    coverUrl: 'https://via.placeholder.com/80x120?text=Book4',
-    rating: 4,
-    status: '독서중',
-    date: '2025.05.24'
-  },
-  {
-    id: 'book5',
-    title: '내게 남은 스물다섯 번의 계절',
-    author: '슈테판 페퍼 (지은이), 전은경 (옮김이)',
-    coverUrl: 'https://via.placeholder.com/80x120?text=Book5',
-    rating: 3,
-    status: '독서중',
-    date: '2025.05.24'
-  },
-  // 더 많은 책 데이터를 추가할 수 있습니다.
-];
+// 별점 아이콘을 렌더링하는 헬퍼 컴포넌트
+const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+  return (
+    <div className="star-rating-full-page">
+      {[...Array(fullStars)].map((_, i) => (
+        <span key={`full-${i}`} className="star full">&#9733;</span> // ★
+      ))}
+      {hasHalfStar && <span className="star half">&#9733;</span>} {/* 반 별 (같은 유니코드 문자지만 CSS로 절반 채움) */}
+      {[...Array(emptyStars)].map((_, i) => (
+        <span key={`empty-${i}`} className="star empty">&#9734;</span> // ☆
+      ))}
+    </div>
+  );
+};
+
 
 function MyBookshelfPage() {
   const navigate = useNavigate();
+  const [books, setBooks] = useState<BookItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i} className={`star ${i <= rating ? 'filled' : ''}`}>
-          ★
-        </span>
-      );
-    }
-    return stars;
+  useEffect(() => {
+    fetch('/datas/bookshelf.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok: ' + response.statusText + '. Requested URL: /datas/bookshelf.json');
+        }
+        return response.json();
+      })
+      .then((data: BookItem[]) => {
+        setBooks(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('책장 데이터를 불러오는 중 오류 발생:', err);
+        setError('책장 데이터를 불러오는 데 실패했습니다: ' + err.message);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // '최신순' 클릭 핸들러 (정렬 로직 필요 시 여기에 추가)
+  const handleSortClick = () => {
+    // 실제 정렬 로직은 여기에 구현 (예: setBooks(sortedBooks))
+    console.log('최신순 정렬 클릭됨');
   };
+
+  if (isLoading) {
+    return <div className="my-bookshelf-page-container loading-state"><p>책장 데이터를 불러오는 중...</p></div>;
+  }
+
+  if (error) {
+    return <div className="my-bookshelf-page-container error-state"><p style={{ color: 'red' }}>{error}</p></div>;
+  }
 
   return (
     <div className="my-bookshelf-page-container">
       <header className="bookshelf-header">
         <div className="header-left-arrow" onClick={() => navigate(-1)}>
-          &lt; {/* 뒤로가기 아이콘 */}
+          <img src="/icons/arrow-left.svg" alt="뒤로가기" className="icon" /> {/* 뒤로가기 아이콘 경로 예시 */}
         </div>
         <h3>나의 책장</h3>
         <div className="header-right-dots">
-          ... {/* 점 3개 메뉴 아이콘 */}
+          <img src="/icons/more-vertical.svg" alt="더보기" className="icon" /> {/* 점 3개 메뉴 아이콘 경로 예시 */}
         </div>
       </header>
 
       <div className="sort-options">
-        <span className="sort-button">최신순 &gt;</span>
+        <span className="sort-button" onClick={handleSortClick}>최신순 &gt;</span>
       </div>
 
       <div className="bookshelf-list-full">
-        {dummyBooks.map((book) => (
-          <div key={book.id} className="bookshelf-item-full">
-            <div className="book-cover-large">
-              <img src={book.coverUrl} alt={book.title} />
-            </div>
-            <div className="book-details-full">
-              <h4 className="book-title-full">{book.title}</h4>
-              <p className="book-author-full">{book.author}</p>
-              <div className="book-rating">
-                {renderStars(book.rating)}
+        {books.length > 0 ? (
+          books.map((book) => (
+            <div key={book.id} className="bookshelf-item-full">
+              <div className="book-cover-large">
+                <img src={book.coverUrl || 'https://via.placeholder.com/80x120?text=No+Cover'} alt={book.title} />
               </div>
-              <div className="book-status-info">
-                <span className="book-status">{book.status}</span>
-                <span className="book-date">{book.date}</span>
+              <div className="book-details-full">
+                <h4 className="book-title-full">{book.title}</h4>
+                <p className="book-author-full">{book.author}</p>
+                <StarRatingFullPage rating={book.rating} /> {/* 별점 컴포넌트 사용 */}
+                <div className="book-status-info">
+                  <span className="book-status">{book.status}</span>
+                  <span className="book-date">{book.date}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="no-books-message">책장에 등록된 책이 없습니다.</p>
+        )}
       </div>
       <div className="add-book-button-container">
         <button className="add-book-button">

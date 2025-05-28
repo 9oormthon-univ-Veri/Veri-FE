@@ -1,0 +1,32 @@
+[
+    {
+      "id": "rec1",
+      "coverUrl": "https://via.placeholder.com/80x120?text=RecBook1",
+      "title": "트렌드 코리아 2024",
+      "author": "김난도 외"
+    },
+    {
+      "id": "rec2",
+      "coverUrl": "https://via.placeholder.com/80x120?text=RecBook2",
+      "title": "퓨처 셀프",
+      "author": "벤저민 하디"
+    },
+    {
+      "id": "rec3",
+      "coverUrl": "https://via.placeholder.com/80x120?text=RecBook3",
+      "title": "나는 메트로폴리탄",
+      "author": "최인아"
+    },
+    {
+      "id": "rec4",
+      "coverUrl": "https://via.placeholder.com/80x120?text=RecBook4",
+      "title": "세이노의 가르침",
+      "author": "세이노"
+    },
+    {
+      "id": "rec5",
+      "coverUrl": "https://via.placeholder.com/80x120?text=RecBook5",
+      "title": "이토록 공부가",
+      "author": "박성혁"
+    }
+  ]
