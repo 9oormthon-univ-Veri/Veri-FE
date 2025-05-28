@@ -1,5 +1,4 @@
 // src/pages/CameraPage.tsx
-import React from 'react';
 
 function CameraPage() {
   return (
