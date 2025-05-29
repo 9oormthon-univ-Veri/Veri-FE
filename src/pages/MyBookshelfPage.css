@@ -13,10 +13,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 15px; /* 좌우 여백 */
+  background-color: #fff; /* 헤더 배경색 */
   border-bottom: 1px solid #eee;
-  margin-bottom: 15px;
-  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 헤더 그림자 */
   position: sticky;
   top: 0;
   z-index: 10;

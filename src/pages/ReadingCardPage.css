@@ -2,7 +2,7 @@
 
 .reading-card-page-container {
   width: 100%;
-  padding: 0 15px 80px; /* 좌우 패딩과 하단 탭바를 위한 패딩 */
+  padding: 0 15px 80px;
   background-color: #f8f8f8;
   min-height: 100vh;
   box-sizing: border-box;
@@ -12,8 +12,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  color: #333;
+  padding: 15px; /* 좌우 여백 */
+  background-color: #fff; /* 헤더 배경색 */
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 헤더 그림자 */
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .reading-card-header h3 {

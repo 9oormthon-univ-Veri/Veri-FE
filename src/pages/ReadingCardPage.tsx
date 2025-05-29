@@ -2,8 +2,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'; // useMemo, useCallback 추가
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBackIosNew } from 'react-icons/md';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FiSearch } from 'react-icons/fi';
 import './ReadingCardPage.css';
 
 // 독서카드 데이터 타입
@@ -106,8 +104,6 @@ function ReadingCardPage() {
         </div>
         <h3>독서카드</h3>
         <div className="header-right-icons">
-          <FiSearch size={24} color="#333" className="icon-search" />
-          <BsThreeDotsVertical size={24} color="#333" className="icon-more" />
         </div>
       </header>
 
