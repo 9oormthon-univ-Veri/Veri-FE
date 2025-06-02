@@ -147,6 +147,5 @@
   text-align: center;
   color: #888;
   padding: 20px;
-  /* grid-column: 1 / -1; */ /* 그리드 속성이므로 제거 */
   width: 100%; /* Flexbox에서 가운데 정렬을 위해 100% 너비 차지 */
 }
