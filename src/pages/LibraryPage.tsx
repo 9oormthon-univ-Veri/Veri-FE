@@ -29,7 +29,7 @@ function LibraryPage() {
         />
 
         <header className="hero-header">
-          <img src="/icons/bell-icon.svg" className="icon" />
+          <img src="/icons/union.png" className="icon" />
           <div className="header-icons">
             <img src="/icons/bell-icon.svg" className="icon" />
             <img src="/icons/search-icon.svg" className="icon" />
