@@ -86,7 +86,7 @@ function ReadingCardPage() {
                             key={card.id}
                             id={card.id}
                             title={card.title}
-                            author={card.author}
+                            //author={card.author}
                             contentPreview={card.contentPreview}
                             date={card.date}
                             thumbnailUrl={card.thumbnailUrl}
