@@ -1,7 +1,5 @@
 // src/pages/ReadingCardPage.tsx
-import React, { useEffect, useState, useMemo, useCallback } from 'react'; // useMemo, useCallback 유지
-import { useNavigate } from 'react-router-dom';
-import { MdArrowBackIosNew } from 'react-icons/md';
+import { useEffect, useState, useMemo, useCallback } from 'react'; // useMemo, useCallback 유지
 import './ReadingCardPage.css'; // 페이지 전체적인 CSS
 import ReadingCardItem, { type ReadingCardItemType } from '../components/ReadingCardPage/ReadingCardItem';
 
@@ -10,7 +8,6 @@ import ReadingCardItem, { type ReadingCardItemType } from '../components/Reading
 // 여기서는 ReadingCardItem.tsx에서 export 된 타입을 바로 사용합니다.
 
 function ReadingCardPage() {
-    const navigate = useNavigate();
     const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -68,17 +65,15 @@ function ReadingCardPage() {
 
     return (
         <div className="reading-card-page-container">
-            <header className="reading-card-header">
-                <div className="header-left-arrow" onClick={() => navigate(-1)}>
-                    <MdArrowBackIosNew size={24} color="#333" />
-                </div>
-                <h3>독서카드</h3>
-                <div className="header-right-icons">
+            <header className="hero-header">
+            <img src="/icons/bell-icon.svg" className="icon"/>
+                <div className="header-icons">
+                    <img src="/icons/bell-icon.svg" className="icon"/>
+                    <img src="/icons/search-icon.svg" className="icon"/>
                 </div>
             </header>
 
             <div className="sort-options">
-                {/* 버튼에 클릭 핸들러 연결 및 텍스트 동적 변경 */}
                 <span className="sort-button" onClick={handleSortClick}>
                     {sortOrder === 'latest' ? '최신순' : '오래된순'} &gt;
                 </span>
@@ -90,7 +85,7 @@ function ReadingCardPage() {
                         <ReadingCardItem // 분리된 컴포넌트 사용
                             key={card.id}
                             id={card.id}
-                            bookTitle={card.bookTitle}
+                            title={card.title}
                             author={card.author}
                             contentPreview={card.contentPreview}
                             date={card.date}

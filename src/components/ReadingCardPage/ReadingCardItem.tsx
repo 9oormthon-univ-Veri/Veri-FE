@@ -10,7 +10,7 @@ import './ReadingCardItem.css'; // ReadingCardItem 전용 CSS 파일이 있다�
 // 2. 별도의 types/index.ts 또는 types/readingCard.ts 파일에 정의하고 양쪽에서 import
 export interface ReadingCardItemType {
     id: string;
-    bookTitle: string;
+    title: string;
     author: string;
     contentPreview: string;
     date: string; // "YYYY-MM-DD" 형식이라고 가정
@@ -18,7 +18,7 @@ export interface ReadingCardItemType {
 }
 
 // 각 독서카드를 표시하는 컴포넌트
-const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, bookTitle, author, contentPreview, date, thumbnailUrl }) => {
+const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, author, contentPreview, date, thumbnailUrl }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -26,17 +26,16 @@ const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, bookTitle, author,
     };
 
     return (
-        <div className="reading-card-item" onClick={handleClick}>
-            {thumbnailUrl && (
-                <div className="card-image-container">
-                    <img src={thumbnailUrl} alt={bookTitle} />
-                </div>
-            )}
+        <div className="reading-card-page-item" onClick={handleClick}>
+            <div className="card-image-container">
+                <img src={thumbnailUrl} alt={title} />
+            </div>
             <div className="card-content">
-                <h4 className="card-book-title">{bookTitle}</h4>
-                <p className="card-author">{author}</p>
                 <p className="card-preview">{contentPreview}</p>
-                <span className="card-date">{date}</span>
+                <div className="card-book-info">
+                    <p className="card-book-title">{title}</p>
+                    <span className="card-date">{date}</span>
+                </div>
             </div>
         </div>
     );

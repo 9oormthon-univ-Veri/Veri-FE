@@ -25,16 +25,17 @@ function LibraryPage() {
       <section className="library-hero-section">
         <img
           src="/images/your-background.png" // 배경 이미지
-          alt="배경"
           className="hero-background"
         />
 
         <header className="hero-header">
+          <img src="/icons/bell-icon.svg" className="icon" />
           <div className="header-icons">
-            <img src="/icons/bell-icon.svg" alt="알림" className="icon" />
-            <img src="/icons/search-icon.svg" alt="검색" className="icon" />
+            <img src="/icons/bell-icon.svg" className="icon" />
+            <img src="/icons/search-icon.svg" className="icon" />
           </div>
         </header>
+
 
         <div className="hero-content">
           <div className="profile-circle"></div>

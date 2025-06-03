@@ -46,12 +46,14 @@ const BookshelfList: React.FC<BookshelfListProps> = ({ books }) => {
             <div className="book-details-full">
               <h4 className="book-title-full">{book.title}</h4>
               <p className="book-author-full">{book.author}</p>
-              <StarRatingFullPage rating={book.rating} />
-              <div className="book-status-info">
-                <span className={`book-status ${book.status === '독서중' ? '독서중' : '독서완료'}`}>
-                  {book.status}
-                </span>
-                <span className="book-date">{book.date}</span>
+              <div className="book-state-container">
+                <StarRatingFullPage rating={book.rating} />
+                <div className="book-status-info">
+                  <span className={`book-status ${book.status === '독서중' ? '독서중' : '독서완료'}`}>
+                    {book.status}
+                  </span>
+                  <span className="book-date">{book.date}</span>
+                </div>
               </div>
             </div>
           </div>

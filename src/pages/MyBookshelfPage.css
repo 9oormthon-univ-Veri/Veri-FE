@@ -8,38 +8,6 @@
   box-sizing: border-box;
 }
 
-/* 헤더 스타일 */
-.bookshelf-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px; /* 좌우 여백 */
-  background-color: #fff; /* 헤더 배경색 */
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 헤더 그림자 */
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.bookshelf-header .header-left-arrow,
-.bookshelf-header .header-right-dots {
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bookshelf-header h3 {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin: 0;
-  flex-grow: 1;
-  text-align: center;
-}
-
 /* 정렬 옵션 */
 .sort-options {
   text-align: right;

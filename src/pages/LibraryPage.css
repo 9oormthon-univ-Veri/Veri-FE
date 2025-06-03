@@ -32,24 +32,6 @@
     filter: brightness(0.85);
 }
 
-.hero-header {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    padding: 16px;
-    z-index: 2;
-}
-
-.header-icons .icon {
-    width: 24px;
-    height: 24px;
-    margin-left: 12px;
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-
 .hero-content {
     position: absolute; /* 절대 위치로 변경 */
     bottom: 0; /* 하단에 붙이기 */
@@ -134,7 +116,6 @@ section {
 }
 
 /* 독서카드, 책장, 오늘의 추천 아이템 공통 스타일 */
-.reading-card-item,
 .bookshelf-item,
 .recommended-book-item {
     display: flex;
@@ -146,35 +127,6 @@ section {
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     padding: 10px;
-}
-
-/* 독서카드 아이템 구체적 스타일 */
-.reading-card-item .card-thumbnail {
-    width: 100px;
-    height: 120px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    overflow: hidden;
-}
-
-.reading-card-item .card-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.reading-card-item .card-text {
-    font-size: 12px;
-    color: #555;
-    line-height: 1.4;
-    height: 3.2em; /* 약 2줄 표시 */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    margin: 0;
 }
 
 /* 나의 책장 섹션 */

@@ -2,21 +2,16 @@
 
 .book-info-section {
     background-color: #fff;
-    padding: 20px 15px;
-    margin: 15px;
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     text-align: center; /* 전체 섹션 중앙 정렬 */
 }
 
 .book-cover-detail-container {
-    width: 150px; /* 더 큰 표지 이미지 */
-    height: 225px; /* 2:3 비율 */
+    width: 100%; /* 더 큰 표지 이미지 */
+    height: 400px; /* 2:3 비율 */
     margin: 0 auto 20px auto; /* 중앙 정렬 및 하단 여백 */
     background-color: #f0f0f0;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .book-cover-detail {
@@ -26,25 +21,35 @@
 }
 
 .book-detail-title {
+    text-align: start;
     font-size: 22px;
     font-weight: bold;
     color: #333;
-    margin: 0 0 8px 0;
+    margin: 20px;
     line-height: 1.4;
 }
 
 .book-detail-author-translator {
+    text-align: start;
     font-size: 15px;
     color: #777;
-    margin: 0 0 20px 0;
+    margin: 20px;
+}
+
+.setting-sections{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-left: 5px;
+    margin-bottom: 20px;
 }
 
 .my-rating-section,
 .start-date-section {
     display: flex;
     align-items: center;
-    justify-content: center; /* 이미지와 유사하게 중앙 정렬 */
-    margin-bottom: 15px;
+    margin-left: 15px;
+    justify-content: start;
     font-size: 14px;
     color: #555;
 }
@@ -63,9 +68,6 @@
 .star-rating-full-page .star {
     font-size: 18px; /* 상세 페이지에서는 별을 더 크게 */
     margin-right: 2px;
-}
-.star-rating-full-page .star.half {
-    /* BookshelfList.css에서 정의된 스타일 그대로 */
 }
 
 

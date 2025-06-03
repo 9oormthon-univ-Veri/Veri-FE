@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdArrowBackIosNew } from 'react-icons/md'; // 뒤로가기 아이콘
-import { BsThreeDotsVertical } from 'react-icons/bs'; // 더보기 아이콘
 import BookInfoSection from '../components/BookDetailPage/BookInfoSection'; // 책 정보 섹션 임포트
 import MyReadingCardSection from '../components/LibraryPage/MyReadingCard';
 import './BookDetailPage.css';
@@ -72,13 +71,12 @@ function BookDetailPage() {
 
   return (
     <div className="book-detail-page-container">
-      <header className="book-detail-header">
+      <header className="detail-header">
         <div className="header-left-arrow" onClick={() => navigate(-1)}>
           <MdArrowBackIosNew size={24} color="#333" />
         </div>
-        <h3>내가 읽은 책</h3> {/* 이미지 참조: "내가 읽은 책" */}
-        <div className="header-right-dots">
-          <BsThreeDotsVertical size={24} color="#333" />
+        <h3>내가 읽은 책</h3>
+        <div className="spacer">
         </div>
       </header>
 

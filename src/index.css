@@ -6,11 +6,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f0f0f0; /* 배경색으로 좀 더 구분하기 쉽게 */
-  /* ✨ 이 세 줄을 제거하거나 주석 처리하세요 */
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
+  background-color: #f0f0f0;
   min-height: 100vh;
 }
 
@@ -94,6 +90,69 @@ code {
   top: -25px; /* 탭 바 위로 튀어나오게 (조정 가능) */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 */
   transition: background-color 0.2s ease-in-out;
+}
+
+.hero-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 75px;
+  display: flex; /* Flexbox 활성화 */
+  justify-content: space-between; /* 첫 번째 자식(img)과 두 번째 자식(div)을 양 끝으로 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  padding: 16px;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* 첫 번째 아이콘 (로고 역할) 에 대한 스타일 */
+.hero-header > .icon:first-child {
+  width: 40px; /* 예시 크기 */
+  height: 40px; /* 예시 크기 */
+}
+
+
+.header-icons {
+  display: flex; /* 아이콘들을 나란히 정렬하기 위해 Flexbox 활성화 */
+  align-items: center; /* 아이콘들이 세로 중앙에 오도록 정렬 */
+}
+
+.header-icons .icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 12px; /* 아이콘들 사이의 간격 */
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
+.detail-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.detail-header .header-left-arrow{
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-header h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  flex-grow: 1;
+  text-align: center;
+}
+.spacer {
+  flex-grow: 0.2;
 }
 
 /* SVG 아이콘 대신 사용할 임시 배경 이미지 (실제 앱에서는 SVG 또는 폰트 아이콘 사용) */
