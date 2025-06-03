@@ -18,7 +18,7 @@ export interface ReadingCardItemType {
 }
 
 // 각 독서카드를 표시하는 컴포넌트
-const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, author, contentPreview, date, thumbnailUrl }) => {
+const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, contentPreview, date, thumbnailUrl }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
