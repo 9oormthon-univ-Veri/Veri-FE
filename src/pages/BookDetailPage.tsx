@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { MdArrowBackIosNew, MdEdit } from 'react-icons/md';
 import MyReadingCardSection from '../components/LibraryPage/MyReadingCard';
 import { StarRatingFullPage } from './MyBookshelfPage';
-import EditPopup from '../components/BookDetailPage/EditPopup'; // EditPopup 컴포넌트 임포트
+import EditPopup from '../components/BookDetailPage/EditPopup';
 import './BookDetailPage.css';
 
 // 책 데이터 타입 정의 (필요에 따라 확장)
