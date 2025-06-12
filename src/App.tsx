@@ -4,7 +4,7 @@ import TabBar from './components/TabBar';
 import FloatingCameraButton from './components/FloatingCameraButton';
 import './App.css';
 
-// 각 페이지 컴포넌트들을 별도의 파일에서 임포트합니다.
+// Import page components from their respective files.
 import LibraryPage from './pages/LibraryPage';
 import ReadingCardPage from './pages/ReadingCardPage';
 import CameraPage from './pages/CameraPage';
@@ -17,12 +17,20 @@ import BookDetailPage from './pages/BookDetailPage';
 function App() {
   const location = useLocation();
 
-  // TabBar와 FloatingButton을 특정 경로에서만 숨깁니다.
-  const showTabBar = !location.pathname.startsWith('/book-detail') && location.pathname !== '/my-bookshelf';
+  // Determine if the TabBar and FloatingCameraButton should be shown.
+  // They are only shown on these specific paths.
+  const showTabBar = [
+    '/library',
+    '/reading-card',
+    '/camera',
+    '/community',
+    '/my-page'
+  ].includes(location.pathname);
 
   return (
     <div className="App">
       <Routes>
+        {/* Define the routes for various pages */}
         <Route path="/" element={<LibraryPage />} />
         <Route path="/library" element={<LibraryPage />} />
         <Route path="/reading-card" element={<ReadingCardPage />} />
@@ -32,9 +40,11 @@ function App() {
         <Route path="/my-page" element={<MyPage />} />
         <Route path="/my-bookshelf" element={<MyBookshelfPage />} />
         <Route path="/book-detail/:id" element={<BookDetailPage />} />
-        <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - 페이지를 찾을 수 없습니다</h2></div>} />
+        {/* Catch-all route for any undefined paths */}
+        <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>
 
+      {/* Conditionally render the TabBar and FloatingCameraButton */}
       {showTabBar && <TabBar />}
       {showTabBar && <FloatingCameraButton />}
     </div>
