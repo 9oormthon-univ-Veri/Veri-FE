@@ -24,7 +24,6 @@
 
 .book-info-section {
     background-color: #fff;
-    border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     text-align: center; /* 전체 섹션 중앙 정렬 */
 }

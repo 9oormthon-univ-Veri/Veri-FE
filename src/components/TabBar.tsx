@@ -15,7 +15,7 @@ interface TabItem {
 const currentTabs: TabItem[] = [
   { id: 'library', name: '서재', iconClass: 'icon-book', path: '/library' },
   { id: 'readingCard', name: '독서카드', iconClass: 'icon-card', path: '/reading-card' },
-  { id: 'dummyCamera', name: '', iconClass: '', path: '/camera', isDummy: true }, // 더미 탭 추가
+  { id: 'camera', name: '', iconClass: 'icon-camera', path: '/camera' }, // 더미 탭 추가
   { id: 'community', name: '커뮤니티', iconClass: 'icon-community', path: '/community' },
   { id: 'myPage', name: '마이페이지', iconClass: 'icon-profile', path: '/my-page' },
 ];
