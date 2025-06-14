@@ -1,4 +1,4 @@
-// src/pages/LibraryPage/MyReadingCard.tsx
+// src/components/LibraryPage/MyReadingCard.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

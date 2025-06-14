@@ -8,6 +8,18 @@
     padding: 16px;
     align-items: flex-start;
     flex-direction: row;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.reading-card-page-item:hover {
+    transform: translateY(-2px); /* 호버 시 살짝 위로 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강조 */
+}
+
+.reading-card-page-item:active {
+    transform: translateY(0); /* 클릭 시 원래 위치로 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 클릭 시 그림자 원상복귀 */
 }
 
 .card-image-container {
