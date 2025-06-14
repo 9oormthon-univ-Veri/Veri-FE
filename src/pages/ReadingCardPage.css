@@ -44,7 +44,6 @@
 }
 
 .sort-options .sort-button {
-  margin-top: 65px;
   font-size: 15px;
   color: #777;
   cursor: pointer;
@@ -66,3 +65,119 @@
   padding: 20px;
   width: 100%; /* Flexbox에서 가운데 정렬을 위해 100% 너비 차지 */
 }
+
+/* src/pages/ReadingCardPage.css */
+
+.reading-card-page-container {
+  padding: 20px;
+  background-color: #f8f8f8; /* 배경색 설정 */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hero-header .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.header-icons {
+  display: flex;
+  gap: 15px;
+}
+
+/* **새로운 탭 스타일 추가** */
+.tab-navigation {
+  margin-top: 65px;
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  margin-bottom: 20px;
+  gap: 10px; /* 탭 버튼 사이 간격 */
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 8px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #b0b0b0; /* 비활성화된 탭 색상 */
+  cursor: pointer;
+  position: relative; /* 밑줄 위치 지정을 위해 */
+}
+
+.tab-button.active {
+  color: #000; /* 활성화된 탭 색상 */
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; /* 탭 아래쪽에 위치 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%; /* 탭 너비와 동일하게 */
+  height: 3px; /* 밑줄 두께 */
+  background-color: #000; /* 밑줄 색상 */
+  border-radius: 2px;
+}
+
+.sort-options {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin-bottom: 20px;
+}
+
+.sort-button {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.no-cards-message {
+  text-align: center;
+  color: #888;
+  margin-top: 50px;
+  width: 100%; /* 그리드 아이템으로 중앙 정렬 */
+  grid-column: 1 / -1; /* 전체 컬럼 차지 */
+}
+
+/* "카드 만들기" 버튼 */
+.create-card-button {
+  position: fixed;
+  bottom: 80px; /* 하단 내비게이션 바 위쪽에 위치 */
+  right: 20px;
+  background-color: #00e676; /* 초록색 */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 25px; /* 둥근 모양 */
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 999;
+}
+
+.create-card-button::before {
+  content: '+';
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* 독서 카드 아이템 스타일은 ReadingCardItem.css에서 관리될 것입니다. */

@@ -1,18 +1,21 @@
 // src/pages/ReadingCardPage.tsx
-import { useEffect, useState, useMemo, useCallback } from 'react'; // useMemo, useCallback 유지
-import './ReadingCardPage.css'; // 페이지 전체적인 CSS
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import './ReadingCardPage.css';
 import ReadingCardItem, { type ReadingCardItemType } from '../components/ReadingCardPage/ReadingCardItem';
 
-// 독서카드 데이터 타입은 이제 ReadingCardItem.tsx에서 import하여 사용합니다.
-// 만약 이 타입이 여러 곳에서 쓰인다면 별도의 types 폴더에 정의하는 것이 가장 좋습니다.
-// 여기서는 ReadingCardItem.tsx에서 export 된 타입을 바로 사용합니다.
+// ReadingCardPage는 이제 activeTab을 prop으로 받지 않습니다.
+// interface ReadingCardPageProps {
+//     activeTab: 'image' | 'text';
+// }
 
-function ReadingCardPage() {
+function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop 제거
     const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    // 1. 정렬 기준 상태 추가: 'latest' (최신순), 'oldest' (오래된순)
     const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest');
+
+    // ★★★ activeTab 상태를 ReadingCardPage 내부에 정의 ★★★
+    const [activeTab, setActiveTab] = useState<'image' | 'text'>('image'); // 초기값은 '이미지' 탭
 
     useEffect(() => {
         fetch('/datas/readingCards.json')
@@ -33,27 +36,28 @@ function ReadingCardPage() {
             });
     }, []);
 
-    // 2. 정렬된 카드 목록을 계산하는 useMemo 훅 (유지)
     const sortedReadingCards = useMemo(() => {
-        // 원본 배열을 복사하여 정렬합니다. (원본 배열 변경 방지)
         const sorted = [...readingCards].sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
 
             if (sortOrder === 'latest') {
-                return dateB.getTime() - dateA.getTime(); // 최신순 (내림차순)
+                return dateB.getTime() - dateA.getTime();
             } else { // 'oldest'
-                return dateA.getTime() - dateB.getTime(); // 오래된순 (오름차순)
+                return dateA.getTime() - dateB.getTime();
             }
         });
         return sorted;
-    }, [readingCards, sortOrder]); // readingCards나 sortOrder가 변경될 때만 재계산
+    }, [readingCards, sortOrder]);
 
-    // 3. 정렬 버튼 클릭 핸들러 (useCallback으로 최적화) (유지)
     const handleSortClick = useCallback(() => {
-        // 현재 'latest'이면 'oldest'로, 'oldest'이면 'latest'로 토글
         setSortOrder(prevOrder => (prevOrder === 'latest' ? 'oldest' : 'latest'));
-    }, []); // 의존성 배열이 비어있으므로 컴포넌트 마운트 시 한 번만 생성
+    }, []);
+
+    // ★★★ 탭 변경 핸들러를 ReadingCardPage 내부에 정의 ★★★
+    const handleTabClick = useCallback((tab: 'image' | 'text') => {
+        setActiveTab(tab);
+    }, []);
 
     if (isLoading) {
         return <div className="reading-card-page-container loading-state">독서 카드를 불러오는 중...</div>;
@@ -66,12 +70,28 @@ function ReadingCardPage() {
     return (
         <div className="reading-card-page-container">
             <header className="hero-header">
-            <img src="/icons/union.png" className="icon"/>
+                <img src="/icons/union.png" className="icon"/>
                 <div className="header-icons">
                     <img src="/icons/bell-icon.svg" className="icon"/>
                     <img src="/icons/search-icon.svg" className="icon"/>
                 </div>
             </header>
+
+            {/* 탭 내비게이션 (이 컴포넌트 내부에서 직접 렌더링하고 상태 제어) */}
+            <nav className="tab-navigation">
+                <button
+                    className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('image')} // ★★★ 내부 핸들러 호출 ★★★
+                >
+                    이미지
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'text' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('text')} // ★★★ 내부 핸들러 호출 ★★★
+                >
+                    텍스트
+                </button>
+            </nav>
 
             <div className="sort-options">
                 <span className="sort-button" onClick={handleSortClick}>
@@ -79,23 +99,49 @@ function ReadingCardPage() {
                 </span>
             </div>
 
-            <div className="reading-card-list">
-                {sortedReadingCards.length > 0 ? ( // 정렬된 카드 목록 사용
-                    sortedReadingCards.map((card) => (
-                        <ReadingCardItem // 분리된 컴포넌트 사용
-                            key={card.id}
-                            id={card.id}
-                            title={card.title}
-                            //author={card.author}
-                            contentPreview={card.contentPreview}
-                            date={card.date}
-                            thumbnailUrl={card.thumbnailUrl}
-                        />
-                    ))
-                ) : (
-                    <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
-                )}
-            </div>
+            {/* activeTab에 따라 다른 뷰 컨테이너 렌더링 */}
+            {activeTab === 'image' && (
+                <div className="reading-card-grid-view"> {/* 이미지 갤러리 뷰 */}
+                    {sortedReadingCards.length > 0 ? (
+                        sortedReadingCards.map((card) => (
+                            <ReadingCardItem
+                                key={card.id}
+                                id={card.id}
+                                title={card.title}
+                                contentPreview={card.contentPreview}
+                                date={card.date}
+                                thumbnailUrl={card.thumbnailUrl}
+                            />
+                        ))
+                    ) : (
+                        <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
+                    )}
+                </div>
+            )}
+
+            {activeTab === 'text' && (
+                <div className="reading-card-list"> {/* 텍스트 리스트 뷰 */}
+                    {sortedReadingCards.length > 0 ? (
+                        sortedReadingCards.map((card) => (
+                            <ReadingCardItem
+                                key={card.id}
+                                id={card.id}
+                                title={card.title}
+                                contentPreview={card.contentPreview}
+                                date={card.date}
+                                thumbnailUrl={card.thumbnailUrl}
+                            />
+                        ))
+                    ) : (
+                        <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
+                    )}
+                </div>
+            )}
+
+            {/* "카드 만들기" 버튼 */}
+            <button className="create-card-button">+ 카드 만들기</button>
+
+            {/* 하단 내비게이션 바는 이 컴포넌트 외부에 있다고 가정 */}
         </div>
     );
 }
