@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import './ReadingCardPage.css';
 import ReadingCardItem, { type ReadingCardItemType } from '../components/ReadingCardPage/ReadingCardItem';
+import ReadingCardGridItem from '../components/ReadingCardPage/ReadingCardGridItem'
 
 // ReadingCardPage는 이제 activeTab을 prop으로 받지 않습니다.
 // interface ReadingCardPageProps {
@@ -69,13 +70,15 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
 
     return (
         <div className="reading-card-page-container">
-            <header className="hero-header">
-                <img src="/icons/union.png" className="icon"/>
-                <div className="header-icons">
-                    <img src="/icons/bell-icon.svg" className="icon"/>
-                    <img src="/icons/search-icon.svg" className="icon"/>
-                </div>
-            </header>
+            <div className="header-margin65">
+                <header className="hero-header">
+                    <img src="/icons/union.png" className="icon" />
+                    <div className="header-icons">
+                        <img src="/icons/bell-icon.svg" className="icon" />
+                        <img src="/icons/search-icon.svg" className="icon" />
+                    </div>
+                </header>
+            </div>
 
             {/* 탭 내비게이션 (이 컴포넌트 내부에서 직접 렌더링하고 상태 제어) */}
             <nav className="tab-navigation">
@@ -104,12 +107,12 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
                 <div className="reading-card-grid-view"> {/* 이미지 갤러리 뷰 */}
                     {sortedReadingCards.length > 0 ? (
                         sortedReadingCards.map((card) => (
-                            <ReadingCardItem
+                            <ReadingCardGridItem // ★★★ ReadingCardGridItem 사용 ★★★
                                 key={card.id}
                                 id={card.id}
                                 title={card.title}
-                                contentPreview={card.contentPreview}
-                                date={card.date}
+                                contentPreview={card.contentPreview} // GridItem에서는 사용하지 않지만 인터페이스 맞춤
+                                date={card.date} // GridItem에서는 사용하지 않지만 인터페이스 맞춤
                                 thumbnailUrl={card.thumbnailUrl}
                             />
                         ))
@@ -120,7 +123,7 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
             )}
 
             {activeTab === 'text' && (
-                <div className="reading-card-list"> {/* 텍스트 리스트 뷰 */}
+                <div className="reading-card-text-view"> {/* 텍스트 리스트 뷰 */}
                     {sortedReadingCards.length > 0 ? (
                         sortedReadingCards.map((card) => (
                             <ReadingCardItem

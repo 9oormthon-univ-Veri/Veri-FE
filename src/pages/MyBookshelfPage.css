@@ -8,10 +8,7 @@
   box-sizing: border-box;
 }
 
-/* 정렬 옵션 */
 .sort-options {
-  text-align: right;
-  margin-bottom: 15px;
   background-color: #f8f8f8;
   padding: 5px 0;
 }
@@ -33,15 +30,13 @@
 .add-book-button-container {
   position: fixed;
   bottom: 20px;
-  right: 20px; /* 이 부분을 변경했습니다 */
-  /* left: 50%; */ /* 이 부분을 삭제했습니다 */
-  /* transform: translateX(-50%); */ /* 이 부분을 삭제했습니다 */
+  right: 20px;
   width: auto;
   max-width: calc(100% - 30px);
   z-index: 1000;
   background-color: transparent;
   padding: 0;
-  text-align: end; /* 이 부분은 버튼을 컨테이너 안에서 오른쪽으로 정렬합니다. */
+  text-align: end;
 }
 
 .add-book-button {

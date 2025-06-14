@@ -97,15 +97,16 @@ function MyBookshelfPage() {
 
   return (
     <div className="my-bookshelf-page-container">
-      <header className="detail-header">
-        <div className="header-left-arrow" onClick={() => navigate(-1)}>
-          <MdArrowBackIosNew size={24} color="#333" />
-        </div>
-        <h3>내가 읽은 책</h3>
-        <div className="spacer">
-        </div>
-      </header>
-
+      <div className="header-margin65">
+        <header className="detail-header">
+          <div className="header-left-arrow" onClick={() => navigate(-1)}>
+            <MdArrowBackIosNew size={24} color="#333" />
+          </div>
+          <h3>내가 읽은 책</h3>
+          <div className="spacer">
+          </div>
+        </header>
+      </div>
 
       <div className="sort-options">
         {/* 4. 버튼에 클릭 핸들러 연결 및 텍스트 동적 변경 */}

@@ -92,6 +92,10 @@ code {
   transition: background-color 0.2s ease-in-out;
 }
 
+.header-margin65 {
+  margin-top: 65px;
+}
+
 .hero-header {
   position: absolute;
   top: 0;

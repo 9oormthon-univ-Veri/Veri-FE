@@ -1,0 +1,9 @@
+[
+    {
+      "id": "user123",
+      "name": "사용자",
+      "booksRead": 15,
+      "readingCards": 27,
+      "profileImageUrl": "/images/profile_kimhyuna.png"
+    }
+  ]
