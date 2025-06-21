@@ -20,6 +20,7 @@ function App() {
   // Determine if the TabBar and FloatingCameraButton should be shown.
   // They are only shown on these specific paths.
   const showTabBar = [
+    '/',
     '/library',
     '/reading-card',
     '/camera',
