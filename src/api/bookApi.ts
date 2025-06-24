@@ -181,7 +181,6 @@ export async function searchBooksByTitle(
 
 // ✨ 오늘의 추천 도서를 가져오는 API 함수 추가
 export async function getTodaysRecommendation(): Promise<GetTodaysRecommendationResponse> {
-  const url = `${BASE_URL}/api/v0/bookshelf/today`;
 
   return new Promise((resolve) => {
     setTimeout(() => {

@@ -1,6 +1,5 @@
 // src/pages/MyPage.tsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
 
 // 사용자 데이터 인터페이스 정의 (users.json 구조에 맞춤)
@@ -13,7 +12,6 @@ interface UserData {
 }
 
 const MyPage: React.FC = () => {
-    const navigate = useNavigate();
     const [userData, setUserData] = useState<UserData | null>(null); // 사용자 데이터 상태
     const [isLoading, setIsLoading] = useState(true); // 로딩 상태
     const [error, setError] = useState<string | null>(null); // 에러 상태

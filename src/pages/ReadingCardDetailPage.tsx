@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdArrowBackIosNew } from 'react-icons/md'; // 뒤로가기 아이콘
 import { FiDownload, FiShare2 } from 'react-icons/fi'; // 다운로드, 공유 아이콘
-import { BsThreeDotsVertical } from 'react-icons/bs'; // 더보기 아이콘
 
 import { getCardDetailById, type Card } from '../api/cardApi'; // CardDetail 대신 Card 타입 사용
 import './ReadingCardDetailPage.css';
@@ -54,10 +53,6 @@ function ReadingCardDetailPage() {
 
   const handleShare = useCallback(() => {
     alert('공유하기 기능은 아직 구현되지 않았습니다.');
-  }, []);
-
-  const handleMoreOptions = useCallback(() => {
-    alert('더보기 기능은 아직 구현되지 않았습니다.');
   }, []);
 
   // 날짜 포맷팅 함수

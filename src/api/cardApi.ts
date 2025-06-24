@@ -31,10 +31,7 @@ export interface GetCardDetailByIdResponse {
   result: Card | null; // result 바로 아래에 Card 객체
 }
 
-const BASE_URL = "https://your-api-base-url.com"; // 실제 서버 URL로 교체 필요
-
 export async function getMyCards(): Promise<GetMyCardsResponse> {
-  const url = `${BASE_URL}/api/v1/cards/my`;
 
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -109,7 +106,6 @@ export async function getMyCards(): Promise<GetMyCardsResponse> {
 
 // 단일 독서 카드 상세 정보를 가져오는 API 함수 업데이트
 export async function getCardDetailById(cardId: number): Promise<GetCardDetailByIdResponse> {
-  const url = `${BASE_URL}/api/v1/cards/${cardId}`; // URL 경로 변경
 
   return new Promise((resolve) => {
     setTimeout(() => {

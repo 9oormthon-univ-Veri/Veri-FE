@@ -45,7 +45,7 @@ function MyBookshelfPage() {
           offset: 0,
           page: 1
         };
-        const response = await getAllBooks(queryParams, accessToken);
+        const response = await getAllBooks(queryParams);
 
         if (response.isSuccess) {
           setBooks(response.result.books);
