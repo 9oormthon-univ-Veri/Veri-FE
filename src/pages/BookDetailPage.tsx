@@ -1,59 +1,120 @@
-import { useEffect, useState, useCallback } from 'react';
+// src/pages/BookDetailPage.tsx
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MdArrowBackIosNew, MdEdit } from 'react-icons/md';
-import MyReadingCardSection from '../components/LibraryPage/MyReadingCard';
-import { StarRatingFullPage } from './MyBookshelfPage';
-import EditPopup from '../components/BookDetailPage/EditPopup';
 import './BookDetailPage.css';
+import { MdArrowBackIosNew, MdEdit } from 'react-icons/md'; // MdArrowBackIosNew 아이콘 사용
+import { MdKeyboardArrowRight } from 'react-icons/md'; // ✨ MdKeyboardArrowRight 아이콘 추가
 
-// 책 데이터 타입 정의 (필요에 따라 확장)
-interface BookItem {
-  id: string;
-  title: string;
-  author: string;
-  coverUrl: string;
-  rating: number;
-  status: string;
-  date: string; // 시작일
-  translator?: string; // 역자 추가
-  // 추가 정보 (줄거리 등)
+import { getBookById, type Book, type CardItem } from '../api/bookApi';
+import { StarRatingFullPage } from './MyBookshelfPage';
+
+// EditPopup 더미 컴포넌트
+const EditPopup: React.FC<any> = ({ isOpen, onClose, bookData, onSave }) => {
+  if (!isOpen) return null;
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000
+    }}>
+      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', width: '300px' }}>
+        <h3>책 정보 수정</h3>
+        <p>책 제목: {bookData.title}</p>
+        <button onClick={() => onSave({ ...bookData, title: bookData.title + ' (수정됨)' })} style={{ marginRight: '10px' }}>저장 (더미)</button>
+        <button onClick={onClose}>취소</button>
+      </div>
+    </div>
+  );
+};
+
+// MyReadingCardSection 컴포넌트 업데이트
+interface MyReadingCardSectionProps {
+  cards: CardItem[];
 }
+
+const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = ({ cards }) => {
+
+  const handleSeeAllCards = useCallback(() => {
+    // 모든 독서 카드 보기 페이지로 이동하는 로직
+    // 예: navigate(`/book-detail/${bookId}/cards`);
+    // 현재 bookId를 알 수 없으므로, 일단 더미 로직만
+    alert('모든 독서 카드 보기 기능은 아직 구현되지 않았습니다.');
+  }, []);
+
+  return (
+    <div className="my-reading-card-section">
+      <div className="section-header">
+        <h4>이 책의 독서카드</h4>
+        <button className="see-all-button" onClick={handleSeeAllCards}>
+          <span>전체보기</span>
+          <MdKeyboardArrowRight size={20} />
+        </button>
+      </div>
+      {cards.length > 0 ? (
+        <div className="card-list">
+          {cards.map((card, index) => (
+            <div key={index} className="card-item-container">
+              <img src={card.imageUrl} alt={`Reading Card ${index + 1}`} className="reading-card-image" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
+      )}
+    </div>
+  );
+};
+
 
 function BookDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [book, setBook] = useState<BookItem | null>(null);
+
+  const [book, setBook] = useState<Book | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // 팝업 열림/닫힘 상태
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+
+  const accessToken = "your_dummy_access_token";
+
+  const fetchBookDetails = useCallback(async (memberBookId: number) => {
+    setIsLoading(true);
+    setError(null);
+    setBook(null);
+
+    try {
+      const response = await getBookById(memberBookId);
+
+      if (response.isSuccess && response.result) {
+        const fetchedBook: Book = {
+          bookId: response.result.bookId,
+          title: response.result.title,
+          author: response.result.author,
+          imageUrl: response.result.imageUrl,
+          rating: response.result.rating,
+          status: response.result.status,
+          date: "2023.01.01",
+          cards: response.result.cards,
+        };
+        setBook(fetchedBook);
+      } else {
+        setError(response.message || "책 상세 정보를 가져오는데 실패했습니다.");
+      }
+    } catch (err: any) {
+      setError("책 상세 정보를 불러오는 중 오류가 발생했습니다: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     if (id) {
-      fetch('/datas/bookshelf.json')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data: BookItem[]) => {
-          const foundBook = data.find(b => b.id === id);
-          if (foundBook) {
-            setBook(foundBook);
-          } else {
-            setError('책을 찾을 수 없습니다.');
-          }
-          setIsLoading(false);
-        })
-        .catch(err => {
-          console.error('책 상세 정보를 불러오는 중 오류 발생:', err);
-          setError('책 상세 정보를 불러오는 데 실패했습니다.');
-          setIsLoading(false);
-        });
+      fetchBookDetails(Number(id));
+    } else {
+      setError("조회할 책 ID가 제공되지 않았습니다.");
+      setIsLoading(false);
     }
-  }, [id]);
+  }, [id, fetchBookDetails]);
 
-  // 저자와 역자를 분리하는 로직
   const getAuthorAndTranslator = useCallback((fullAuthor: string) => {
     const parts = fullAuthor.split(' (지은이), ');
     const authorName = parts[0];
@@ -61,36 +122,38 @@ function BookDetailPage() {
     return { author: authorName, translator: translatorName };
   }, []);
 
-  // 수정 팝업 열기 핸들러
   const handleOpenEditPopup = useCallback(() => {
     setIsEditPopupOpen(true);
   }, []);
 
-  // 수정 팝업 닫기 핸들러
   const handleCloseEditPopup = useCallback(() => {
     setIsEditPopupOpen(false);
   }, []);
 
-  // 책 정보 저장 핸들러 (팝업에서 호출됨)
-  const handleSaveBook = useCallback((updatedBook: BookItem) => {
-    // 실제 백엔드 API에 업데이트 요청을 보내거나
-    // 로컬 상태를 업데이트하는 로직을 여기에 추가합니다.
-    setBook(updatedBook); // 현재 표시되는 책 정보 업데이트
-    console.log('책 정보가 업데이트되었습니다:', updatedBook);
-    handleCloseEditPopup(); // 저장 후 팝업 닫기
-    // 실제 앱에서는 여기서 API 호출을 통해 서버에 변경 사항을 저장해야 합니다.
-  }, [handleCloseEditPopup]); // handleCloseEditPopup이 의존성으로 추가되어야 합니다.
+  const handleSaveBook = useCallback((updatedBook: Book) => {
+    setBook(updatedBook);
+    handleCloseEditPopup();
+  }, [handleCloseEditPopup]);
 
   if (isLoading) {
-    return <div className="book-detail-page-container loading-state">책 정보를 불러오는 중...</div>;
+    return (
+      <div className="book-detail-page-container loading-state">책 정보를 불러오는 중...</div>
+    );
   }
 
   if (error) {
-    return <div className="book-detail-page-container error-state" style={{ color: 'red' }}>{error}</div>;
+    return (
+      <div className="book-detail-page-container error-state">
+        <p style={{ color: 'red' }}>{error}</p>
+        <button onClick={() => navigate(-1)} className="back-button">뒤로 가기</button>
+      </div>
+    );
   }
 
   if (!book) {
-    return <div className="book-detail-page-container no-data-state">책 정보를 찾을 수 없습니다.</div>;
+    return (
+      <div className="book-detail-page-container no-data-state">책 정보를 찾을 수 없습니다.</div>
+    );
   }
 
   const { author, translator } = getAuthorAndTranslator(book.author);
@@ -98,17 +161,16 @@ function BookDetailPage() {
   return (
     <div className="book-detail-page-container">
       <header className="detail-header">
-        <div className="header-left-arrow" onClick={() => navigate(-1)}>
+        <button className="header-left-arrow" onClick={() => navigate(-1)}>
           <MdArrowBackIosNew size={24} color="#333" />
-        </div>
+        </button>
         <h3>내가 읽은 책</h3>
         <div className="spacer"></div>
       </header>
 
-      {/* BookInfoSection의 내용을 직접 포함 */}
       <div className="book-info-section">
         <div className="book-cover-detail-container">
-          <img src={book.coverUrl || 'https://via.placeholder.com/150x225?text=No+Cover'} alt={book.title} className="book-cover-detail" />
+          <img src={book.imageUrl || 'https://via.placeholder.com/150x225?text=No+Cover'} alt={book.title} className="book-cover-detail" />
         </div>
 
         <h2 className="book-detail-title">{book.title}</h2>
@@ -120,30 +182,25 @@ function BookDetailPage() {
           <div className="my-rating-section">
             <span className="section-label">나의 별점</span>
             <StarRatingFullPage rating={book.rating} />
-            {/* 수정 아이콘 클릭 시 팝업 열기 */}
             <MdEdit size={16} color="#888" className="edit-icon" onClick={handleOpenEditPopup} />
           </div>
 
           <div className="start-date-section">
             <span className="section-label">시작일</span>
             <span className="start-date-value">{book.date}</span>
-            {/* 수정 아이콘 클릭 시 팝업 열기 */}
             <MdEdit size={16} color="#888" className="edit-icon" onClick={handleOpenEditPopup} />
           </div>
         </div>
-        {/* 여기에 줄거리나 추가 정보 섹션 추가 가능 */}
       </div>
 
-      {/* 독서카드 섹션 */}
-      <MyReadingCardSection />
+      <MyReadingCardSection cards={book.cards || []} />
 
-      {/* 책 수정 팝업 */}
-      {book && ( // 책 데이터가 있을 때만 팝업을 렌더링
+      {book && (
         <EditPopup
           isOpen={isEditPopupOpen}
           onClose={handleCloseEditPopup}
-          bookData={book} // 현재 책 데이터를 팝업에 전달
-          onSave={handleSaveBook} // 팝업에서 저장 시 호출될 함수
+          bookData={book}
+          onSave={handleSaveBook}
         />
       )}
     </div>

@@ -13,6 +13,7 @@ import BookmarkPage from './pages/BookmarkPage';
 import MyPage from './pages/MyPage';
 import MyBookshelfPage from './pages/MyBookshelfPage';
 import BookDetailPage from './pages/BookDetailPage';
+import ReadingCardDetailPage from './pages/ReadingCardDetailPage'; // ✨ ReadingCardDetailPage 임포트
 
 function App() {
   const location = useLocation();
@@ -41,7 +42,7 @@ function App() {
         <Route path="/my-page" element={<MyPage />} />
         <Route path="/my-bookshelf" element={<MyBookshelfPage />} />
         <Route path="/book-detail/:id" element={<BookDetailPage />} />
-        {/* Catch-all route for any undefined paths */}
+        <Route path="/reading-card-detail/:id" element={<ReadingCardDetailPage />} />
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>
 

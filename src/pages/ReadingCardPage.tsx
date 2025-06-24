@@ -1,40 +1,55 @@
 // src/pages/ReadingCardPage.tsx
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import './ReadingCardPage.css';
-import ReadingCardItem, { type ReadingCardItemType } from '../components/ReadingCardPage/ReadingCardItem';
-import ReadingCardGridItem from '../components/ReadingCardPage/ReadingCardGridItem'
+import './ReadingCardPage.css'; // CSS 파일 임포트 유지
+import ReadingCardItem from '../components/ReadingCardPage/ReadingCardItem';
+import ReadingCardGridItem from '../components/ReadingCardPage/ReadingCardGridItem'; // 경로 확인
+import { getMyCards, type Card } from '../api/cardApi';
 
-// ReadingCardPage는 이제 activeTab을 prop으로 받지 않습니다.
-// interface ReadingCardPageProps {
-//     activeTab: 'image' | 'text';
-// }
+// ReadingCardItemType 정의를 API 응답과 사용법에 맞게 업데이트
+export interface ReadingCardItemType {
+    id: string; // cardId
+    title: string; // card.book.title
+    contentPreview: string; // card.content (trimmed)
+    date: string; // card.createdAt (raw string for sorting, then formatted for display)
+    thumbnailUrl: string; // card.imageUrl (card's own image)
+}
 
-function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop 제거
+function ReadingCardPage() {
     const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest');
 
-    // ★★★ activeTab 상태를 ReadingCardPage 내부에 정의 ★★★
     const [activeTab, setActiveTab] = useState<'image' | 'text'>('image'); // 초기값은 '이미지' 탭
 
     useEffect(() => {
-        fetch('/datas/readingCards.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        const fetchCards = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const response = await getMyCards(); // API 호출
+
+                if (response.isSuccess) {
+                    const mappedCards: ReadingCardItemType[] = response.result.cards.map((card: Card) => ({
+                        id: String(card.cardId),
+                        title: card.book.title,
+                        contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content, // 미리보기 길이 제한
+                        date: card.createdAt, // API의 createdAt을 date로 사용
+                        thumbnailUrl: card.imageUrl, // 카드의 이미지 URL
+                    }));
+                    setReadingCards(mappedCards);
+                } else {
+                    setError(response.message || "독서 카드를 가져오는데 실패했습니다.");
                 }
-                return response.json();
-            })
-            .then((data: ReadingCardItemType[]) => {
-                setReadingCards(data);
-                setIsLoading(false);
-            })
-            .catch(err => {
+            } catch (err: any) {
                 console.error('독서 카드 데이터를 불러오는 중 오류 발생:', err);
-                setError('독서 카드 데이터를 불러오는 데 실패했습니다.');
+                setError(`독서 카드를 불러오는 데 실패했습니다: ${err.message}`);
+            } finally {
                 setIsLoading(false);
-            });
+            }
+        };
+
+        fetchCards();
     }, []);
 
     const sortedReadingCards = useMemo(() => {
@@ -55,7 +70,6 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
         setSortOrder(prevOrder => (prevOrder === 'latest' ? 'oldest' : 'latest'));
     }, []);
 
-    // ★★★ 탭 변경 핸들러를 ReadingCardPage 내부에 정의 ★★★
     const handleTabClick = useCallback((tab: 'image' | 'text') => {
         setActiveTab(tab);
     }, []);
@@ -72,25 +86,24 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
         <div className="reading-card-page-container">
             <div className="header-margin65">
                 <header className="hero-header">
-                    <img src="/icons/union.png" className="icon" />
+                    <img src="/icons/union.png" className="icon" alt="Union Icon" />
                     <div className="header-icons">
-                        <img src="/icons/bell-icon.svg" className="icon" />
-                        <img src="/icons/search-icon.svg" className="icon" />
+                        <img src="/icons/bell-icon.svg" className="icon" alt="Bell Icon" />
+                        <img src="/icons/search-icon.svg" className="icon" alt="Search Icon" />
                     </div>
                 </header>
             </div>
 
-            {/* 탭 내비게이션 (이 컴포넌트 내부에서 직접 렌더링하고 상태 제어) */}
             <nav className="tab-navigation">
                 <button
                     className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}
-                    onClick={() => handleTabClick('image')} // ★★★ 내부 핸들러 호출 ★★★
+                    onClick={() => handleTabClick('image')}
                 >
                     이미지
                 </button>
                 <button
                     className={`tab-button ${activeTab === 'text' ? 'active' : ''}`}
-                    onClick={() => handleTabClick('text')} // ★★★ 내부 핸들러 호출 ★★★
+                    onClick={() => handleTabClick('text')}
                 >
                     텍스트
                 </button>
@@ -102,17 +115,16 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
                 </span>
             </div>
 
-            {/* activeTab에 따라 다른 뷰 컨테이너 렌더링 */}
             {activeTab === 'image' && (
-                <div className="reading-card-grid-view"> {/* 이미지 갤러리 뷰 */}
+                <div className="reading-card-grid-view">
                     {sortedReadingCards.length > 0 ? (
                         sortedReadingCards.map((card) => (
-                            <ReadingCardGridItem // ★★★ ReadingCardGridItem 사용 ★★★
+                            <ReadingCardGridItem
                                 key={card.id}
                                 id={card.id}
                                 title={card.title}
-                                contentPreview={card.contentPreview} // GridItem에서는 사용하지 않지만 인터페이스 맞춤
-                                date={card.date} // GridItem에서는 사용하지 않지만 인터페이스 맞춤
+                                contentPreview={card.contentPreview}
+                                date={card.date}
                                 thumbnailUrl={card.thumbnailUrl}
                             />
                         ))
@@ -123,7 +135,7 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
             )}
 
             {activeTab === 'text' && (
-                <div className="reading-card-text-view"> {/* 텍스트 리스트 뷰 */}
+                <div className="reading-card-text-view">
                     {sortedReadingCards.length > 0 ? (
                         sortedReadingCards.map((card) => (
                             <ReadingCardItem
@@ -141,10 +153,7 @@ function ReadingCardPage(/* { activeTab }: ReadingCardPageProps */) { // prop �
                 </div>
             )}
 
-            {/* "카드 만들기" 버튼 */}
             <button className="create-card-button">+ 카드 만들기</button>
-
-            {/* 하단 내비게이션 바는 이 컴포넌트 외부에 있다고 가정 */}
         </div>
     );
 }

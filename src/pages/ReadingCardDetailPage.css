@@ -1,0 +1,125 @@
+/* src/pages/ReadingCardDetailPage.css */
+
+.reading-card-detail-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f8f8;
+    font-family: 'Arial', sans-serif;
+    padding-top: 65px; /* 헤더 공간 확보 */
+    align-items: center; /* 내용을 중앙으로 정렬 */
+}
+
+.reading-card-detail-page-container.loading-state,
+.reading-card-detail-page-container.error-state,
+.reading-card-detail-page-container.no-data-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 65px); /* 헤더 제외 높이 */
+    text-align: center;
+    font-size: 1.1em;
+    color: #666;
+    width: 100%; /* 전체 너비 차지 */
+}
+
+/* 카드 내용 영역: BookDetailPage의 섹션과 유사하게 변경 */
+.card-content-area {
+    width: 450px;
+    max-width: 450px; /* 전체 카드 영역의 최대 너비 설정 */
+    background-color: #fff; /* 흰색 배경 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    margin: 20px 0; /* 상하 여백 추가, 좌우는 max-width와 auto margin으로 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-image-wrapper {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-text-info {
+    text-align: left;
+    padding: 0 20px; /* 좌우 패딩 */
+}
+
+.book-title-for-card {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.card-content-text {
+    font-size: 1.05em;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+.card-upload-date {
+    font-size: 0.9em;
+    color: #888;
+    text-align: right; /* 날짜 오른쪽 정렬 */
+    margin-top: 20px;
+    padding-right: 0; /* 이미 패딩이 있으므로 0으로 설정 */
+}
+
+/* 하단 액션 버튼 컨테이너 (위치는 유지) */
+.action-buttons-container {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
+    position: sticky;
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85em;
+    color: #555;
+    font-weight: 600;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    min-width: 80px;
+}
+
+.action-button svg {
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.action-button.download-button:hover {
+    background-color: #e6f0ff;
+    color: #007bff;
+}
+
+.action-button.share-button:hover {
+    background-color: #e6f0ff;
+    color: #007bff;
+}
