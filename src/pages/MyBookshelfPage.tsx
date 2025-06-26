@@ -102,12 +102,12 @@ function MyBookshelfPage() {
         <div className="header-left-arrow" onClick={() => navigate(-1)}>
           <MdArrowBackIosNew size={24} color="#333" />
         </div>
-        <h3>내가 읽은 책</h3>
+        <h3>나의책장</h3>
         <div className="spacer">
         </div>
       </header>
 
-      <div className="header-margin65">
+      <div className="header-margin">
       </div>
 
       <div className="sort-options">

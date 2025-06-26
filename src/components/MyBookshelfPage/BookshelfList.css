@@ -17,24 +17,14 @@
 
 /* 개별 책 아이템 스타일 (full 페이지용) */
 .bookshelf-item-full {
+    height: 135px;
     display: flex;
     background-color: #fff;
     border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    padding: 15px;
+    padding-inline: 15px;
     align-items: flex-start; /* 세로 정렬 */
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.bookshelf-item-full:hover {
-    transform: translateY(-2px); /* 호버 시 살짝 위로 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강조 */
-}
-
-.bookshelf-item-full:active {
-    transform: translateY(0); /* 클릭 시 원래 위치로 */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 클릭 시 그림자 원상복귀 */
 }
 
 .bookshelf-item-full .book-cover-large {
@@ -63,9 +53,12 @@
 }
 
 .bookshelf-item-full .book-title-full {
+    color: var(--Black, #1A1A1A);
+    font-family: Pretendard;
     font-size: 16px;
-    font-weight: bold;
-    color: #333;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
     margin: 0 0 5px 0;
     line-height: 1.4;
     max-height: 2.8em; /* 2줄까지 표시 */
@@ -89,7 +82,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 10px;
 }
 
 .book-status-info {
@@ -101,8 +93,8 @@
 
 .book-status-info .book-status {
     font-size: 11px;
-    color: #fff;
-    background-color: #a0a0a0;
+    color: rgba(32, 220, 85, 0.70);
+    background: rgba(32, 220, 85, 0.10);
     padding: 3px 8px;
     border-radius: 12px;
     margin-right: 8px;
@@ -112,7 +104,7 @@
     background-color: #4CAF50;
 }
 .book-status-info .book-status.독서완료 {
-    background-color: #2196F3;
+    background-color: #547a99;
 }
 
 .book-status-info .book-date {

@@ -53,17 +53,17 @@ const BookshelfList: React.FC<BookshelfListProps> = ({ books }) => {
               />
             </div>
             <div className="book-details-full">
-              <h4 className="book-title-full">{book.title}</h4>
-              <p className="book-author-full">{book.author}</p>
-              <div className="book-state-container">
+              <div className="book-top-info">
+                <h4 className="book-title-full">{book.title}</h4>
+                <p className="book-author-full">{book.author}</p>
                 <StarRatingFullPage rating={book.rating} />
-                <div className="book-status-info">
+              </div>
+              <div className="book-status-info">
                   <span className={`book-status ${getStatusClass(book.status)}`}>
                     {book.status}
                   </span>
                   <span className="book-date">{book.date}</span>
                 </div>
-              </div>
             </div>
           </div>
         ))

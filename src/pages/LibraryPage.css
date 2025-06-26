@@ -8,14 +8,15 @@
 /* 라이브러리 히어로 섹션 (배경 이미지와 상단 아이콘, 프로필, 책 커버) */
 .library-hero-section {
     position: relative;
-    height: 200px;
+    height: 300px;
     overflow: hidden;
 }
 
 .hero-content {
     position: absolute; /* 절대 위치로 변경 */
     bottom: 0; /* 하단에 붙이기 */
-    left: 0; /* 왼쪽에 붙이기 */
+    right: 0; /* 오른쪽에 붙이기 */
+    left: 0;
     display: flex;
     justify-content: space-between; /* 좌우 끝으로 벌리기 */
     align-items: flex-end; /* 아이템들을 하단에 정렬 (선택 사항) */
@@ -34,9 +35,11 @@
 
 .welcome-text h2 {
     margin: 0;
-    font-size: 1.2rem;
-    color: black; /* 검정색 대신 흰색으로 변경 */
-}
+    font-weight: 500;
+    font-size: 16px;
+    color: black;
+    text-align: left;
+  }
 .welcome-text p {
     margin: 0;
     font-size: 0.9rem;
@@ -47,33 +50,31 @@
     height: 100px;
     border-radius: 8px;
     margin-left: auto;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* 공통 섹션 스타일 (나머지 내용 영역) */
 section {
     background-color: #fff;
     padding: 15px;
-    margin-top: 15px;
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 12px;
+    margin-inline: 10px;
 }
 
 .section-header h3 {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333;
+    font-size: 20px;
+    font-weight: 500;
+    color: #000000;
     margin: 0;
 }
 
 .section-header .more-link,
 .section-header .more-text {
-    font-size: 11px;
+    font-size: 14px;
     color: #a0a0a0;
     cursor: pointer;
 }
@@ -84,7 +85,6 @@ section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
-    gap: 10px;
     padding-bottom: 8px;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -104,7 +104,6 @@ section {
     flex-direction: column;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     padding: 10px;
     cursor: pointer;
 }
@@ -112,14 +111,12 @@ section {
 /* 나의 책장 섹션 */
 .my-bookshelf .bookshelf-list {
     padding: 0;
-    gap: 10px;
 }
 
 .my-bookshelf .bookshelf-item {
     width: 100px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     padding: 10px;
     text-align: center;
 }
@@ -167,7 +164,6 @@ section {
     width: 100px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     padding: 10px;
 }
 
@@ -207,4 +203,16 @@ section {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.hero-book-sample{
+    width: 150px;
+    height: 200px;
+    background-color: #f0f0f0;
+    margin-left: 20px;
+    overflow: hidden;
+}
+
+.hero-background{
+    height: 410px;
 }

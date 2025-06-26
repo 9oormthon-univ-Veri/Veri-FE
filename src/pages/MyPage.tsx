@@ -72,10 +72,10 @@ const MyPage: React.FC = () => {
     return (
         <div className="page-container">
             <header className="hero-header">
-                <img src="/icons/union.png" className="icon" alt="Union 로고" />
+                <div className="color-main-icon" />
                 <div className="header-icons">
-                    <img src="/icons/bell-icon.svg" className="icon" alt="알림 아이콘" />
-                    <img src="/icons/search-icon.svg" className="icon" alt="검색 아이콘" />
+                    <div className="color-notificationl-icon"></div>
+                    <div className="color-search-icon"></div>
                 </div>
             </header>
 
@@ -85,7 +85,7 @@ const MyPage: React.FC = () => {
             <div className="my-page-profile-section" onClick={handleProfileClick}>
                 <div className="profile-avatar">
                     {userData.profileImageUrl ? (
-                        <img src={userData.profileImageUrl} alt="프로필 아바타" className="avatar-image" />
+                        <img src={userData.profileImageUrl} className="avatar-image" />
                     ) : (
                         <div className="avatar-placeholder"></div>
                     )}

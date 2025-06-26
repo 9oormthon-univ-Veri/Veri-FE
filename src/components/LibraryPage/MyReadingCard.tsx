@@ -96,7 +96,7 @@ const MyReadingCardSection: React.FC = () => {
     return (
       <section className={styles.myReadingCards}>
         <div className={styles.sectionHeader}>
-          <h3>나의 독서카드</h3>
+          <h2>나의 독서카드</h2>
           <span className={styles.moreLink} onClick={() => navigate('/reading-card-list')}>
             책갈피 보러가기 &gt;
           </span>

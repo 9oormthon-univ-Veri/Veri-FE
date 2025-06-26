@@ -3,31 +3,19 @@
     display: flex;
     justify-content: start; /* Flexbox의 시작점으로 정렬 */
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 16px;
+    gap: 10px;
     align-items: flex-start;
     flex-direction: row;
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.reading-card-page-item:hover {
-    transform: translateY(-2px); /* 호버 시 살짝 위로 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강조 */
-}
-
-.reading-card-page-item:active {
-    transform: translateY(0); /* 클릭 시 원래 위치로 */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 클릭 시 그림자 원상복귀 */
+    align-self: stretch;
 }
 
 .card-image-container {
+    border-radius: 6px;
+    background: var(--Grey_2, #E7E9EF);
     width: 100px;
     height: 100px;
-    /* 이미지 컨테이너 배경색 및 모서리 둥글게 */
-    background-color: #eee;
-    border-radius: 8px;
     margin-right: 16px; /* 이미지와 텍스트 사이 간격 */
     flex-shrink: 0; /* 이미지가 줄어들지 않도록 */
 }

@@ -85,16 +85,15 @@ function ReadingCardPage() {
     return (
         <div className="page-container">
             <div className="reading-card-hero-section">
+                <header className="hero-header">
+                    <div className="color-main-icon" />
+                    <div className="header-icons">
+                        <div className="color-notificationl-icon"></div>
+                        <div className="color-search-icon"></div>
+                    </div>
+                </header>
                 <div className="header-margin">
-                    <header className="hero-header">
-                        <img src="/icons/union.png" className="icon" alt="Union Icon" />
-                        <div className="header-icons">
-                            <img src="/icons/bell-icon.svg" className="icon" alt="Bell Icon" />
-                            <img src="/icons/search-icon.svg" className="icon" alt="Search Icon" />
-                        </div>
-                    </header>
                 </div>
-
                 <nav className="tab-navigation">
                     <button
                         className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}

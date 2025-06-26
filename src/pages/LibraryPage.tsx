@@ -27,12 +27,16 @@ function LibraryPage() {
           src="/images/your-background.png" // 배경 이미지
           className="hero-background"
         />
-
         <header className="hero-header">
-          <img src="/icons/union.png" className="icon" />
+          <img src="/icons/TopBar/union.svg" className="icon" />
           <div className="header-icons">
-            <img src="/icons/bell-icon.svg" className="icon" />
-            <img src="/icons/search-icon.svg" className="icon" />
+            {/* 알림 아이콘 */}
+            <img
+              src="/icons/TopBar/notificationl.svg" // 배경 이미지
+            />
+            <img
+              src="/icons/TopBar/search.svg" // 배경 이미지
+            />
           </div>
         </header>
 
@@ -43,6 +47,10 @@ function LibraryPage() {
             <h2>반가워요, {userName}님!</h2>
             <p>오늘도 책 잘 기록해 봐요...</p>
           </div>
+          <img
+            src="/images/your-background.png" // 배경 이미지
+            className="hero-book-sample"
+          />
         </div>
       </section>
 

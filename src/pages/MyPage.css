@@ -4,25 +4,28 @@
 .my-page-profile-section {
     display: flex;
     align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    margin: 10px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    cursor: pointer;
+    border-radius: 16px;
+    background: rgba(231, 233, 239, 0.30);
+    margin-inline: 15px;
+    padding: 20px 18px;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .profile-avatar {
     width: 60px;
     height: 60px;
-    background-color: #e0e0e0; /* 플레이스홀더 색상 */
+    background-color: #b1b1b1;
+    /* 플레이스홀더 색상 */
     border-radius: 50%;
     margin-right: 15px;
-    flex-shrink: 0; /* 줄어들지 않도록 */
+    flex-shrink: 0;
+    /* 줄어들지 않도록 */
 }
 
 .profile-info {
-    flex-grow: 1; /* 남은 공간을 차지 */
+    flex-grow: 1;
+    /* 남은 공간을 차지 */
 }
 
 .profile-name {
@@ -31,13 +34,18 @@
     color: #333;
     margin: 0;
     text-align: left;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.64px;
 }
 
 .profile-arrow {
     width: 20px;
     height: 20px;
     margin-left: 10px;
-    filter: invert(50%); /* 아이콘 색상 조정 예시 */
+    filter: invert(50%);
+    /* 아이콘 색상 조정 예시 */
 }
 
 /* 독서 현황 카드 섹션 */
@@ -45,38 +53,50 @@
     margin: 10px;
     display: flex;
     justify-content: space-between;
-    gap: 15px; /* 카드 간 간격 */
+    gap: 15px;
+    /* 카드 간 간격 */
 }
 
 .stat-card {
-    flex: 1; /* 두 카드가 동일한 너비를 가지도록 */
-    background-color: #fff;
-    padding: 20px 15px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    text-align: center;
+    flex: 1;
+    border-radius: 16px;
+    background: rgba(231, 233, 239, 0.30);
+    display: flex;
+    width: 170px;
+    padding: 16px 0px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .stat-value {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #00e676; /* 녹색 */
-    margin-bottom: 5px;
+    color: rgba(26, 26, 26, 0.80);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
 }
 
 .stat-label {
-    font-size: 0.9em;
-    color: #666;
-    margin: 0;
+    color: rgba(26, 26, 26, 0.80);
+    font-family: Pretendard;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.48px;
 }
 
 /* 소식 섹션 */
 .my-page-news-section {
+    border-radius: 16px;
+    background: rgba(231, 233, 239, 0.50);
     margin: 10px;
-    background-color: #fff;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 20px;
+    padding: 16px 10px 20px 20px;
+    align-items: flex-start;
+    gap: 20px;
 }
 
 .section-title {
@@ -92,19 +112,22 @@
     display: flex;
     align-items: center;
     padding: 12px 0;
-    border-top: 1px solid #eee; /* 구분선 */
+    border-top: 1px solid #eee;
+    /* 구분선 */
     cursor: pointer;
 }
 
 .news-item:first-child {
-    border-top: none; /* 첫 번째 항목은 상단 구분선 없음 */
+    border-top: none;
+    /* 첫 번째 항목은 상단 구분선 없음 */
 }
 
 .news-icon {
     width: 22px;
     height: 22px;
     margin-right: 15px;
-    filter: invert(40%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); /* 회색 아이콘 */
+    filter: invert(40%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+    /* 회색 아이콘 */
 }
 
 .news-label {
@@ -118,23 +141,6 @@
     width: 18px;
     height: 18px;
     margin-left: 10px;
-    filter: invert(50%); /* 아이콘 색상 조정 예시 */
-}
-
-/* 모바일 반응형 조정 */
-@media (max-width: 600px) {
-    .my-page-container {
-        padding: 15px;
-        gap: 15px;
-    }
-
-    .my-page-profile-section,
-    .stat-card,
-    .my-page-news-section {
-        padding: 15px;
-    }
-
-    .stat-value {
-        font-size: 1.6em;
-    }
+    filter: invert(50%);
+    /* 아이콘 색상 조정 예시 */
 }
