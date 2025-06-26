@@ -1,15 +1,6 @@
 /* src/pages/MyBookshelfPage.css */
 
-.my-bookshelf-page-container {
-  width: 100%;
-  padding: 0 15px 80px;
-  background-color: #f8f8f8;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
 .sort-options {
-  background-color: #f8f8f8;
   padding: 5px 0;
 }
 

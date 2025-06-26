@@ -1,13 +1,5 @@
 /* src/pages/LibraryPage.css */
 
-/* 전체 페이지 컨테이너 */
-.library-page-container {
-    width: 100%;
-    padding: 0 15px 80px;
-    background-color: #f8f8f8;
-    min-height: 100vh;
-}
-
 .book-sample-image{
     width: 200px;
     height: 300px;
@@ -18,18 +10,6 @@
     position: relative;
     height: 200px;
     overflow: hidden;
-    background-color: #f2f2f2;
-}
-
-.hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-    filter: brightness(0.85);
 }
 
 .hero-content {
@@ -75,14 +55,13 @@ section {
     background-color: #fff;
     padding: 15px;
     margin-top: 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin: 12px;
 }
 
 .section-header h3 {

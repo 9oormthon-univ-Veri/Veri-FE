@@ -1,11 +1,7 @@
 /* src/pages/ReadingCardPage.css */
 
-.reading-card-page-container {
-  width: 100%;
+.reading-card-hero-section{
   padding: 0 15px 80px;
-  background-color: #f8f8f8;
-  min-height: 100vh;
-  box-sizing: border-box;
 }
 
 .reading-card-header {

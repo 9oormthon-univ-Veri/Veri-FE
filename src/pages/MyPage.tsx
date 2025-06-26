@@ -57,28 +57,29 @@ const MyPage: React.FC = () => {
 
     // 로딩 및 에러 상태 처리
     if (isLoading) {
-        return <div className="my-page-container loading-state">사용자 데이터를 불러오는 중...</div>;
+        return <div className="loading-page-container">사용자 데이터를 불러오는 중...</div>;
     }
 
     if (error) {
-        return <div className="my-page-container error-state" style={{ color: 'red' }}>{error}</div>;
+        return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
     }
 
     if (!userData) {
         // isLoading도 아니고 error도 아닌데 userData가 null인 경우 (예: 데이터는 성공적으로 불러왔지만 비어있을 때)
-        return <div className="my-page-container no-data-state">사용자 데이터를 찾을 수 없습니다.</div>;
+        return <div className="loading-page-container">사용자 데이터를 찾을 수 없습니다.</div>;
     }
 
     return (
-        <div className="my-page-container">
-            <div className="header-margin65">
-                <header className="hero-header">
-                    <img src="/icons/union.png" className="icon" alt="Union 로고" />
-                    <div className="header-icons">
-                        <img src="/icons/bell-icon.svg" className="icon" alt="알림 아이콘" />
-                        <img src="/icons/search-icon.svg" className="icon" alt="검색 아이콘" />
-                    </div>
-                </header>
+        <div className="page-container">
+            <header className="hero-header">
+                <img src="/icons/union.png" className="icon" alt="Union 로고" />
+                <div className="header-icons">
+                    <img src="/icons/bell-icon.svg" className="icon" alt="알림 아이콘" />
+                    <img src="/icons/search-icon.svg" className="icon" alt="검색 아이콘" />
+                </div>
+            </header>
+
+            <div className="header-margin">
             </div>
 
             <div className="my-page-profile-section" onClick={handleProfileClick}>

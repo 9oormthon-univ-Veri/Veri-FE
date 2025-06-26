@@ -21,7 +21,7 @@ function LibraryPage() {
 
 
   return (
-    <div className="library-page-container">
+    <div className="page-container">
       <section className="library-hero-section">
         <img
           src="/images/your-background.png" // 배경 이미지

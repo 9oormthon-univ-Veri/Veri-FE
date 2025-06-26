@@ -2,8 +2,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './BookDetailPage.css';
-import { MdArrowBackIosNew, MdEdit } from 'react-icons/md'; // MdArrowBackIosNew 아이콘 사용
-import { MdKeyboardArrowRight } from 'react-icons/md'; // ✨ MdKeyboardArrowRight 아이콘 추가
+import { MdArrowBackIosNew, MdEdit } from 'react-icons/md'; 
+import { MdKeyboardArrowRight } from 'react-icons/md'; 
+import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { useRef } from 'react';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 
 import { getBookById, type Book, type CardItem } from '../api/bookApi';
 import { StarRatingFullPage } from './MyBookshelfPage';
@@ -76,6 +79,19 @@ function BookDetailPage() {
 
   const accessToken = "your_dummy_access_token";
 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const fetchBookDetails = useCallback(async (memberBookId: number) => {
     setIsLoading(true);
     setError(null);
@@ -137,13 +153,13 @@ function BookDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="book-detail-page-container loading-state">책 정보를 불러오는 중...</div>
+      <div className="loading-page-container">책 정보를 불러오는 중...</div>
     );
   }
 
   if (error) {
     return (
-      <div className="book-detail-page-container error-state">
+      <div className="loading-page-container">
         <p style={{ color: 'red' }}>{error}</p>
         <button onClick={() => navigate(-1)} className="back-button">뒤로 가기</button>
       </div>
@@ -159,13 +175,33 @@ function BookDetailPage() {
   const { author, translator } = getAuthorAndTranslator(book.author);
 
   return (
-    <div className="book-detail-page-container">
+    <div className="page-container">
       <header className="detail-header">
         <button className="header-left-arrow" onClick={() => navigate(-1)}>
           <MdArrowBackIosNew size={24} color="#333" />
         </button>
         <h3>내가 읽은 책</h3>
-        <div className="spacer"></div>
+        <div className="header-right-wrapper">
+          <button
+            className="header-menu-button"
+            onClick={() => setMenuOpen((prev) => !prev)}
+          >
+            <BsThreeDotsVertical size={20} color="#333" />
+          </button>
+
+          {menuOpen && (
+            <div className="header-dropdown-menu" ref={menuRef}>
+              <div className="menu-item" onClick={() => alert('수정')}>
+                <FiEdit2 size={16} />
+                <span>수정하기</span>
+              </div>
+              <div className="menu-item" onClick={() => alert('삭제')}>
+                <FiTrash2 size={16} />
+                <span>삭제하기</span>
+              </div>
+            </div>
+          )}
+        </div>
       </header>
 
       <div className="book-info-section">

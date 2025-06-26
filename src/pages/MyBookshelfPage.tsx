@@ -82,7 +82,7 @@ function MyBookshelfPage() {
 
   if (isLoading) {
     return (
-      <div className="my-bookshelf-page-container loading-state">
+      <div className="loading-page-container">
         <p>책장 데이터를 불러오는 중...</p>
       </div>
     );
@@ -90,23 +90,24 @@ function MyBookshelfPage() {
 
   if (error) {
     return (
-      <div className="my-bookshelf-page-container error-state">
+      <div className="loading-page-container">
         <p style={{ color: 'red' }}>{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="my-bookshelf-page-container">
+    <div className="page-container">
+      <header className="detail-header">
+        <div className="header-left-arrow" onClick={() => navigate(-1)}>
+          <MdArrowBackIosNew size={24} color="#333" />
+        </div>
+        <h3>내가 읽은 책</h3>
+        <div className="spacer">
+        </div>
+      </header>
+
       <div className="header-margin65">
-        <header className="detail-header">
-          <div className="header-left-arrow" onClick={() => navigate(-1)}>
-            <MdArrowBackIosNew size={24} color="#333" />
-          </div>
-          <h3>내가 읽은 책</h3>
-          <div className="spacer">
-          </div>
-        </header>
       </div>
 
       <div className="sort-options">

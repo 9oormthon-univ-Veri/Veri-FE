@@ -103,76 +103,78 @@ function CameraPage() {
   };
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <h2>촬영 페이지</h2>
-      <p>책 표지를 촬영하여 독서 기록을 시작합니다.</p>
+    <div className="page-container">
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>촬영 페이지</h2>
+        <p>책 표지를 촬영하여 독서 기록을 시작합니다.</p>
 
-      {hasPermission === null && <p>카메라 접근 권한을 요청 중입니다...</p>}
-      {hasPermission === false && (
-        <div style={{ color: 'red', margin: '20px 0' }}>
-          <p>{error || '카메라 접근 권한이 없습니다. 카메라를 사용하려면 권한을 허용해야 합니다.'}</p>
-          <button onClick={getCameraAccess} style={{ padding: '10px 20px', cursor: 'pointer' }}>
-            다시 권한 요청
-          </button>
-        </div>
-      )}
+        {hasPermission === null && <p>카메라 접근 권한을 요청 중입니다...</p>}
+        {hasPermission === false && (
+          <div style={{ color: 'red', margin: '20px 0' }}>
+            <p>{error || '카메라 접근 권한이 없습니다. 카메라를 사용하려면 권한을 허용해야 합니다.'}</p>
+            <button onClick={getCameraAccess} style={{ padding: '10px 20px', cursor: 'pointer' }}>
+              다시 권한 요청
+            </button>
+          </div>
+        )}
 
-      {hasPermission === true && !photoDataUrl && (
-        <div style={{ margin: '20px 0' }}>
-          <video
-            ref={videoRef}
-            style={{ width: '100%', maxWidth: '500px', border: '1px solid #ccc' }}
-            autoPlay
-            playsInline
-            muted
-          />
-          <button
-            onClick={takePhoto}
-            style={{ marginTop: '10px', padding: '10px 20px', fontSize: '1.2em', cursor: 'pointer' }}
-          >
-            사진 촬영
-          </button>
-        </div>
-      )}
+        {hasPermission === true && !photoDataUrl && (
+          <div style={{ margin: '20px 0' }}>
+            <video
+              ref={videoRef}
+              style={{ width: '100%', maxWidth: '500px', border: '1px solid #ccc' }}
+              autoPlay
+              playsInline
+              muted
+            />
+            <button
+              onClick={takePhoto}
+              style={{ marginTop: '10px', padding: '10px 20px', fontSize: '1.2em', cursor: 'pointer' }}
+            >
+              사진 촬영
+            </button>
+          </div>
+        )}
 
-      {photoDataUrl && (
-        <div style={{ margin: '20px 0' }}>
-          <h3>촬영된 이미지:</h3>
-          <img
-            src={photoDataUrl}
-            alt="Captured Book Cover"
-            style={{ maxWidth: '100%', height: 'auto', border: '1px solid #ccc' }}
-          />
-          <button
-            onClick={() => {
-              setPhotoDataUrl(null);
-              getCameraAccess(); // Restart camera
-            }}
-            style={{ marginTop: '10px', padding: '10px 20px', fontSize: '1.2em', cursor: 'pointer' }}
-          >
-            다시 촬영
-          </button>
-          <button
-            style={{
-              marginTop: '10px',
-              marginLeft: '10px',
-              padding: '10px 20px',
-              fontSize: '1.2em',
-              cursor: 'pointer',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-            }}
-          >
-            저장 / 사용
-          </button>
-        </div>
-      )}
+        {photoDataUrl && (
+          <div style={{ margin: '20px 0' }}>
+            <h3>촬영된 이미지:</h3>
+            <img
+              src={photoDataUrl}
+              alt="Captured Book Cover"
+              style={{ maxWidth: '100%', height: 'auto', border: '1px solid #ccc' }}
+            />
+            <button
+              onClick={() => {
+                setPhotoDataUrl(null);
+                getCameraAccess(); // Restart camera
+              }}
+              style={{ marginTop: '10px', padding: '10px 20px', fontSize: '1.2em', cursor: 'pointer' }}
+            >
+              다시 촬영
+            </button>
+            <button
+              style={{
+                marginTop: '10px',
+                marginLeft: '10px',
+                padding: '10px 20px',
+                fontSize: '1.2em',
+                cursor: 'pointer',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+              }}
+            >
+              저장 / 사용
+            </button>
+          </div>
+        )}
 
-      {error && hasPermission !== false && <p style={{ color: 'red' }}>오류: {error}</p>}
+        {error && hasPermission !== false && <p style={{ color: 'red' }}>오류: {error}</p>}
 
-      {/* Hidden canvas to draw captured image */}
-      <canvas ref={photoRef} style={{ display: 'none' }} />
+        {/* Hidden canvas to draw captured image */}
+        <canvas ref={photoRef} style={{ display: 'none' }} />
+      </div>
     </div>
   );
 }

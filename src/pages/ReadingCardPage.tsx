@@ -75,85 +75,87 @@ function ReadingCardPage() {
     }, []);
 
     if (isLoading) {
-        return <div className="reading-card-page-container loading-state">독서 카드를 불러오는 중...</div>;
+        return <div className="loading-page-container">독서 카드를 불러오는 중...</div>;
     }
 
     if (error) {
-        return <div className="reading-card-page-container error-state" style={{ color: 'red' }}>{error}</div>;
+        return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
     }
 
     return (
-        <div className="reading-card-page-container">
-            <div className="header-margin65">
-                <header className="hero-header">
-                    <img src="/icons/union.png" className="icon" alt="Union Icon" />
-                    <div className="header-icons">
-                        <img src="/icons/bell-icon.svg" className="icon" alt="Bell Icon" />
-                        <img src="/icons/search-icon.svg" className="icon" alt="Search Icon" />
+        <div className="page-container">
+            <div className="reading-card-hero-section">
+                <div className="header-margin">
+                    <header className="hero-header">
+                        <img src="/icons/union.png" className="icon" alt="Union Icon" />
+                        <div className="header-icons">
+                            <img src="/icons/bell-icon.svg" className="icon" alt="Bell Icon" />
+                            <img src="/icons/search-icon.svg" className="icon" alt="Search Icon" />
+                        </div>
+                    </header>
+                </div>
+
+                <nav className="tab-navigation">
+                    <button
+                        className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}
+                        onClick={() => handleTabClick('image')}
+                    >
+                        이미지
+                    </button>
+                    <button
+                        className={`tab-button ${activeTab === 'text' ? 'active' : ''}`}
+                        onClick={() => handleTabClick('text')}
+                    >
+                        텍스트
+                    </button>
+                </nav>
+
+                <div className="sort-options">
+                    <span className="sort-button" onClick={handleSortClick}>
+                        {sortOrder === 'latest' ? '최신순' : '오래된순'} &gt;
+                    </span>
+                </div>
+
+                {activeTab === 'image' && (
+                    <div className="reading-card-grid-view">
+                        {sortedReadingCards.length > 0 ? (
+                            sortedReadingCards.map((card) => (
+                                <ReadingCardGridItem
+                                    key={card.id}
+                                    id={card.id}
+                                    title={card.title}
+                                    contentPreview={card.contentPreview}
+                                    date={card.date}
+                                    thumbnailUrl={card.thumbnailUrl}
+                                />
+                            ))
+                        ) : (
+                            <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
+                        )}
                     </div>
-                </header>
+                )}
+
+                {activeTab === 'text' && (
+                    <div className="reading-card-text-view">
+                        {sortedReadingCards.length > 0 ? (
+                            sortedReadingCards.map((card) => (
+                                <ReadingCardItem
+                                    key={card.id}
+                                    id={card.id}
+                                    title={card.title}
+                                    contentPreview={card.contentPreview}
+                                    date={card.date}
+                                    thumbnailUrl={card.thumbnailUrl}
+                                />
+                            ))
+                        ) : (
+                            <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
+                        )}
+                    </div>
+                )}
+
+                <button className="create-card-button">+ 카드 만들기</button>
             </div>
-
-            <nav className="tab-navigation">
-                <button
-                    className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}
-                    onClick={() => handleTabClick('image')}
-                >
-                    이미지
-                </button>
-                <button
-                    className={`tab-button ${activeTab === 'text' ? 'active' : ''}`}
-                    onClick={() => handleTabClick('text')}
-                >
-                    텍스트
-                </button>
-            </nav>
-
-            <div className="sort-options">
-                <span className="sort-button" onClick={handleSortClick}>
-                    {sortOrder === 'latest' ? '최신순' : '오래된순'} &gt;
-                </span>
-            </div>
-
-            {activeTab === 'image' && (
-                <div className="reading-card-grid-view">
-                    {sortedReadingCards.length > 0 ? (
-                        sortedReadingCards.map((card) => (
-                            <ReadingCardGridItem
-                                key={card.id}
-                                id={card.id}
-                                title={card.title}
-                                contentPreview={card.contentPreview}
-                                date={card.date}
-                                thumbnailUrl={card.thumbnailUrl}
-                            />
-                        ))
-                    ) : (
-                        <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'text' && (
-                <div className="reading-card-text-view">
-                    {sortedReadingCards.length > 0 ? (
-                        sortedReadingCards.map((card) => (
-                            <ReadingCardItem
-                                key={card.id}
-                                id={card.id}
-                                title={card.title}
-                                contentPreview={card.contentPreview}
-                                date={card.date}
-                                thumbnailUrl={card.thumbnailUrl}
-                            />
-                        ))
-                    ) : (
-                        <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
-                    )}
-                </div>
-            )}
-
-            <button className="create-card-button">+ 카드 만들기</button>
         </div>
     );
 }

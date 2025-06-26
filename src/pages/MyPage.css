@@ -1,15 +1,5 @@
 /* src/pages/MyPage.css */
 
-.my-page-container {
-    width: 100%;
-    padding: 20px;
-    background-color: #f8f8f8; /* 배경색 */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* 섹션 간의 기본 간격 */
-}
-
 /* 상단 프로필 섹션 */
 .my-page-profile-section {
     display: flex;

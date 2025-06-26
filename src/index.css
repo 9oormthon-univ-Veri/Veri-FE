@@ -92,8 +92,31 @@ code {
   transition: background-color 0.2s ease-in-out;
 }
 
-.header-margin65 {
-  margin-top: 65px;
+.page-container {
+  width: 450px;
+  padding: 0 0px 80px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.loading-page-container {
+  width: 450px;
+  padding: 0 0px 80px;
+  background-color: #ffffff;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.header-margin {
+  height: 80px;
+  background-color: #fff;
 }
 
 .hero-header {
@@ -133,7 +156,8 @@ code {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 450px;
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -141,13 +165,23 @@ code {
 }
 
 .detail-header .header-left-arrow{
+  background: none;
+  border: none;
   cursor: pointer;
   padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
+.detail-header .header-menu-button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .detail-header h3 {
   font-size: 18px;
   font-weight: bold;
@@ -157,6 +191,40 @@ code {
 }
 .spacer {
   flex-grow: 0.2;
+}
+
+.header-right-wrapper {
+  position: relative;
+}
+
+.header-dropdown-menu {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  width: 120px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 8px 0;
+  z-index: 999;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+.menu-item + .menu-item {
+  border-top: 1px solid #eee;
 }
 
 /* SVG 아이콘 대신 사용할 임시 배경 이미지 (실제 앱에서는 SVG 또는 폰트 아이콘 사용) */
