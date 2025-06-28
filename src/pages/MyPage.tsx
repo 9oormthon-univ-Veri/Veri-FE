@@ -25,7 +25,6 @@ const MyPage: React.FC = () => {
                 return response.json();
             })
             .then((data: UserData[]) => {
-                // ★★★ 이 부분 수정 ★★★
                 if (data && data.length > 0) {
                     setUserData(data[0] as UserData); // data[0]를 UserData 타입으로 단언
                 } else {
@@ -93,7 +92,7 @@ const MyPage: React.FC = () => {
                 <div className="profile-info">
                     <p className="profile-name">{userData.name}</p>
                 </div>
-                <img src="/icons/arrow-right.svg" alt="더 보기" className="profile-arrow" />
+                <img src="/icons/right_line.svg" alt="더 보기" className="profile-arrow" />
             </div>
 
             <div className="my-page-stats-cards">
@@ -110,14 +109,14 @@ const MyPage: React.FC = () => {
             <div className="my-page-news-section">
                 <h3 className="section-title">소식</h3>
                 <div className="news-item" onClick={handleNoticeClick}>
-                    <img src="/icons/calendar-check.svg" className="news-icon" alt="공지사항 아이콘" />
+                    <img src="/icons/schedule_fill.svg" className="news-icon" alt="공지사항 아이콘" />
                     <span className="news-label">공지사항</span>
-                    <img src="/icons/arrow-right.svg" className="news-arrow" alt="이동" />
+                    <img src="/icons/right_line.svg" className="news-arrow" alt="이동" />
                 </div>
                 <div className="news-item" onClick={handleEventClick}>
-                    <img src="/icons/star-outline.svg" className="news-icon" alt="이벤트 아이콘" />
+                    <img src="/icons/sale_fill.svg" className="news-icon" alt="이벤트 아이콘" />
                     <span className="news-label">이벤트</span>
-                    <img src="/icons/arrow-right.svg" className="news-arrow" alt="이동" />
+                    <img src="/icons/right_line.svg" className="news-arrow" alt="이동" />
                 </div>
             </div>
         </div>

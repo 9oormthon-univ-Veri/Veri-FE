@@ -1,7 +1,10 @@
 // src/pages/CameraPage.tsx
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { MdArrowBackIosNew} from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 function CameraPage() {
+  const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const photoRef = useRef<HTMLCanvasElement>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -104,7 +107,22 @@ function CameraPage() {
 
   return (
     <div className="page-container">
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <header className="detail-header">
+        <button className="header-left-arrow" onClick={() => navigate(-1)}>
+          <MdArrowBackIosNew size={24} color="#333" />
+        </button>
+        <h3>내가 읽은 책</h3>
+        <div className="header-right-wrapper">
+          <div
+            className="dummy-box"
+          >
+          </div>
+        </div>
+      </header>
+
+      <div className="header-margin"></div>
+
+      <div className='page-title'>
         <h2>촬영 페이지</h2>
         <p>책 표지를 촬영하여 독서 기록을 시작합니다.</p>
 

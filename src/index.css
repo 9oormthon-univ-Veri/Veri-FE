@@ -15,6 +15,11 @@ code {
     monospace;
 }
 
+.dummy-box {
+  width: 30px;
+  height: 20px;
+}
+
 /* TabBar.tsx 관련 스타일 */
 .tab-bar-container {
   display: flex;
@@ -49,29 +54,6 @@ code {
   /* 동일한 너비로 분할 */
 }
 
-.tab-item.active {
-  color: #333;
-  /* 활성화된 탭 텍스트 색상 */
-}
-
-.tab-item-icon {
-  width: 24px;
-  /* 아이콘 크기 */
-  height: 24px;
-  margin-bottom: 4px;
-  background-color: #d0d0d0;
-  /* 임시 아이콘 배경색 */
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.tab-item.active .tab-item-icon {
-  background-color: #333;
-  /* 활성화된 탭 아이콘 색상 */
-}
-
 /* 중앙 '촬영' 탭 스타일 */
 .tab-item.camera-tab {
   position: relative;
@@ -85,28 +67,6 @@ code {
   font-weight: bold;
   height: 100%;
   /* 부모와 높이 맞춤 */
-}
-
-.camera-tab .tab-item-icon {
-  background-color: #000;
-  /* 촬영 탭 아이콘은 검은색 */
-  border-radius: 50%;
-  /* 원형 배경 */
-  width: 55px;
-  /* 더 큰 아이콘 */
-  height: 55px;
-  margin-bottom: 2px;
-  display: flex;
-  /* 아이콘 중앙 정렬을 위해 */
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  /* 중앙 원형 아이콘의 위치 조정 */
-  top: -25px;
-  /* 탭 바 위로 튀어나오게 (조정 가능) */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  /* 그림자 */
-  transition: background-color 0.2s ease-in-out;
 }
 
 .page-container {
@@ -184,7 +144,7 @@ code {
   position: absolute;
   top: 0;
   left: 0;
-  width: 450px;
+  width: 100%;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -218,10 +178,6 @@ code {
   color: #333;
   flex-grow: 1;
   text-align: center;
-}
-
-.spacer {
-  flex-grow: 0.2;
 }
 
 .header-right-wrapper {

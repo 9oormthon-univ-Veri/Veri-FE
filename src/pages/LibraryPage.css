@@ -1,6 +1,6 @@
 /* src/pages/LibraryPage.css */
 
-.book-sample-image{
+.book-sample-image {
     width: 200px;
     height: 300px;
 }
@@ -13,16 +13,22 @@
 }
 
 .hero-content {
-    position: absolute; /* 절대 위치로 변경 */
-    bottom: 0; /* 하단에 붙이기 */
-    right: 0; /* 오른쪽에 붙이기 */
+    position: absolute;
+    /* 절대 위치로 변경 */
+    bottom: 0;
+    /* 하단에 붙이기 */
+    right: 0;
+    /* 오른쪽에 붙이기 */
     left: 0;
     display: flex;
-    justify-content: space-between; /* 좌우 끝으로 벌리기 */
-    align-items: flex-end; /* 아이템들을 하단에 정렬 (선택 사항) */
+    justify-content: space-between;
+    /* 좌우 끝으로 벌리기 */
+    align-items: flex-end;
+    /* 아이템들을 하단에 정렬 (선택 사항) */
     padding: 20px;
     z-index: 2;
-    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+    box-sizing: border-box;
+    /* 패딩 포함 너비 계산 */
 }
 
 .profile-circle {
@@ -39,7 +45,8 @@
     font-size: 16px;
     color: black;
     text-align: left;
-  }
+}
+
 .welcome-text p {
     margin: 0;
     font-size: 0.9rem;
@@ -123,7 +130,8 @@ section {
 
 .my-bookshelf .book-cover-thumbnail {
     width: 100%;
-    padding-bottom: 150%; /* 2:3 비율 */
+    padding-bottom: 150%;
+    /* 2:3 비율 */
     position: relative;
     background-color: #f0f0f0;
     border-radius: 4px;
@@ -169,7 +177,8 @@ section {
 
 .todays-recommendation .recommended-book-item .book-cover-thumbnail {
     width: 100%;
-    padding-bottom: 150%; /* 2:3 비율 */
+    padding-bottom: 150%;
+    /* 2:3 비율 */
     position: relative;
     background-color: #f0f0f0;
     border-radius: 4px;
@@ -205,14 +214,16 @@ section {
     text-overflow: ellipsis;
 }
 
-.hero-book-sample{
+.hero-book-sample {
     width: 150px;
     height: 200px;
     background-color: #f0f0f0;
     margin-left: 20px;
     overflow: hidden;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
-.hero-background{
+.hero-background {
     height: 410px;
 }

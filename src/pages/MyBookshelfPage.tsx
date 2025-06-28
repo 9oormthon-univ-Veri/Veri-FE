@@ -7,24 +7,56 @@ import { MdArrowBackIosNew } from 'react-icons/md';
 import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../api/bookApi';
 import BookshelfList from '../components/MyBookshelfPage/BookshelfList';
 
+const STAR_FILL_ICON = '/icons/star_fill.svg';
+const STAR_LINE_ICON = '/icons/star_line.svg';
+
 export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
+  // 별점 계산 로직 (기존과 동일)
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const starElements = [];
+
+  // 채워진 별
+  for (let i = 0; i < fullStars; i++) {
+    starElements.push(
+      <img
+        key={`full-${i}`}
+        src={STAR_FILL_ICON}
+        alt="filled star"
+        className="star full"
+      />
+    );
+  }
+
+  if (hasHalfStar) {
+    starElements.push(
+      <img
+        key="half"
+        src={STAR_FILL_ICON} // 채워진 별 아이콘을 사용
+        alt="half star"
+        className="star half"
+      />
+    );
+  }
+
+  for (let i = 0; i < emptyStars; i++) {
+    starElements.push(
+      <img
+        key={`empty-${i}`}
+        src={STAR_LINE_ICON}
+        alt="empty star"
+        className="star empty"
+      />
+    );
+  }
 
   return (
     <div className="star-rating-full-page">
-      {[...Array(fullStars)].map((_, i) => (
-        <span key={`full-${i}`} className="star full">&#9733;</span>
-      ))}
-      {hasHalfStar && <span key="half" className="star half">&#9733;</span>}
-      {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`} className="star empty">&#9734;</span>
-      ))}
+      {starElements}
     </div>
   );
 };
-
 
 function MyBookshelfPage() {
   const navigate = useNavigate();
@@ -103,7 +135,9 @@ function MyBookshelfPage() {
           <MdArrowBackIosNew size={24} color="#333" />
         </div>
         <h3>나의책장</h3>
-        <div className="spacer">
+        <div
+          className="dummy-box"
+        >
         </div>
       </header>
 

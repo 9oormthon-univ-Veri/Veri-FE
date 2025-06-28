@@ -7,7 +7,7 @@
     border-radius: 16px;
     background: rgba(231, 233, 239, 0.30);
     margin-inline: 15px;
-    padding: 20px 18px;
+    padding: 20px 20px;
     justify-content: space-between;
     align-items: center;
 }
@@ -50,11 +50,11 @@
 
 /* 독서 현황 카드 섹션 */
 .my-page-stats-cards {
+    padding: 0px 5px;
     margin: 10px;
     display: flex;
     justify-content: space-between;
     gap: 15px;
-    /* 카드 간 간격 */
 }
 
 .stat-card {
@@ -92,28 +92,29 @@
 .my-page-news-section {
     border-radius: 16px;
     background: rgba(231, 233, 239, 0.50);
-    margin: 10px;
+    margin: 15px;
     border-radius: 12px;
-    padding: 16px 10px 20px 20px;
+    padding: 16px 20px 20px 20px;
     align-items: flex-start;
     gap: 20px;
 }
 
 .section-title {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 15px;
+    color: var(--black, #1A1A1A);
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: -0.64px;
+    margin-bottom: 20px;
     text-align: left;
 }
 
 .news-item {
     display: flex;
     align-items: center;
-    padding: 12px 0;
-    border-top: 1px solid #eee;
-    /* 구분선 */
+    padding: 7px 0;
     cursor: pointer;
 }
 
@@ -125,15 +126,20 @@
 .news-icon {
     width: 22px;
     height: 22px;
-    margin-right: 15px;
-    filter: invert(40%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
-    /* 회색 아이콘 */
+    margin-right: 8px;
+    border-radius: 16px;
+    background: rgba(231, 233, 239, 0.50);
 }
 
 .news-label {
     flex-grow: 1;
-    font-size: 1em;
-    color: #333;
+    color: var(--black, #1A1A1A);
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.64px;
     text-align: left;
 }
 
