@@ -2,7 +2,7 @@
 
 // 기존 타입 임포트는 그대로 둡니다.
 import type { GetAllBooksResponse, TodaysRecommendationBook, GetBookByIdResponse, SearchBooksResponse } from './bookApi';
-import type { Card, GetMyCardsResponse, GetCardDetailByIdResponse, BookInfoForCard } from './cardApi';
+import type { GetMyCardsResponse, GetCardDetailByIdResponse } from './cardApi';
 
 // 💡 새로 추가된 타입 임포트
 import type { GetMemberProfileResponse } from './memberApi';
