@@ -23,6 +23,13 @@
     /* 줄어들지 않도록 */
 }
 
+.avatar-image {
+    width: 100%; /* 부모 요소의 너비를 꽉 채움 */
+    height: 100%; /* 부모 요소의 높이를 꽉 채움 */
+    border-radius: 50%; /* 이미지를 원형으로 만듦 */
+    object-fit: cover; /* 이미지를 비율을 유지하며 컨테이너를 꽉 채우도록 조정 (잘려도 좋음) */
+}
+
 .profile-info {
     flex-grow: 1;
     /* 남은 공간을 차지 */

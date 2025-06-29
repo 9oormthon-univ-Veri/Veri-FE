@@ -15,11 +15,11 @@ interface ReadingCardItemType {
 }
 
 // 개별 독서카드 아이템을 렌더링하는 내부 컴포넌트
-const SingleReadingCard: React.FC<ReadingCardItemType> = ({ id, coverUrl, title, contentPreview }) => {
+const SingleReadingCard: React.FC<ReadingCardItemType> = ({ coverUrl, title, contentPreview }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/reading-card-detail/${id}`);
+    navigate(`/bookmark`);
   };
 
   return (
@@ -81,7 +81,7 @@ const MyReadingCardSection: React.FC = () => {
       <section className={styles.myReadingCards}>
         <div className={styles.sectionHeader}>
           <h3>나의 독서카드</h3>
-          <span className={styles.moreLink} onClick={() => navigate('/reading-card-list')}>
+          <span className={styles.moreLink} onClick={() => navigate('/bookmark')}>
             책갈피 보러가기 &gt;
           </span>
         </div>
@@ -97,7 +97,7 @@ const MyReadingCardSection: React.FC = () => {
       <section className={styles.myReadingCards}>
         <div className={styles.sectionHeader}>
           <h2>나의 독서카드</h2>
-          <span className={styles.moreLink} onClick={() => navigate('/reading-card-list')}>
+          <span className={styles.moreLink} onClick={() => navigate('/bookmark')}>
             책갈피 보러가기 &gt;
           </span>
         </div>
@@ -112,7 +112,7 @@ const MyReadingCardSection: React.FC = () => {
     <section className={styles.myReadingCards}>
       <div className={styles.sectionHeader}>
         <h3>나의 독서카드</h3>
-        <span className={styles.moreLink} onClick={() => navigate('/reading-card-list')}>
+        <span className={styles.moreLink} onClick={() => navigate('/bookmark')}>
           책갈피 보러가기 &gt;
         </span>
       </div>

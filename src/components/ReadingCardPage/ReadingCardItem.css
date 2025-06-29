@@ -1,7 +1,8 @@
 .reading-card-page-item {
     height: 100px;
     display: flex;
-    justify-content: start; /* Flexbox의 시작점으로 정렬 */
+    justify-content: space-between;
+    /* Flexbox의 시작점으로 정렬 */
     background-color: #fff;
     gap: 10px;
     align-items: flex-start;
@@ -16,8 +17,10 @@
     background: var(--Grey_2, #E7E9EF);
     width: 100px;
     height: 100px;
-    margin-right: 16px; /* 이미지와 텍스트 사이 간격 */
-    flex-shrink: 0; /* 이미지가 줄어들지 않도록 */
+    margin-right: 16px;
+    /* 이미지와 텍스트 사이 간격 */
+    flex-shrink: 0;
+    /* 이미지가 줄어들지 않도록 */
 }
 
 .card-image-container img {
@@ -30,10 +33,14 @@
 
 .card-content {
     flex-grow: 1;
-    display: flex; /* 콘텐츠 내부 요소들을 세로로 정렬하기 위해 Flexbox 사용 */
-    flex-direction: column; /* 세로 방향으로 정렬 */
-    /* 기존 padding은 .reading-card-item으로 옮겨졌으므로 여기서는 제거하거나 필요에 따라 추가 */
-    /* padding: 16px; */
+    height: 100%;
+    /* 콘텐츠 영역이 카드 높이에 맞게 조정 */
+    display: flex;
+    /* 콘텐츠 내부 요소들을 세로로 정렬하기 위해 Flexbox 사용 */
+    flex-direction: column;
+    /* 세로 방향으로 정렬 */
+    justify-content: space-between;
+    /* 콘텐츠 내부 요소들을 위아래로 정렬 */
 }
 
 .card-book-info {
@@ -45,8 +52,12 @@
 }
 
 .card-preview {
-    font-size: 0.8em;
-    color: #333;
+    color: var(--Black, #1A1A1A);
+    font-family: Pretendard;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
     line-height: 1.4;
     margin-bottom: auto;
     text-align: left;
@@ -56,11 +67,16 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     word-break: break-all;
+
+    margin-bottom: 0px;
+    margin-top: 4px;
 }
 
 .card-book-title {
     font-size: 1.0em;
     text-align: left;
+    margin-top: 0px;
+    margin-bottom: 4px;
 }
 
 .card-date {

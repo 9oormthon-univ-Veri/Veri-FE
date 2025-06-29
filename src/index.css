@@ -7,7 +7,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
-  min-height: 100vh;
 }
 
 code {
@@ -72,6 +71,7 @@ code {
 .page-container {
   max-width: 100%;
   width: 100%;
+  height: auto;
   /* ✅ 반응형 처리 */
   padding: 0 0px 80px;
   background-color: #ffffff;

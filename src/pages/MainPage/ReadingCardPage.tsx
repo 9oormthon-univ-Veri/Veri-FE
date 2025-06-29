@@ -1,5 +1,6 @@
 // src/pages/ReadingCardPage.tsx
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ReadingCardPage.css'; // CSS 파일 임포트 유지
 import ReadingCardItem from '../../components/ReadingCardPage/ReadingCardItem';
 import ReadingCardGridItem from '../../components/ReadingCardPage/ReadingCardGridItem'; // 경로 확인
@@ -15,6 +16,7 @@ export interface ReadingCardItemType {
 }
 
 function ReadingCardPage() {
+    const navigate = useNavigate();
     const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -73,6 +75,10 @@ function ReadingCardPage() {
     const handleTabClick = useCallback((tab: 'image' | 'text') => {
         setActiveTab(tab);
     }, []);
+
+    const handleCreateCardClick = () => {
+        navigate('/make-card');
+    };
 
     if (isLoading) {
         return <div className="loading-page-container">독서 카드를 불러오는 중...</div>;
@@ -153,7 +159,7 @@ function ReadingCardPage() {
                     </div>
                 )}
 
-                <button className="create-card-button">+  카드 만들기</button>
+                <button className="create-card-button" onClick={handleCreateCardClick}>+ 카드 만들기</button>
             </div>
         </div>
     );

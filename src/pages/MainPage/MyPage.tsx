@@ -1,45 +1,50 @@
 // src/pages/MyPage.tsx
 import React, { useEffect, useState } from 'react';
 import './MyPage.css';
+import { getMemberProfile } from '../../api/memberApi';
 
-// 사용자 데이터 인터페이스 정의 (users.json 구조에 맞춤)
+// 💡 사용자 데이터 인터페이스를 API 응답 타입에 맞춰 변경
 interface UserData {
     id: string;
     name: string;
     booksRead: number;
     readingCards: number;
-    profileImageUrl?: string; // 프로필 이미지는 선택 사항일 수 있음
+    // 💡 '?' 대신 ' | undefined'로 명시하여 API 응답과 타입을 일치시킵니다.
+    profileImageUrl: string | undefined;
 }
 
 const MyPage: React.FC = () => {
-    const [userData, setUserData] = useState<UserData | null>(null); // 사용자 데이터 상태
-    const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-    const [error, setError] = useState<string | null>(null); // 에러 상태
+    const [userData, setUserData] = useState<UserData | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch('/datas/users.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('사용자 데이터를 불러오는 데 실패했습니다.');
-                }
-                return response.json();
-            })
-            .then((data: UserData[]) => {
-                if (data && data.length > 0) {
-                    setUserData(data[0] as UserData); // data[0]를 UserData 타입으로 단언
+        const fetchUserData = async () => {
+            try {
+                const response = await getMemberProfile();
+
+                if (response.isSuccess && response.result) {
+                    // API 응답 데이터를 컴포넌트 상태에 맞게 변환하여 저장
+                    setUserData({
+                        id: response.result.memberId.toString(),
+                        name: response.result.name,
+                        booksRead: response.result.booksRead,
+                        readingCards: response.result.readingCards,
+                        // API 응답에서 받은 값을 그대로 할당합니다.
+                        profileImageUrl: response.result.profileImageUrl,
+                    });
                 } else {
-                    // 데이터가 없거나 비어있는 경우
-                    setError('사용자 데이터를 찾을 수 없습니다. JSON 파일이 비어있거나 올바르지 않습니다.');
-                    setUserData(null); // 에러 발생 시 userData를 null로 설정
+                    setError(response.message);
                 }
-                setIsLoading(false);
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error('Error fetching user data:', err);
-                setError('사용자 데이터를 불러올 수 없습니다.');
-                setUserData(null); // 에러 발생 시 userData를 null로 설정
+                setError('사용자 데이터를 불러오는 데 실패했습니다.');
+            } finally {
                 setIsLoading(false);
-            });
+            }
+        };
+
+        fetchUserData();
     }, []);
 
     const handleProfileClick = () => {
@@ -64,7 +69,6 @@ const MyPage: React.FC = () => {
     }
 
     if (!userData) {
-        // isLoading도 아니고 error도 아닌데 userData가 null인 경우 (예: 데이터는 성공적으로 불러왔지만 비어있을 때)
         return <div className="loading-page-container">사용자 데이터를 찾을 수 없습니다.</div>;
     }
 
@@ -78,13 +82,12 @@ const MyPage: React.FC = () => {
                 </div>
             </header>
 
-            <div className="header-margin">
-            </div>
+            <div className="header-margin"></div>
 
             <div className="my-page-profile-section" onClick={handleProfileClick}>
                 <div className="profile-avatar">
                     {userData.profileImageUrl ? (
-                        <img src={userData.profileImageUrl} className="avatar-image" />
+                        <img src={userData.profileImageUrl} className="avatar-image" alt="프로필 이미지" />
                     ) : (
                         <div className="avatar-placeholder"></div>
                     )}
