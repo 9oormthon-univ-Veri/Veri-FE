@@ -72,16 +72,17 @@ code {
   max-width: 100%;
   width: 100%;
   height: auto;
-  /* ✅ 반응형 처리 */
+
   padding: 0 0px 80px;
   background-color: #ffffff;
   min-height: 100vh;
-  box-sizing: border-box;
 }
 
 .loading-page-container {
   max-width: 100%;
   width: 100%;
+  height: auto;
+
   padding: 0 0px 80px;
   background-color: #ffffff;
   min-height: 100vh;
