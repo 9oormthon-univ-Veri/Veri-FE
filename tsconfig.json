@@ -9,12 +9,14 @@
       "@pages/*": ["pages/*"],
       "@components/*": ["components/*"]
     },
+    "outDir": "./dist", // 이 줄을 추가하여 컴파일된 JS 파일이 'dist' 폴더에 생성되도록 합니다.
+    "noEmit": true,
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["src"],
+  "files": [],
   "references": [
     {
       "path": "./tsconfig.app.json"
