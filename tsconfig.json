@@ -4,10 +4,10 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "jsx": "react-jsx",
-    "baseUrl": "./src", // ✨ src 기준으로 경로 인식
+    "baseUrl": "./src",
     "paths": {
-      "@pages/*": ["pages/*"],          // 예: @pages/mainPage/LibraryPage
-      "@components/*": ["components/*"] // 필요 시
+      "@pages/*": ["pages/*"],
+      "@components/*": ["components/*"]
     },
     "strict": true,
     "esModuleInterop": true,
