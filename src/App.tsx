@@ -5,15 +5,15 @@ import FloatingCameraButton from './components/FloatingCameraButton';
 import './App.css';
 
 // Import page components from their respective files.
-import LibraryPage from './pages/LibraryPage';
-import ReadingCardPage from './pages/ReadingCardPage';
-import CameraPage from './pages/CameraPage';
-import CommunityPage from './pages/CommunityPage';
+import LibraryPage from './pages/MainPage/LibraryPage';
+import ReadingCardPage from './pages/MainPage/ReadingCardPage';
+import CameraPage from './pages/MainPage/CameraPage';
+import CommunityPage from './pages/MainPage/CommunityPage';
 import BookmarkPage from './pages/BookmarkPage';
-import MyPage from './pages/MyPage';
+import MyPage from './pages/MainPage/MyPage';
 import MyBookshelfPage from './pages/MyBookshelfPage';
-import BookDetailPage from './pages/BookDetailPage';
-import ReadingCardDetailPage from './pages/ReadingCardDetailPage'; // ✨ ReadingCardDetailPage 임포트
+import BookDetailPage from './pages/DetailPage/BookDetailPage';
+import ReadingCardDetailPage from './pages/DetailPage/ReadingCardDetailPage'; // ✨ ReadingCardDetailPage 임포트
 
 function App() {
   const location = useLocation();

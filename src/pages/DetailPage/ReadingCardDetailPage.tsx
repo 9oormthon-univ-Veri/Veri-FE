@@ -7,7 +7,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { useRef } from 'react';
 
-import { getCardDetailById, type Card } from '../api/cardApi'; // CardDetail 대신 Card 타입 사용
+import { getCardDetailById, type Card } from '../../api/cardApi'; // CardDetail 대신 Card 타입 사용
 import './ReadingCardDetailPage.css';
 
 function ReadingCardDetailPage() {

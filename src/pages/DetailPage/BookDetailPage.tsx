@@ -8,8 +8,8 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { useRef } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
-import { getBookById, type Book, type CardItem } from '../api/bookApi';
-import { StarRatingFullPage } from './MyBookshelfPage';
+import { getBookById, type Book, type CardItem } from '../../api/bookApi';
+import { StarRatingFullPage } from '../MyBookshelfPage';
 
 // EditPopup 더미 컴포넌트
 const EditPopup: React.FC<any> = ({ isOpen, onClose, bookData, onSave }) => {

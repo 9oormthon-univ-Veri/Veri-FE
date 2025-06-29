@@ -154,7 +154,7 @@ function MyBookshelfPage() {
 
       <div className="add-book-button-container">
         <button className="add-book-button">
-          + 책 등록
+          + 등록하기
         </button>
       </div>
     </div>

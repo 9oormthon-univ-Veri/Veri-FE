@@ -1,9 +1,9 @@
 // src/pages/LibraryPage.tsx
 import { useState, useEffect } from 'react'; // useState와 useEffect를 임포트합니다.
 import './LibraryPage.css'; // LibraryPage 전체 스타일
-import MyReadingCardSection from '../components/LibraryPage/MyReadingCard';
-import MyBookshelfSection from '../components/LibraryPage/MyBookshelf';
-import TodaysRecommendationSection from '../components/LibraryPage/TodaysRecommendation';
+import MyReadingCardSection from '../../components/LibraryPage/MyReadingCard';
+import MyBookshelfSection from '../../components/LibraryPage/MyBookshelf';
+import TodaysRecommendationSection from '../../components/LibraryPage/TodaysRecommendation';
 
 function LibraryPage() {
   // 1. 사용자 이름을 관리할 상태(state)를 정의합니다.

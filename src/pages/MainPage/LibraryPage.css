@@ -69,7 +69,6 @@ section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-inline: 10px;
 }
 
 .section-header h3 {

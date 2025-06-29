@@ -1,9 +1,9 @@
 // src/pages/ReadingCardPage.tsx
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import './ReadingCardPage.css'; // CSS 파일 임포트 유지
-import ReadingCardItem from '../components/ReadingCardPage/ReadingCardItem';
-import ReadingCardGridItem from '../components/ReadingCardPage/ReadingCardGridItem'; // 경로 확인
-import { getMyCards, type Card } from '../api/cardApi';
+import ReadingCardItem from '../../components/ReadingCardPage/ReadingCardItem';
+import ReadingCardGridItem from '../../components/ReadingCardPage/ReadingCardGridItem'; // 경로 확인
+import { getMyCards, type Card } from '../../api/cardApi';
 
 // ReadingCardItemType 정의를 API 응답과 사용법에 맞게 업데이트
 export interface ReadingCardItemType {
@@ -153,7 +153,7 @@ function ReadingCardPage() {
                     </div>
                 )}
 
-                <button className="create-card-button">+ 카드 만들기</button>
+                <button className="create-card-button">+  카드 만들기</button>
             </div>
         </div>
     );

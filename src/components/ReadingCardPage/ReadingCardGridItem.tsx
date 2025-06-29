@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ReadingCardGridItem.css'; // CSS 파일 임포트 유지
-import { type ReadingCardItemType } from '../../pages/ReadingCardPage'; // ReadingCardPage에서 정의된 인터페이스 임포트
+import { type ReadingCardItemType } from '../../pages/MainPage/ReadingCardPage'; // ReadingCardPage에서 정의된 인터페이스 임포트
 
 // 각 독서카드를 이미지 갤러리 형태로 표시하는 컴포넌트
 const ReadingCardGridItem: React.FC<ReadingCardItemType> = ({ id, title, thumbnailUrl }) => {

@@ -56,6 +56,8 @@
     line-height: normal;
     margin-inline: 20px;
     line-height: 1.4;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .book-detail-author-translator {
@@ -66,7 +68,9 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    margin: 20px;
+    margin-inline: 20px;
+    margin-top: 0;
+    margin-bottom: 16;
 }
 
 .setting-sections {
@@ -112,9 +116,19 @@
 }
 
 .edit-icon {
+    display: flex;
+    padding: 4px 5px 4px 8px;
+    align-items: center;
+    gap: 3px;
+
+    border-radius: 15px;
+    border: 0.5px solid #E7E9EF;
+
+    width: 14px;
+    height: 14px;
     cursor: pointer;
-    opacity: 0.7;
     transition: opacity 0.2s ease;
+    color: #464A52;
 }
 
 .edit-icon:hover {
