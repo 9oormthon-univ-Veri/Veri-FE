@@ -152,9 +152,11 @@ function MyBookshelfPage() {
 
       <BookshelfList books={sortedBooks} />
 
-      <button className="add-book-button">
+      <div className="create-button-container">
+        <button className="create-button">
           + 등록하기
         </button>
+      </div>
     </div>
   );
 }

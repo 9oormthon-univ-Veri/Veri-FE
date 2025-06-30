@@ -237,5 +237,4 @@ section {
 .hero-background {
     width: 100%;
     filter: blur(10px);
-    transform: scale(1.1);
 }
