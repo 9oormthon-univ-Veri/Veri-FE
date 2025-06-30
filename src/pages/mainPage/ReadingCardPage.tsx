@@ -159,8 +159,9 @@ function ReadingCardPage() {
                     </div>
                 )}
 
-                <button className="create-card-button" onClick={handleCreateCardClick}>+ 카드 만들기</button>
+
             </div>
+            <button className="create-card-button" onClick={handleCreateCardClick}>+ 카드 만들기</button>
         </div>
     );
 }
