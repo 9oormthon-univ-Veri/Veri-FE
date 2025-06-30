@@ -1,69 +1,127 @@
 // src/pages/LibraryPage.tsx
-import { useState, useEffect } from 'react'; // useState와 useEffect를 임포트합니다.
+import { useState, useEffect } from 'react';
 import './LibraryPage.css'; // LibraryPage 전체 스타일
 import MyReadingCardSection from '../../components/LibraryPage/MyReadingCard';
 import MyBookshelfSection from '../../components/LibraryPage/MyBookshelf';
 import TodaysRecommendationSection from '../../components/LibraryPage/TodaysRecommendation';
 
+// API 응답에 맞춘 사용자 데이터 인터페이스 (MyPage.tsx와 동일)
+interface UserData {
+  id: string;
+  name: string;
+  booksRead: number;
+  readingCards: number;
+  profileImageUrl: string | undefined;
+}
+
+// 💡 필요한 API 함수들을 임포트합니다.
+import { getMemberProfile } from '../../api/memberApi';
+import { getRandomBook } from '../../api/bookApi'; // 💡 getRandomBook 함수 임포트
+
 function LibraryPage() {
-  // 1. 사용자 이름을 관리할 상태(state)를 정의합니다.
-  // 초기값은 비워두거나, '게스트' 등으로 설정할 수 있습니다.
-  const [userName, setUserName] = useState(''); // 초기값은 빈 문자열
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // 2. 컴포넌트가 마운트될 때 (처음 로드될 때) 사용자 이름을 가져오는 로직을 추가합니다.
-  // 실제 앱에서는 로그인된 사용자 정보를 API 호출 등으로 가져올 것입니다.
   useEffect(() => {
+      const fetchAllData = async () => {
+          try {
+              // 1. 사용자 프로필 API 호출
+              const userResponse = await getMemberProfile();
+              if (userResponse.isSuccess && userResponse.result) {
+                  setUserData({
+                      id: userResponse.result.memberId.toString(),
+                      name: userResponse.result.name,
+                      booksRead: userResponse.result.booksRead,
+                      readingCards: userResponse.result.readingCards,
+                      profileImageUrl: userResponse.result.profileImageUrl,
+                  });
+              } else {
+                  setError(userResponse.message);
+              }
 
-    // 예시로 '사용자'라는 이름을 설정합니다.
-    const fetchedUserName = '사용자'; // 실제로는 로그인된 사용자의 이름이 들어갈 자리입니다.
-    setUserName(fetchedUserName);
-  }, []); // 빈 배열은 컴포넌트가 처음 렌더링될 때 한 번만 실행됨을 의미합니다.
+              // 💡 2. 랜덤 책을 가져오는 API 호출
+              const randomBook = await getRandomBook(); 
+              // getRandomBook 함수는 Promise<Book>을 반환하므로, 바로 imageUrl에 접근할 수 있습니다.
+              setBookImageUrl(randomBook.imageUrl); 
+              
+          } catch (err: any) { // 타입 추론이 안될 때 any 사용
+              console.error('Error fetching data:', err);
+              setError('데이터를 불러오는 데 실패했습니다: ' + err.message);
+          } finally {
+              setIsLoading(false);
+          }
+      };
 
+      fetchAllData();
+  }, []);
+
+
+  // 로딩 및 에러 상태 처리
+  if (isLoading) {
+      return <div className="loading-page-container">데이터를 불러오는 중...</div>;
+  }
+
+  if (error) {
+      return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
+  }
+
+  if (!userData) {
+      return <div className="loading-page-container">사용자 데이터를 찾을 수 없습니다.</div>;
+  }
+  
+  // 💡 bookImageUrl이 없을 경우를 대비해 기본 이미지를 설정합니다.
+  const bookImageSrc = bookImageUrl || '/images/your-default-book-image.png';
 
   return (
-    <div className="page-container">
-      <section className="library-hero-section">
-        <img
-          src="/images/your-background.png" // 배경 이미지
-          className="hero-background"
-        />
-        <header className="hero-header">
-          <img src="/icons/TopBar/union.svg" className="icon" />
-          <div className="header-icons">
-            {/* 알림 아이콘 */}
-            <img
-              src="/icons/TopBar/notificationl.svg" // 배경 이미지
-            />
-            <img
-              src="/icons/TopBar/search.svg" // 배경 이미지
-            />
-          </div>
-        </header>
+      <div className="page-container">
+          <section className="library-hero-section">
+              {/* 배경 이미지: 책 샘플 이미지를 블러 처리한 버전 */}
+              <img
+                  src={bookImageSrc}
+                  className="hero-background"
+                  alt="Hero background"
+              />
+              <header className="hero-header">
+                  <img src="/icons/TopBar/union.svg" className="icon" alt="앱 로고" />
+                  <div className="header-icons">
+                      <img src="/icons/TopBar/notificationl.svg" alt="알림" />
+                      <img src="/icons/TopBar/search.svg" alt="검색" />
+                  </div>
+              </header>
 
+              <div className="hero-content">
+                  {/* 프로필 이미지와 이름을 userData 상태에서 가져와 표시합니다. */}
+                  <div className="profile-circle">
+                      {userData.profileImageUrl ? (
+                          <img src={userData.profileImageUrl} className="profile-image" alt="프로필 이미지" />
+                      ) : (
+                          <div className="profile-placeholder"></div>
+                      )}
+                  </div>
+                  <div className="welcome-text">
+                      <h2>반가워요, {userData.name}님!</h2>
+                      <p>오늘도 책 잘 기록해 봐요...</p>
+                  </div>
+                  {/* 책 샘플 이미지 */}
+                  <img
+                      src={bookImageSrc}
+                      className="hero-book-sample"
+                      alt="책 샘플 이미지"
+                  />
+              </div>
+          </section>
 
-        <div className="hero-content">
-          <div className="profile-circle"></div>
-          <div className="welcome-text">
-            <h2>반가워요, {userName}님!</h2>
-            <p>오늘도 책 잘 기록해 봐요...</p>
-          </div>
-          <img
-            src="/images/your-background.png" // 배경 이미지
-            className="hero-book-sample"
-          />
-        </div>
-      </section>
+          {/* 나의 독서카드 섹션 - 분리된 컴포넌트 사용 */}
+          <MyReadingCardSection />
 
-      {/* 나의 독서카드 섹션 - 분리된 컴포넌트 사용 */}
-      <MyReadingCardSection />
+          {/* 나의 책장 섹션 - 분리된 컴포넌트 사용 */}
+          <MyBookshelfSection />
 
-      {/* 나의 책장 섹션 - 분리된 컴포넌트 사용 */}
-      <MyBookshelfSection />
-
-      {/* 오늘의 추천 섹션 - 분리된 컴포넌트 사용 */}
-      <TodaysRecommendationSection />
-
-    </div>
+          {/* 오늘의 추천 섹션 - 분리된 컴포넌트 사용 */}
+          <TodaysRecommendationSection />
+      </div>
   );
 }
 

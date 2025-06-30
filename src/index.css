@@ -131,6 +131,7 @@ code {
   /* 아이콘들을 나란히 정렬하기 위해 Flexbox 활성화 */
   align-items: center;
   /* 아이콘들이 세로 중앙에 오도록 정렬 */
+  gap: 10px;
 }
 
 .header-icons .icon {
@@ -244,7 +245,6 @@ code {
   -webkit-mask: url('/icons/TopBar/search.svg') no-repeat center;
   mask-size: contain;
   -webkit-mask-size: contain;
-  margin-left: 10px;
 }
 
 /* SVG 아이콘 대신 사용할 임시 배경 이미지 (실제 앱에서는 SVG 또는 폰트 아이콘 사용) */

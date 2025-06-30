@@ -259,3 +259,41 @@ export async function getTodaysRecommendation(): Promise<GetTodaysRecommendation
   const data: GetTodaysRecommendationResponse = await response.json();
   return data;
 }
+
+// ... (기존 코드 생략) ...
+
+/**
+ * ✨ 랜덤으로 책 한 권을 가져오는 API 함수 (수정)
+ */
+export async function getRandomBook(): Promise<Book> {
+  if (USE_MOCK_DATA) {
+      return new Promise((resolve, reject) => {
+          setTimeout(() => {
+              const books = mockAllBooksResponse.result.books;
+              if (books.length === 0) {
+                  reject(new Error("No books available in mock data."));
+                  return;
+              }
+              const randomIndex = Math.floor(Math.random() * books.length);
+              const randomBook = books[randomIndex];
+              
+              // 💡 여기서 `!`를 추가하여 TypeScript에게 undefined가 아님을 확신시킨다.
+              if (randomBook) { // 💡 또는 이렇게 조건문으로 undefined 여부를 검사하는 것이 더 안전합니다.
+                  resolve(randomBook);
+              } else {
+                  reject(new Error("Failed to select a random book. The book at the random index was undefined."));
+              }
+              
+          }, 500);
+      });
+  }
+
+  // 실제 API가 있다면 여기에 실제 호출 로직을 구현합니다.
+  // 예:
+  // const url = `${BASE_URL}/api/v0/bookshelf/random`;
+  // const response = await fetchWithAuth(url, { method: 'GET' });
+  // const data: Book = await response.json();
+  // return data;
+
+  throw new Error('Real API for getRandomBook not implemented.');
+}
