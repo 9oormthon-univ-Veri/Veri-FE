@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdArrowBackIosNew } from 'react-icons/md';
+import { MdClose } from 'react-icons/md';
 
 import GalleryIcon from '/icons/gallery.svg';
 import CameraIcon from '/icons/camera.svg';
@@ -190,7 +190,7 @@ const MakeCardPage: React.FC = () => {
       <div className="make-card-page">
         <header className="detail-header">
           <button className="header-left-arrow" onClick={() => navigate(-1)}>
-            <MdArrowBackIosNew size={24} color="#333" />
+            <MdClose size={24} color="#333" />
           </button>
           <h3>독서카드 만들기</h3>
           <div className="dummy-box" />

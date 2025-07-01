@@ -1,97 +1,150 @@
 .complete-page-container {
-    padding: 20px;
-    font-family: 'Nanum Gothic', sans-serif;
-    background-color: #fff;
-    min-height: 100vh;
-  }
+  padding: 20px;
+  font-family: 'Nanum Gothic', sans-serif;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.complete-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 16px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+}
+
+.spacer {
+  width: 40px;
+  /* 우측 공간 비움 */
+}
+
+.completion-message {
+  margin: 0px;
+  margin-bottom: 30px;
+
+  color: var(--Black, #1A1A1A);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.72px;
+}
+
+.action-icons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.share-icon-btn {
+  border: none;
+
+  display: flex;
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 10px;
+  background: rgba(155, 162, 177, 0.10);
+}
+
+.download-icon-btn {
+  border: none;
+
+  display: flex;
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 10px;
+  background: rgba(155, 162, 177, 0.10);
+}
+
+.card-preview-complete {
+  height: 100%;
+}
+
+.card-preview-complete-card {
+  border-radius: 16px;
+  position: relative;
+  height: 350px;
+  margin: 14px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-overlay-text {
+  position: absolute;
+  bottom: 50px;
+  color: white;
+  padding: 16px;
+  color: #FFF;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 160%; /* 22.4px */
+
+  text-align: left;
+}
+
+.card-summary-text {
+  margin-top: 20px;
+  padding: 16px;
+  text-align: left; /* 텍스트 왼쪽 정렬 */
+  display: block; /* 기본값이지만 명시적으로 해도 좋음 */
+}
+
+.card-summary-text strong {
+  align-self: stretch;
+  color: #1A1A1A;
+
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
+
+  text-align: left;
+}
+
+.summary-body {
+  flex: 1 0 0;
+  align-self: stretch;
+  color: rgba(26, 26, 26, 0.60);
+
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
   
-  .complete-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .cancel-btn {
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 16px;
-  }
-  
-  .page-title {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    flex: 1;
-  }
-  
-  .spacer {
-    width: 40px; /* 우측 공간 비움 */
-  }
-  
-  .completion-message {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .action-icons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin: 16px 0;
-  }
-  
-  .icon-btn {
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  .card-preview-complete {
-    position: relative;
-    width: 100%;
-    max-width: 340px;
-    margin: 0 auto;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  .card-image {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  
-  .card-overlay-text {
-    position: absolute;
-    bottom: 0;
-    color: white;
-    padding: 16px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-    font-size: 14px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-  }
-  
-  .card-summary-text {
-    margin-top: 20px;
-    padding: 16px;
-  }
-  
-  .card-summary-text strong {
-    display: block;
-    font-size: 16px;
-    margin-bottom: 8px;
-  }
-  
-  .summary-body {
-    font-size: 14px;
-    color: #555;
-    line-height: 1.6;
-  }
-  
+  text-align: left;
+}

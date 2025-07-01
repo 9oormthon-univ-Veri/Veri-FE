@@ -1,5 +1,12 @@
 /* src/pages/makeCardPage/CardCustomizationPage.css */
 
+.card-customization-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 30px);
+}
+
 .customization-container {
     display: flex;
     flex-direction: column;
@@ -11,61 +18,59 @@
     justify-content: space-between;
     padding: 16px;
     font-size: 16px;
+
+    margin-inline: 10px;
+    margin-bottom: 30px;
 }
 
-.cancel-btn,
+.customization-cancel-btn {
+    background: none;
+    border: none;
+    color: rgba(0, 0, 0, 0.50);
+
+    font-family: Pretendard;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
 .save-btn {
     background: none;
     border: none;
-    color: #6c6c6c;
-    font-weight: bold;
+
+    color: var(--blue-point, #391BE2);
+    font-family: Pretendard;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 }
 
-.save-btn {
-    color: #5f51ef;
-}
-
-.card-preview {
-    width: 100%;
+.custom-card-preview {
+    width: auto;
     height: 450px;
-    
+
     position: relative;
-    flex: 1;
     background-size: cover;
     background-position: center;
-    border-radius: 10px;
-    margin: 16px;
+
+    margin-bottom: 30px;
 }
 
 .overlay-text {
     position: absolute;
-    bottom: 40px;
+    bottom: 100px;
     left: 16px;
     right: 16px;
-    color: white;
-    font-size: 16px;
-    text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
-    line-height: 1.6;
-}
+    color: #FFF;
 
-.tab-buttons {
-    display: flex;
-    justify-content: center;
-    margin: 8px 0;
-}
-
-.tab {
-    padding: 8px 16px;
-    border-radius: 10px;
-    margin: 0 8px;
-    background-color: #f0f0f0;
-    color: #888;
-    font-weight: bold;
-}
-
-.tab.selected {
-    background-color: #5f51ef;
-    color: white;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+    /* 22.4px */
 }
 
 .option-panel {
@@ -81,20 +86,71 @@
 }
 
 .option {
-    min-width: 80px;
-    padding: 12px 16px;
-    background-color: #eee;
-    border-radius: 8px;
-    font-weight: bold;
-    color: #666;
-    white-space: nowrap;
+    position: relative; /* 체크 아이콘 위치 조정 위해 필요 */
+    display: flex;
+    width: 40px;
+    height: 40px;
+    padding: 18px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background: var(--Grey_2, #E7E9EF);
+  }
+  
+  .option .check-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* 클릭 이벤트 방해하지 않도록 */
+  }
+
+.option-label {
+    margin-top: 4px;
+    color: var(--Grey_1, #9BA2B1);
     text-align: center;
-    flex-shrink: 0;
-    cursor: pointer;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 }
 
-.option.active {
-    border: 2px solid #5f51ef;
-    background-color: white;
-    color: #5f51ef;
+.tab-selected {
+    border: none;
+    background: none;
+
+    color: var(--green-point, #0CE19A);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    width: 60px;
 }
+
+.tab {
+    border: none;
+    background: none;
+
+    color: var(--Grey_1, #9BA2B1);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    width: 60px;
+}
+
+.tab-icon-svg path {
+    transition: fill 0.3s;
+    fill: #9BA2B1;
+  }
+  
+  .tab-icon-svg.active path {
+    fill: #0CE19A;
+  }

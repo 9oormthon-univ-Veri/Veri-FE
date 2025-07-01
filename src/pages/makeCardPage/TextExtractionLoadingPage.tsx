@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 // 👇 모의 데이터 가져오기
 import { mockExtractedTextResponse } from '../../api/mockData';
 
+import './TextExtractionLoadingPage.css'; // 스타일 파일을 가져옵니다.
+
 const TextExtractionLoadingPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,24 +33,27 @@ const TextExtractionLoadingPage: React.FC = () => {
 
   return (
     <div className="page-container">
-      <div className="text-extraction-loading-page">
-        <header className="loading-header">
-          <h3>텍스트 추출 중</h3>
-          <p>결과가 나올때까지 조금만 기다려주세요!</p>
-        </header>
+      <div className="text-extraction-wrapper">
+        <div className="text-extraction-loading-page">
+          <header className="loading-header">
+            <h3>텍스트를 분석중이에요</h3>
+            <p>결과가 나올때까지 조금만 기다려주세요!</p>
+          </header>
 
-        <div className="loading-content">
-          <p>책 표지에서 텍스트를 추출하는 중입니다...</p>
-          <p>잠시만 기다려 주세요.</p>
-          {image && (
-            <img
-              src={image}
-              alt="업로드된 이미지"
-              style={{ marginTop: '20px', maxWidth: '80%', borderRadius: '8px' }}
-            />
-          )}
+          <div className="loading-content">
+            {image && (
+              <img
+                src={image}
+                alt="업로드된 이미지"
+                style={{ marginTop: '20px', maxWidth: '80%', borderRadius: '8px' }}
+              />
+            )}
+            <p>앱 사용에 대한 간단한 설명</p>
+
+          </div>
         </div>
       </div>
+
     </div>
   );
 };
