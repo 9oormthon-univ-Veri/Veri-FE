@@ -1,0 +1,97 @@
+.complete-page-container {
+    padding: 20px;
+    font-family: 'Nanum Gothic', sans-serif;
+    background-color: #fff;
+    min-height: 100vh;
+  }
+  
+  .complete-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .cancel-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 16px;
+  }
+  
+  .page-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+  }
+  
+  .spacer {
+    width: 40px; /* 우측 공간 비움 */
+  }
+  
+  .completion-message {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .action-icons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  
+  .icon-btn {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .card-preview-complete {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .card-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .card-overlay-text {
+    position: absolute;
+    bottom: 0;
+    color: white;
+    padding: 16px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  
+  .card-summary-text {
+    margin-top: 20px;
+    padding: 16px;
+  }
+  
+  .card-summary-text strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .summary-body {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+  }
+  

@@ -181,3 +181,12 @@ export const mockMemberProfileResponse: GetMemberProfileResponse = {
         profileImageUrl: 'https://i.pravatar.cc/150?img=22', // 임의의 프로필 이미지
     },
 };
+
+export const mockExtractedTextResponse = {
+    isSuccess: true,
+    code: 'COMMON200',
+    message: '성공입니다.',
+    result: {
+      extractedString: '“행복은 우리가 멈춰 서서 바라볼 때 가장 잘 보인다.” - 헨리 데이비드 소로우',
+    },
+  };

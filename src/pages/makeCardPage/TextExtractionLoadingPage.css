@@ -1,0 +1,50 @@
+/* src/pages/makeCardPage/TextExtractionLoadingPage.css */
+
+.text-extraction-loading-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    height: 100%;
+}
+
+.loading-header h3 {
+    align-self: stretch;
+
+    color: var(--Black, #1A1A1A);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 160%;
+    /* 28.8px */
+}
+
+.loading-header p {
+    align-self: stretch;
+
+    color: rgba(26, 26, 26, 0.80);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+    /* 25.6px */
+}
+
+.loading-content {
+    color: #000;
+
+    text-align: center;
+    font-family: Praise;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    /* 22.5px */
+    letter-spacing: 0.75px;
+}

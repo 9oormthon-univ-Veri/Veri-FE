@@ -17,7 +17,11 @@ import MyBookshelfPage from './pages/MyBookshelfPage';
 import BookDetailPage from './pages/detailPage/BookDetailPage';
 import ReadingCardDetailPage from './pages/detailPage/ReadingCardDetailPage';
 import LoginPage from './pages/LoginPage';
-import MakeCardPage from './pages/makePage/MakeCardPage';
+import MakeCardPage from './pages/makeCardPage/MakeCardPage';
+import TextExtractionLoadingPage from './pages/makeCardPage/TextExtractionLoadingPage';
+import TextExtractionResultPage from './pages/makeCardPage/TextExtractionResultPage';
+import CardCustomizationPage from './pages/makeCardPage/CardCustomizationPage';
+import CardCustomizationCompletePage from './pages/makeCardPage/CardCustomizationCompletePage';
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
 //const isAuthenticated = () => {
@@ -65,6 +69,11 @@ function App() {
         <Route path="/book-detail/:id" element={<BookDetailPage />} />
         <Route path="/reading-card-detail/:id" element={<ReadingCardDetailPage />} />
         <Route path="/make-card" element={<MakeCardPage />} />
+        <Route path="/text-extraction-loading" element={<TextExtractionLoadingPage />} />
+        <Route path="/text-extraction-result" element={<TextExtractionResultPage />} />
+        <Route path="/customize-card" element={<CardCustomizationPage />} />
+        <Route path="/card-complete" element={<CardCustomizationCompletePage />} />
+        {/* 404 페이지 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>
       {showTabBar && <TabBar />}

@@ -1,0 +1,43 @@
+/* src/pages/makeCardPage/TextExtractionResultPage.css */
+  
+  .extracted-image {
+    width: 100%;
+    margin: 20px 0;
+    border-radius: 8px;
+  }
+  
+  .extracted-textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    white-space: pre-wrap;
+    font-family: inherit;
+    box-sizing: border-box;
+    min-height: 180px;
+  }
+  
+  .button-group {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  .button-group button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background-color: #4a90e2;
+    color: white;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+  
+  .button-group button:hover {
+    background-color: #357abd;
+  }
+  
