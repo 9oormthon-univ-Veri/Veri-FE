@@ -12,6 +12,7 @@ const CardCustomizationCompletePage: React.FC = () => {
     const extractedText = location.state?.extractedText as string | undefined;
 
     const cardRef = useRef<HTMLDivElement>(null); // 캡처 대상 참조
+    const selectedFont = location.state?.font as string | undefined;
 
     const handleDownload = async () => {
         if (cardRef.current) {
@@ -80,12 +81,14 @@ const CardCustomizationCompletePage: React.FC = () => {
             <div className="card-preview-complete" ref={cardRef}>
                 <div className="card-preview-complete-card">
                     <img src={image} alt="완성된 카드" className="card-image" />
-                    <div className="card-overlay-text">{extractedText}</div>
+                    <div className="card-overlay-text" style={{ fontFamily: selectedFont }}>
+                        {extractedText}
+                    </div>
                 </div>
 
                 <div className="card-summary-text">
-                    <strong>아무도 지켜보지 않지만 모두가 공연을 한다</strong>
-                    <p className="summary-body">
+                    <strong style={{ fontFamily: selectedFont }}>아무도 지켜보지 않지만 모두가 공연을 한다</strong>
+                    <p className="summary-body" style={{ fontFamily: selectedFont }}>
                         {extractedText.length > 80 ? extractedText.slice(0, 80) + '...' : extractedText}
                     </p>
                 </div>
