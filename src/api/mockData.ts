@@ -13,41 +13,41 @@ export const mockAllBooksResponse: GetAllBooksResponse = {
     code: '1000',
     message: '요청에 성공하였습니다.',
     result: {
-        books: [
+        // ✨ 'books' 대신 'memberBooks'로 변경
+        memberBooks: [
             {
                 bookId: 1,
                 title: '해리 포터와 마법사의 돌',
                 author: 'J.K. 롤링',
                 imageUrl: 'https://picsum.photos/id/10/200/300',
-                status: '독서중',
-                rating: 5,
-                date: '2023-01-15',
-                cards: [
-                    { imageUrl: 'https://picsum.photos/id/11/200/300' },
-                    { imageUrl: 'https://picsum.photos/id/12/200/300' },
-                ],
+                score: 5,           // ✨ rating 대신 score로 변경
+                startedAt: '2023-01-15T00:00:00.000Z', // ✨ date 대신 startedAt, ISO 8601 형식으로 변경
+                status: 'READING',  // ✨ '독서중' 대신 API 스펙의 BookStatus 값 사용
             },
             {
                 bookId: 2,
                 title: '어린 왕자',
                 author: '앙투안 드 생텍쥐페리',
                 imageUrl: 'https://picsum.photos/id/20/200/300',
-                status: '완독',
-                rating: 4.5,
-                date: '2022-12-01',
-                cards: [],
+                score: 4,           // ✨ rating 대신 score로 변경 (소수점은 integer($int32) 스펙에 안맞을 수 있음)
+                startedAt: '2022-12-01T00:00:00.000Z', // ✨ date 대신 startedAt, ISO 8601 형식으로 변경
+                status: 'COMPLETED', // ✨ '완독' 대신 API 스펙의 BookStatus 값 사용
             },
             {
                 bookId: 3,
                 title: '코스모스',
                 author: '칼 세이건',
                 imageUrl: 'https://picsum.photos/id/30/200/300',
-                status: '읽고싶어요',
-                rating: 0,
-                date: '',
-                cards: [],
+                score: 0,
+                startedAt: '2024-07-02T00:00:00.000Z', // ✨ API 스펙의 ISO 8601 형식에 맞춤
+                status: 'NOT_START', // ✨ '읽고싶어요' 대신 API 스펙의 BookStatus 값 사용
             },
         ],
+        // ✨ pagination 필드를 추가합니다.
+        page: 1,
+        size: 3, // mock data에 있는 책의 개수
+        totalElements: 3,
+        totalPages: 1,
     },
 };
 
@@ -62,7 +62,7 @@ export const mockBookByIdResponse: GetBookByIdResponse = {
         author: 'J.K. 롤링',
         imageUrl: 'https://picsum.photos/id/10/200/300',
         rating: 5,
-        status: '독서중',
+        status: 'READING',
         cards: [
             { imageUrl: 'https://picsum.photos/id/11/200/300' },
             { imageUrl: 'https://picsum.photos/id/12/200/300' },
@@ -115,56 +115,54 @@ export const mockMyCardsResponse: GetMyCardsResponse = {
         cards: [
             {
                 cardId: 101,
-                createdAt: '2023-05-20T10:00:00Z',
+                // createdAt 필드는 새 스펙에서 제거되었으므로 삭제
                 content: '인생은 가까이서 보면 비극이지만, 멀리서 보면 희극이다.',
-                imageUrl: 'https://picsum.photos/id/201/200/300',
-                book: {
-                    bookId: 1,
-                    title: '해리 포터와 마법사의 돌',
-                    coverUrl: 'https://picsum.photos/id/10/200/300',
-                },
+                image: 'https://picsum.photos/id/201/200/300', // imageUrl -> image로 필드명 변경
+                // book 객체는 새 스펙에서 제거되었으므로 삭제
             },
             {
                 cardId: 102,
-                createdAt: '2023-05-18T14:30:00Z',
+                // createdAt 필드는 새 스펙에서 제거되었으므로 삭제
                 content: '나는 생각한다. 고로 나는 존재한다.',
-                imageUrl: 'https://picsum.photos/id/202/200/300',
-                book: {
-                    bookId: 2,
-                    title: '어린 왕자',
-                    coverUrl: 'https://picsum.photos/id/20/200/300',
-                },
+                image: 'https://picsum.photos/id/202/200/300', // imageUrl -> image로 필드명 변경
+                // book 객체는 새 스펙에서 제거되었으므로 삭제
             },
             {
                 cardId: 103,
-                createdAt: '2023-05-15T11:00:00Z',
+                // createdAt 필드는 새 스펙에서 제거되었으므로 삭제
                 content: '하늘을 나는 것만으로는 부족하다. 더 높이, 더 멀리, 더 빨리.',
-                imageUrl: 'https://picsum.photos/id/203/200/300',
-                book: {
-                    bookId: 5,
-                    title: '갈매기의 꿈',
-                    coverUrl: 'https://picsum.photos/id/50/200/300',
-                },
+                image: 'https://picsum.photos/id/203/200/300', // imageUrl -> image로 필드명 변경
+                // book 객체는 새 스펙에서 제거되었으므로 삭제
+            },
+            // 필요하다면 더 많은 카드 데이터 추가
+            {
+                cardId: 104,
+                content: '책 속에는 항상 진리가 있다. 그것을 찾아내는 것이 독서의 기쁨이다.',
+                image: 'https://picsum.photos/id/204/200/300',
+            },
+            {
+                cardId: 105,
+                content: '어제는 역사이고, 내일은 미스터리이며, 오늘은 선물이다.',
+                image: 'https://picsum.photos/id/205/200/300',
             },
         ],
+        // ✨ 새로운 API 스펙에 따라 페이지네이션 정보 추가
+        page: 1,           // 현재 페이지
+        size: 5,           // 한 페이지당 항목 수 (여기서는 예시로 5개)
+        totalElements: 10, // 전체 항목 수 (예시)
+        totalPages: 2,     // 전체 페이지 수 (예시)
     },
 };
 
-// 단일 카드 상세 정보 API의 목 데이터 (ID 101에 대한 정보)
+// ✨ mockCardDetailResponse도 새 Card 인터페이스에 맞춰 수정해야 합니다.
 export const mockCardDetailResponse: GetCardDetailByIdResponse = {
     isSuccess: true,
     code: '1000',
-    message: '요청에 성공하였습니다.',
+    message: '카드 상세 정보 조회 성공',
     result: {
         cardId: 101,
-        createdAt: '2023-05-20T10:00:00Z',
-        content: '인생은 가까이서 보면 비극이지만, 멀리서 보면 희극이다. - 찰리 채플린',
-        imageUrl: 'https://picsum.photos/id/201/200/300',
-        book: {
-            bookId: 1,
-            title: '해리 포터와 마법사의 돌',
-            coverUrl: 'https://picsum.photos/id/10/200/300',
-        },
+        content: '인생은 가까이서 보면 비극이지만, 멀리서 보면 희극이다. (상세 내용)',
+        image: 'https://picsum.photos/id/201/500/800', // imageUrl -> image
     },
 };
 
@@ -172,13 +170,13 @@ export const mockCardDetailResponse: GetCardDetailByIdResponse = {
 export const mockMemberProfileResponse: GetMemberProfileResponse = {
     isSuccess: true,
     code: '1000',
-    message: '사용자 정보 조회에 성공하였습니다.',
+    message: '목업 프로필 정보입니다.',
     result: {
-        memberId: 1,
-        name: '홍길동',
-        booksRead: 42,
-        readingCards: 150,
-        profileImageUrl: 'https://i.pravatar.cc/150?img=22', // 임의의 프로필 이미지
+        email: 'mockuser@example.com',
+        nickname: '테스트유저', // API 스펙에 맞춰 변경
+        image: 'https://placehold.co/100x100/A0B2C3/FFFFFF?text=Mock', // API 스펙에 맞춰 변경
+        numOfReadBook: 15, // API 스펙에 맞춰 변경
+        numOfCard: 30,     // API 스펙에 맞춰 변경
     },
 };
 

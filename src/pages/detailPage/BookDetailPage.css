@@ -242,10 +242,3 @@
     object-fit: cover;
     display: block;
 }
-
-.no-cards-message {
-    font-size: 0.9em;
-    color: #777;
-    text-align: center;
-    padding: 20px;
-}

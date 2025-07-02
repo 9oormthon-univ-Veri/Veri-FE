@@ -1,92 +1,123 @@
 // src/api/cardApi.ts
 
 import { fetchWithAuth, USE_MOCK_DATA } from './bookApi';
+// mockData는 새 스펙에 맞춰 업데이트해야 합니다.
 import { mockMyCardsResponse, mockCardDetailResponse } from './mockData';
 
 const BASE_URL = "https://api.very.miensoap.me";
 
-// 인터페이스 정의 (기존 코드 그대로 유지, 문제 없음)
-export interface BookInfoForCard {
-  bookId: number;
-  title: string;
-  coverUrl: string;
-}
-
+// Card 인터페이스는 현재 스펙에 맞습니다.
 export interface Card {
-  cardId: number;
-  createdAt: string;
-  content: string;
-  imageUrl: string;
-  book: BookInfoForCard;
-}
-
-export interface GetMyCardsResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
-    cards: Card[];
-  };
-}
-
-export interface GetCardDetailByIdResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: Card | null;
-}
-
-export interface CreateCardRequest {
-  memberBookId: number;
-  content: string;
-  imageUrl: string;
-}
-
-export interface CreateCardResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
     cardId: number;
-    createdAt: string;
-  };
+    content: string;
+    image: string; // 'imageUrl' 대신 'image' 사용
+}
+
+// GetMyCardsResponse 인터페이스는 현재 스펙에 맞습니다.
+export interface GetMyCardsResponse {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+    result: {
+        cards: Card[];
+        page: number;
+        size: number;
+        totalElements: number;
+        totalPages: number;
+    };
+}
+
+// GetCardDetailByIdResponse는 Card 타입 변경에 따라 결과 타입에 영향을 받습니다.
+export interface GetCardDetailByIdResponse {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+    result: Card | null; // Card 타입이 변경되었으므로 여기에 반영
+}
+
+// CreateCardRequest는 새 API 스펙과 일치합니다.
+export interface CreateCardRequest {
+    memberBookId: number;
+    content: string;
+    imageUrl: string; // 백엔드와 논의 후 'image'로 통일하는 것을 고려 (현재 API는 imageUrl)
+}
+
+// ✨ CreateCardResponse를 새 API 스펙에 맞춰 수정합니다.
+export interface CreateCardResponse {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+    result: {
+        cardId: number;
+        // 'createdAt' 필드는 새 스펙에 없으므로 제거합니다.
+    };
+}
+
+// ✨ POST /api/v1/cards/image 요청 바디 인터페이스 추가
+export interface GetPresignedUrlRequest {
+    contentType: string;
+    contentLength: number;
+}
+
+// ✨ POST /api/v1/cards/image 응답 인터페이스 추가
+export interface GetPresignedUrlResponse {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+    result: {
+        presignedUrl: string;
+        publicUrl: string;
+    };
+}
+
+// GetMyCards API를 위한 쿼리 파라미터 인터페이스는 현재 스펙에 맞습니다.
+export interface GetMyCardsQueryParams {
+    page?: number;
+    size?: number;
+    sort?: string;
 }
 
 // ==========================================================
-//                 ⬇️ 실제 API 호출 로직 ⬇️
+//          ⬇️ 실제 API 호출 로직 ⬇️
 // ==========================================================
 
 /**
  * 내 독서 카드 목록을 가져오는 API 함수
+ * @param {GetMyCardsQueryParams} params - 페이지네이션 및 정렬 쿼리 파라미터
  * @returns {Promise<GetMyCardsResponse>} 카드 목록 응답 객체
  */
-export async function getMyCards(): Promise<GetMyCardsResponse> {
-  // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
-  if (USE_MOCK_DATA) {
-    // 네트워크 지연을 흉내내기 위해 0.5초 지연시킵니다.
-    return new Promise(resolve => setTimeout(() => resolve(mockMyCardsResponse), 500));
-  }
-
-  // 실제 API 호출 로직
-  const url = `${BASE_URL}/api/v1/cards/my`;
-  try {
-    const response = await fetchWithAuth(url, {
-      method: 'GET',
-    });
-
-    const data: GetMyCardsResponse = await response.json();
-
-    // API 응답의 성공 여부 및 데이터 유효성 검사
-    if (!data.isSuccess || !data.result) {
-      throw new Error(`API call failed: ${data.message || 'Unknown error'}`);
+export async function getMyCards(params: GetMyCardsQueryParams = {}): Promise<GetMyCardsResponse> {
+    if (USE_MOCK_DATA) {
+        return new Promise(resolve => setTimeout(() => resolve(mockMyCardsResponse), 500));
     }
 
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch my cards:', error);
-    // 에러를 호출한 컴포넌트로 다시 전파
-    throw error;
-  }
+    const url = new URL(`${BASE_URL}/api/v1/cards/my`);
+    if (params.page !== undefined) {
+        url.searchParams.append('page', String(params.page));
+    }
+    if (params.size !== undefined) {
+        url.searchParams.append('size', String(params.size));
+    }
+    if (params.sort) {
+        url.searchParams.append('sort', params.sort);
+    }
+
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+        });
+
+        const data: GetMyCardsResponse = await response.json();
+
+        if (!data.isSuccess || !data.result || !Array.isArray(data.result.cards)) {
+            throw new Error(`API call failed or data format is incorrect: ${data.message || 'Unknown error'}`);
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch my cards:', error);
+        throw error;
+    }
 }
 
 /**
@@ -95,61 +126,106 @@ export async function getMyCards(): Promise<GetMyCardsResponse> {
  * @returns {Promise<GetCardDetailByIdResponse>} 카드 상세 정보 응답 객체
  */
 export async function getCardDetailById(cardId: number): Promise<GetCardDetailByIdResponse> {
-  // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
-  if (USE_MOCK_DATA) {
-    // 요청한 ID에 따라 다른 목 데이터를 반환하도록 로직을 추가합니다.
-    const mockResult = cardId === 101 ? mockCardDetailResponse : {
-      isSuccess: true,
-      code: '200', // 카드가 없을 때도 isSuccess는 true일 수 있으므로 code로 분기
-      message: '카드를 찾을 수 없습니다.',
-      result: null, // 결과가 없는 경우 null
-    };
-    return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
-  }
-
-  // 실제 API 호출 로직
-  const url = `${BASE_URL}/api/v1/cards/${cardId}`;
-
-  try {
-    const response = await fetchWithAuth(url, {
-      method: 'GET',
-    });
-
-    const data: GetCardDetailByIdResponse = await response.json();
-
-    // API 응답의 성공 여부 및 데이터 유효성 검사
-    if (!data.isSuccess) {
-      throw new Error(`API call failed: ${data.message || 'Unknown error'}`);
+    if (USE_MOCK_DATA) {
+        const mockResult = cardId === 101 ? mockCardDetailResponse : {
+            isSuccess: true,
+            code: '200',
+            message: '카드를 찾을 수 없습니다.',
+            result: null,
+        };
+        return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
     }
 
-    return data;
-  } catch (error) {
-    console.error(`Failed to fetch card detail for ID ${cardId}:`, error);
-    throw error;
-  }
+    const url = `${BASE_URL}/api/v1/cards/${cardId}`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'GET',
+        });
+
+        const data: GetCardDetailByIdResponse = await response.json();
+
+        if (!data.isSuccess) {
+            throw new Error(`API call failed: ${data.message || 'Unknown error'}`);
+        }
+
+        return data;
+    } catch (error) {
+        console.error(`Failed to fetch card detail for ID ${cardId}:`, error);
+        throw error;
+    }
 }
 
+/**
+ * 새로운 독서 카드를 생성하는 API 함수
+ * @param {CreateCardRequest} body - 생성할 카드의 데이터 (memberBookId, content, imageUrl)
+ * @returns {Promise<CreateCardResponse>} 카드 생성 응답 객체 (cardId 포함)
+ */
 export async function createCard(body: CreateCardRequest): Promise<CreateCardResponse> {
-  const url = `${BASE_URL}/api/v1/cards`;
+    const url = `${BASE_URL}/api/v1/cards`;
 
-  try {
-    const response = await fetchWithAuth(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
 
-    const data: CreateCardResponse = await response.json();
+        const data: CreateCardResponse = await response.json();
 
-    if (!data.isSuccess) {
-      throw new Error(data.message || '카드 생성 실패');
+        if (!data.isSuccess) {
+            throw new Error(data.message || '카드 생성에 실패했습니다.');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('카드 생성 중 오류:', error);
+        throw error;
+    }
+}
+
+/**
+ * 이미지 업로드를 위한 presigned URL을 요청하는 API 함수
+ * @param {GetPresignedUrlRequest} body - 이미지의 contentType 및 contentLength
+ * @returns {Promise<GetPresignedUrlResponse>} presigned URL 및 public URL 응답 객체
+ */
+export async function getPresignedUrlForImageUpload(body: GetPresignedUrlRequest): Promise<GetPresignedUrlResponse> {
+    const url = `${BASE_URL}/api/v1/cards/image`;
+
+    // ✨ USE_MOCK_DATA에 대한 목 데이터 처리를 추가할 수 있습니다.
+    if (USE_MOCK_DATA) {
+        return new Promise(resolve => setTimeout(() => resolve({
+            isSuccess: true,
+            code: '1000',
+            message: 'Mock presigned URL generated successfully.',
+            result: {
+                presignedUrl: 'https://mock-presigned-url.example.com/upload/mock-image.jpg?AWSAccessKeyId=MOCKKEY&Expires=MOCKEXP&Signature=MOCKSIG',
+                publicUrl: 'https://mock-public-url.example.com/mock-image.jpg',
+            }
+        }), 500));
     }
 
-    return data;
-  } catch (error) {
-    console.error('카드 생성 중 오류:', error);
-    throw error;
-  }
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        const data: GetPresignedUrlResponse = await response.json();
+
+        if (!data.isSuccess) {
+            throw new Error(data.message || 'Presigned URL 요청에 실패했습니다.');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Presigned URL 요청 중 오류:', error);
+        throw error;
+    }
 }

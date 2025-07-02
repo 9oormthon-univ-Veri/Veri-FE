@@ -89,13 +89,7 @@
   width: 100%;
 }
 
-.no-cards-message {
-  text-align: center;
-  color: #888;
-  padding: 20px;
-  width: 100%;
-  /* Flexbox에서 가운데 정렬을 위해 100% 너비 차지 */
-}
+
 
 .tab-navigation {
   display: flex;
@@ -144,16 +138,6 @@
   height: 2px;
   background-color: #9B90E9;
   border-radius: 1px;
-}
-
-.no-cards-message {
-  text-align: center;
-  color: #888;
-  margin-top: 50px;
-  width: 100%;
-  /* 그리드 아이템으로 중앙 정렬 */
-  grid-column: 1 / -1;
-  /* 전체 컬럼 차지 */
 }
 
 .create-card-button:hover {

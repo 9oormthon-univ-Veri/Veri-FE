@@ -92,3 +92,11 @@
   position: relative;
   z-index: 1000;
 }
+
+.no-cards-message {
+  text-align: center;
+  color: #888;
+  margin-top: 50px;
+  width: 100%;
+  grid-column: 1 / -1;
+}

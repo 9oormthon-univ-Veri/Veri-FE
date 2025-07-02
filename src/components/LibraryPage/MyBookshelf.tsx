@@ -20,10 +20,19 @@ const SingleBookshelfItem: React.FC<BookshelfItemType> = ({ id, coverUrl, title,
     navigate(`/book-detail/${id}`); // 클릭 시 해당 책의 상세 페이지로 이동
   };
 
+  const fallbackImageUrl = 'https://placehold.co/100x150?text=No+Cover';
   return (
     <div className="bookshelf-item" onClick={handleClick}>
       <div className="book-cover-thumbnail">
-        <img src={coverUrl || 'https://via.placeholder.com/100x150?text=No+Cover'} alt={title} onError={(e) => { e.currentTarget.src = "https://via.placeholder.com/100x150?text=No+Cover"; }} />
+        <img
+          src={coverUrl || fallbackImageUrl}
+          alt={title}
+          onError={(e) => {
+            if (e.currentTarget.src !== fallbackImageUrl) {
+              e.currentTarget.src = fallbackImageUrl;
+            }
+          }}
+        />
       </div>
       <p className="book-title">{title}</p>
       <p className="book-author">{author}</p>
@@ -45,23 +54,35 @@ const MyBookshelfSection: React.FC = () => {
 
       try {
         const queryParams: GetAllBooksQueryParams = {
-          offset: 0, // 필요에 따라 조정
-          page: 1,   // 필요에 따라 조정
+          // API 스펙에 맞춰 page, size, sort를 사용하는 것이 좋습니다.
+          page: 1,
+          size: 5, // 최대 5개만 표시할 것이므로 size를 5로 설정 (API 호출 최적화)
+          // offset은 API 스펙에 없으므로 제거하는 것이 좋습니다.
+          // sort: 'newest', // 필요하다면 추가
         };
-        // 현재 이 부분에서 accessToken 없이 getAllBooks를 호출하고 있다고 주석을 달아주셨습니다.
-        // bookApi.ts의 getAllBooks 로직에 fetchWithAuth가 있으므로 accessToken이 필요합니다.
-        const response = await getAllBooks(queryParams); 
+        
+        const response = await getAllBooks(queryParams);
 
         if (response.isSuccess) {
-          const mappedBooks: BookshelfItemType[] = response.result.books.map((book: Book) => ({
-            id: String(book.bookId), // bookId를 string으로 변환
-            coverUrl: book.imageUrl,
-            title: book.title,
-            author: book.author,
-          }));
-          // 최대 5개의 책만 표시하도록 제한 (UI 일관성을 위해)
-          setBookshelfItems(mappedBooks.slice(0, 5));
+          // ✨ 이 부분을 수정합니다: response.result && Array.isArray(response.result.memberBooks) 체크
+          // ✨ 그리고 .books 대신 .memberBooks를 사용합니다.
+          if (response.result && Array.isArray(response.result.memberBooks)) {
+            const mappedBooks: BookshelfItemType[] = response.result.memberBooks.map((book: Book) => ({
+              id: String(book.bookId),
+              coverUrl: book.imageUrl,
+              title: book.title,
+              author: book.author,
+            }));
+            // 최대 5개의 책만 표시하도록 제한 (UI 일관성을 위해)
+            setBookshelfItems(mappedBooks.slice(0, 5));
+          } else {
+            // isSuccess는 true지만, memberBooks 배열이 없거나 비어있는 경우
+            console.warn("API는 성공을 반환했지만, 책 데이터(result.memberBooks)가 없거나 형식이 잘못되었습니다:", response);
+            setBookshelfItems([]); // 빈 배열로 설정하여 오류 없이 "등록된 책이 없습니다." 메시지 표시
+            setError("책장 데이터를 불러왔으나, 표시할 내용이 없습니다.");
+          }
         } else {
+          // API 호출이 isSuccess: false로 실패한 경우 (예: 인증 오류)
           setError(response.message || "책장 데이터를 가져오는데 실패했습니다.");
         }
       } catch (err: any) {

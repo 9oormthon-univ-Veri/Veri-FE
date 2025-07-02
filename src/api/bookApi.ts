@@ -12,7 +12,7 @@ import {
 } from './mockData';
 
 // 기존 인터페이스는 그대로 둡니다. (문제 없음)
-export type BookStatus = "독서중" | "완독" | "읽고싶어요" | "미정";
+export type BookStatus = "READING" | "NOT_START" | "COMPLETED";
 
 export interface CardItem {
   imageUrl: string;
@@ -23,15 +23,17 @@ export interface Book {
   title: string;
   author: string;
   imageUrl: string;
+  score: number;
+  startedAt: string;
   status: BookStatus;
-  rating: number; // score 대신 rating 필드로 변경
-  date: string;
-  translator?: string;
-  cards?: CardItem[];
 }
 
 export interface BooksResult {
-  books: Book[];
+  memberBooks: Book[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 export interface GetAllBooksResponse {
@@ -42,8 +44,10 @@ export interface GetAllBooksResponse {
 }
 
 export interface GetAllBooksQueryParams {
-  offset?: number;
   page?: number;
+  size?: number;
+  offset?: number;
+  sort?: string;
 }
 
 export interface GetBookByIdResponse {
@@ -128,7 +132,7 @@ export interface GetPopularBooksQueryParams {
 
 // ✨ 2. 목 데이터 사용 여부를 결정하는 스위치를 만듭니다.
 //     true로 설정하면 실제 API 호출 없이 목 데이터를 사용합니다.
-export const USE_MOCK_DATA = true; // ✨ 개발 시에는 true, 백엔드 연동 시 false로 변경
+export const USE_MOCK_DATA = false; // ✨ 개발 시에는 true, 백엔드 연동 시 false로 변경
 
 const BASE_URL = "https://api.very.miensoap.me";
 
@@ -142,44 +146,44 @@ const BASE_URL = "https://api.very.miensoap.me";
 export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
   // 목 데이터 사용 시 로직은 그대로 둡니다. (여기서는 중요하지 않음)
   if (USE_MOCK_DATA) {
-      // ... (USE_MOCK_DATA 처리 로직. 현재 getAllBooks에서 직접 목 데이터 반환하므로 여기는 영향 없음)
+    // ... (USE_MOCK_DATA 처리 로직. 현재 getAllBooks에서 직접 목 데이터 반환하므로 여기는 영향 없음)
   }
 
   const accessToken = getAccessToken();
-  
-  const headers: Record<string, string> = { 
-      'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string>),
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string>),
   };
 
   // ✨ accessToken이 있을 경우에만 Authorization 헤더를 추가합니다.
   if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
+    headers['Authorization'] = `Bearer ${accessToken}`;
   } else {
-      // ✨ 토큰이 없는데 인증이 필수인 API라면 여기서 에러를 throw하거나 로그인 페이지로 리다이렉트합니다.
-      if (!USE_MOCK_DATA) {
-           console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}. This API call might fail if authentication is required.`);
-           // throw new Error('Authentication required: No access token available. Please log in.');
-           // 실제 서비스에서는 여기서 로그인 페이지로 리다이렉트하는 로직을 추가합니다.
-           // navigate('/login'); // navigate는 이 스코프에 없으니 주의
-      }
+    // ✨ 토큰이 없는데 인증이 필수인 API라면 여기서 에러를 throw하거나 로그인 페이지로 리다이렉트합니다.
+    if (!USE_MOCK_DATA) {
+      console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}. This API call might fail if authentication is required.`);
+      // throw new Error('Authentication required: No access token available. Please log in.');
+      // 실제 서비스에서는 여기서 로그인 페이지로 리다이렉트하는 로직을 추가합니다.
+      // navigate('/login'); // navigate는 이 스코프에 없으니 주의
+    }
   }
 
   const response = await fetch(url, {
-      ...options,
-      headers: headers as HeadersInit, // 최종적으로 HeadersInit으로 단언하여 fetch에 전달
+    ...options,
+    headers: headers as HeadersInit, // 최종적으로 HeadersInit으로 단언하여 fetch에 전달
   });
 
   if (!response.ok) {
-      let errorMessage = `API call failed: ${response.status}`;
-      try {
-          const errorData = await response.json();
-          errorMessage += ` - ${errorData.message || response.statusText}`;
-      } catch (e) {
-          const text = await response.text();
-          errorMessage += ` - ${text || response.statusText}`;
-      }
-      throw new Error(errorMessage);
+    let errorMessage = `API call failed: ${response.status}`;
+    try {
+      const errorData = await response.json();
+      errorMessage += ` - ${errorData.message || response.statusText}`;
+    } catch (e) {
+      const text = await response.text();
+      errorMessage += ` - ${text || response.statusText}`;
+    }
+    throw new Error(errorMessage);
   }
 
   return response;
@@ -189,7 +193,44 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
  * 모든 책을 가져오는 API
  */
 export async function getAllBooks(
+
   params: GetAllBooksQueryParams): Promise<GetAllBooksResponse> {
+    if (USE_MOCK_DATA) {
+      return new Promise(resolve => setTimeout(() => resolve({
+        isSuccess: true,
+        code: '1000',
+        message: '목 책장 조회 성공',
+        result: {
+          // ✨ books 대신 memberBooks로 변경하고, 필드들도 Book 인터페이스에 맞게 변경
+          memberBooks: [
+            {
+              bookId: 1,
+              title: '목 책 1',
+              author: '목 작가 1',
+              imageUrl: 'https://placehold.co/100x150?text=My+Book+1',
+              score: 5,
+              startedAt: '2025-07-01T10:00:00.000Z',
+              status: 'READING'
+            },
+            {
+              bookId: 2,
+              title: '목 책 2',
+              author: '목 작가 2',
+              imageUrl: 'https://placehold.co/100x150?text=My+Book+2',
+              score: 4,
+              startedAt: '2025-06-20T10:00:00.000Z',
+              status: 'NOT_START'
+            },
+            // ... 다른 목업 책들도 API 스펙에 맞춰 수정
+          ],
+          // ✨ offset 제거
+          page: params.page || 1,
+          size: params.size || 10,
+          totalElements: 2, // 목업 데이터 개수에 맞춰 조정
+          totalPages: 1,
+        }
+      }), 500));
+    }
   // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
   if (USE_MOCK_DATA) {
     // 네트워크 지연을 흉내내기 위해 0.5초 지연시킵니다.
@@ -307,7 +348,9 @@ export async function getRandomBook(): Promise<Book> {
   if (USE_MOCK_DATA) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const books = mockAllBooksResponse.result.books;
+        // ✨ 이 줄을 수정합니다: books 대신 memberBooks 사용
+        const books = mockAllBooksResponse.result.memberBooks; // <-- 여기를 수정합니다.
+
         if (books.length === 0) {
           reject(new Error("No books available in mock data."));
           return;
@@ -315,8 +358,7 @@ export async function getRandomBook(): Promise<Book> {
         const randomIndex = Math.floor(Math.random() * books.length);
         const randomBook = books[randomIndex];
 
-        // 💡 여기서 `!`를 추가하여 TypeScript에게 undefined가 아님을 확신시킨다.
-        if (randomBook) { // 💡 또는 이렇게 조건문으로 undefined 여부를 검사하는 것이 더 안전합니다.
+        if (randomBook) {
           resolve(randomBook);
         } else {
           reject(new Error("Failed to select a random book. The book at the random index was undefined."));

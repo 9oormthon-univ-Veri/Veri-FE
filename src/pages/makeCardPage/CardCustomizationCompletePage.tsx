@@ -1,22 +1,26 @@
+// src/pages/CardCustomizationCompletePage.tsx
 import html2canvas from 'html2canvas';
-import React, { useRef, useEffect } from 'react'; // useEffect를 import 합니다.
+import React, { useRef, useEffect } from 'react';
 import { MdClose } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
 import { createCard } from '../../api/cardApi';
+// ✨ imageApi에서 uploadImage 함수를 임포트합니다.
+import { uploadImage } from '../../api/imageApi';
 
 const CardCustomizationCompletePage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const image = location.state?.image as string | undefined;
-    const extractedText = location.state?.extractedText as string | undefined;
-    // bookId를 location.state에서 가져옵니다. 이전 페이지에서 반드시 넘겨줘야 합니다.
-    const bookId = location.state?.bookId as number | undefined; 
+    const image = location.state?.image as string | undefined; // 카드 배경 이미지 (Base64 또는 URL)
+    const extractedText = location.state?.extractedText as string | undefined; // 카드에 들어갈 텍스트
+    // bookId를 location.state에서 가져옵니다. 이 값이 memberBookId로 사용됩니다.
+    const memberBookId = location.state?.bookId as number | undefined;
+    const selectedFont = location.state?.font as string | undefined; // 선택된 폰트
 
-    const cardRef = useRef<HTMLDivElement>(null);
-    const selectedFont = location.state?.font as string | undefined;
+    const cardRef = useRef<HTMLDivElement>(null); // html2canvas로 캡처할 카드 요소의 ref
 
+    // 카드 다운로드 처리 함수
     const handleDownload = async () => {
         if (cardRef.current) {
             const canvas = await html2canvas(cardRef.current);
@@ -24,16 +28,23 @@ const CardCustomizationCompletePage: React.FC = () => {
 
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = '독서카드.png';
-            link.click();
+            link.download = '독서카드.png'; // 다운로드될 파일 이름
+            link.click(); // 다운로드 실행
         }
     };
 
+    // 카드 공유 처리 함수
     const handleShare = async () => {
         if (cardRef.current) {
             const canvas = await html2canvas(cardRef.current);
             canvas.toBlob((blob) => {
-                if (navigator.canShare && blob && navigator.canShare({ files: [new File([blob], 'card.png', { type: 'image/png' })] })) {
+                if (!blob) {
+                    console.error('Blob 생성에 실패했습니다.');
+                    return;
+                }
+
+                // navigator.canShare 및 navigator.share API를 사용하여 공유 기능 구현
+                if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'card.png', { type: 'image/png' })] })) {
                     const file = new File([blob], 'card.png', { type: 'image/png' });
 
                     navigator.share({
@@ -42,64 +53,80 @@ const CardCustomizationCompletePage: React.FC = () => {
                         files: [file],
                     }).catch((error) => console.error('공유 실패:', error));
                 } else {
-                    alert('현재 브라우저에서 공유를 지원하지 않아요.');
+                    // alert 대신 console.log로 메시지 출력 (UI에 커스텀 모달이 있다면 대체)
+                    console.log('현재 브라우저에서 공유를 지원하지 않거나 파일 공유가 불가능합니다.');
                 }
             }, 'image/png');
         }
     };
 
-    // 카드를 저장하는 비동기 함수
+    // 카드를 저장하는 비동기 함수 (이미지 업로드 후 카드 생성 API 호출)
     const handleSave = async () => {
-        if (!cardRef.current || !extractedText || bookId === undefined) {
+        // 필수 정보가 없는 경우 에러 로깅 및 함수 종료
+        if (!cardRef.current || !extractedText || memberBookId === undefined) {
             console.error('카드를 저장하는 데 필요한 정보가 부족합니다. (이미지, 텍스트 또는 책 ID)');
             return;
         }
 
+        // 1. HTML 요소를 Canvas로 렌더링하고 Blob으로 변환
         const canvas = await html2canvas(cardRef.current);
         const blob = await new Promise<Blob | null>((resolve) => {
             canvas.toBlob((b) => resolve(b), 'image/png');
         });
 
         if (!blob) {
-            console.error('이미지 생성에 실패했습니다.');
+            console.error('캔버스에서 이미지 Blob 생성에 실패했습니다.');
             return;
         }
 
-        const imageUrl = 'https://cdn.example.com/uploads/mock-uploaded-card.png';
-        console.log('생성된 카드 이미지 (임시) URL:', imageUrl);
+        // 2. Blob을 File 객체로 변환 (업로드를 위해)
+        const cardImageFile = new File([blob], `reading_card_${Date.now()}.png`, { type: 'image/png' });
+
+        let uploadedImageUrl: string;
+        try {
+            // 3. imageApi의 uploadImage 함수를 사용하여 이미지를 서버에 업로드
+            // 이 함수는 Presigned URL을 받아와 실제 PUT 업로드를 수행하고 최종 Public URL을 반환합니다.
+            uploadedImageUrl = await uploadImage(cardImageFile);
+            console.log('생성된 카드 이미지가 성공적으로 업로드되었습니다. URL:', uploadedImageUrl);
+        } catch (uploadError) {
+            console.error('카드 이미지 업로드 실패:', uploadError);
+            // alert 대신 console.log로 메시지 출력 (UI에 커스텀 모달이 있다면 대체)
+            console.log('카드 이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+            return; // 업로드 실패 시 카드 저장 중단
+        }
 
         try {
-            // createCard API를 호출하여 카드를 저장합니다.
+            // 4. createCard API를 호출하여 카드를 저장합니다.
             const response = await createCard({
-                // ✨ 이 부분을 수정합니다. bookId 대신 memberBookId 사용.
-                // 현재 bookId 변수에 memberBookId로 사용할 값이 들어있다고 가정합니다.
-                memberBookId: bookId, 
+                memberBookId: memberBookId, // memberBookId 사용
                 content: extractedText,
-                imageUrl,
+                imageUrl: uploadedImageUrl, // 업로드된 이미지의 Public URL 사용
             });
 
             console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
+            // 카드 상세 페이지로 이동 (예시 경로)
             navigate(`/reading-card-detail/${response.result.cardId}`);
-        } catch (err) {
-            alert('카드 저장에 실패했습니다. 다시 시도해주세요.');
-            console.error('카드 저장 중 오류:', err);
+        } catch (saveError) {
+            // alert 대신 console.log로 메시지 출력 (UI에 커스텀 모달이 있다면 대체)
+            console.log('카드 저장에 실패했습니다. 다시 시도해주세요.');
+            console.error('카드 저장 중 오류:', saveError);
         }
     };
 
     // ⭐️ useEffect 훅을 사용하여 컴포넌트가 마운트될 때 handleSave를 자동으로 호출합니다.
     useEffect(() => {
         // 이미지, 추출된 텍스트, 책 ID가 모두 존재할 때만 저장을 시도합니다.
-        if (image && extractedText && bookId !== undefined) {
+        if (image && extractedText && memberBookId !== undefined) {
             handleSave();
         } else {
             // 필수 데이터가 없으면 사용자에게 메시지를 남기고 카드 생성 페이지로 돌려보냅니다.
             console.error('자동 저장을 위한 필수 데이터가 누락되었습니다. 카드 생성 페이지로 리디렉션합니다.');
             navigate('/make-card');
         }
-    }, [image, extractedText, bookId, navigate]); // 의존성 배열에 변수들을 추가하여 필요할 때만 실행되게 합니다.
+    }, [image, extractedText, memberBookId, navigate]); // 의존성 배열에 변수들을 추가하여 필요할 때만 실행되게 합니다.
 
     // 이미지, 추출된 텍스트 또는 책 ID가 없을 경우 로딩 상태를 보여주거나 리디렉션합니다.
-    if (!image || !extractedText || bookId === undefined) {
+    if (!image || !extractedText || memberBookId === undefined) {
         // 필요한 데이터가 없으므로 잠시 로딩 메시지를 표시할 수 있습니다.
         // useEffect가 이미 navigate를 호출할 것이므로 이 부분은 빠르게 지나갈 것입니다.
         return <div className="complete-page-container">카드 정보를 불러오는 중...</div>;
@@ -136,6 +163,7 @@ const CardCustomizationCompletePage: React.FC = () => {
 
             <div className="card-preview-complete" ref={cardRef}>
                 <div className="card-preview-complete-card">
+                    {/* 이미지 URL이 Base64일 수도 있고, 일반 URL일 수도 있으므로 그대로 사용 */}
                     <img src={image} alt="완성된 카드" className="card-image" />
                     <div className="card-overlay-text" style={{ fontFamily: selectedFont }}>
                         {extractedText}
@@ -143,6 +171,8 @@ const CardCustomizationCompletePage: React.FC = () => {
                 </div>
 
                 <div className="card-summary-text">
+                    {/* 이 부분은 카드 내용 요약이므로, extractedText를 기반으로 동적으로 생성하는 것이 좋습니다. */}
+                    {/* 현재는 하드코딩된 텍스트와 extractedText의 일부를 사용하고 있습니다. */}
                     <strong style={{ fontFamily: selectedFont }}>아무도 지켜보지 않지만 모두가 공연을 한다</strong>
                     <p className="summary-body" style={{ fontFamily: selectedFont }}>
                         {extractedText.length > 80 ? extractedText.slice(0, 80) + '...' : extractedText}
