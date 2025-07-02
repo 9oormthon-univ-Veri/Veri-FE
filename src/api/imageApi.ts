@@ -9,15 +9,15 @@ const BASE_URL = "https://api.very.miensoap.me";
 // ==========================================================
 
 // POST /api/v0/images/presigned-url 응답 (기존)
-interface PresignedUrlResponse {
-    isSuccess: boolean;
-    code: string;
-    message: string;
-    result: {
-        presignedUrl: string;
-        fileName: string; // 업로드 후 접근할 최종 파일 이름/URL
-    };
-}
+// interface PresignedUrlResponse {
+//     isSuccess: boolean;
+//     code: string;
+//     message: string;
+//     result: {
+//         presignedUrl: string;
+//         fileName: string; // 업로드 후 접근할 최종 파일 이름/URL
+//     };
+// }
 
 interface ImageUploadApiResponse {
     isSuccess: boolean;
@@ -61,34 +61,34 @@ export interface OcrResponse {
 //          ⬇️ 목 데이터 (필요시 src/api/mockData.ts로 이동) ⬇️
 // ==========================================================
 
-const mockPresignedUrlResponse: PresignedUrlResponse = {
-    isSuccess: true,
-    code: '1000',
-    message: 'Mock presigned URL generated successfully.',
-    result: {
-        presignedUrl: 'https://mock-presigned-url.example.com/upload/mock-image.jpg?AWSAccessKeyId=MOCKKEY&Expires=MOCKEXP&Signature=MOCKSIG',
-        fileName: 'https://mock-public-url.example.com/mock-image.jpg', // mock public URL
-    },
-};
+// const mockPresignedUrlResponse: PresignedUrlResponse = {
+//     isSuccess: true,
+//     code: '1000',
+//     message: 'Mock presigned URL generated successfully.',
+//     result: {
+//         presignedUrl: 'https://mock-presigned-url.example.com/upload/mock-image.jpg?AWSAccessKeyId=MOCKKEY&Expires=MOCKEXP&Signature=MOCKSIG',
+//         fileName: 'https://mock-public-url.example.com/mock-image.jpg', // mock public URL
+//     },
+// };
 
-const mockImagesListResponse: GetImagesResponse = {
-    isSuccess: true,
-    code: '1000',
-    message: 'Mock images fetched successfully.',
-    result: {
-        content: [
-            'https://via.placeholder.com/150/0000FF/FFFFFF?text=MockImage1',
-            'https://via.placeholder.com/150/FF0000/FFFFFF?text=MockImage2',
-            'https://via.placeholder.com/150/00FF00/FFFFFF?text=MockImage3',
-            'https://via.placeholder.com/150/FFFF00/000000?text=MockImage4',
-            'https://via.placeholder.com/150/FF00FF/FFFFFF?text=MockImage5',
-        ],
-        page: 1,
-        size: 5,
-        totalElements: 10,
-        totalPages: 2,
-    },
-};
+// const mockImagesListResponse: GetImagesResponse = {
+//     isSuccess: true,
+//     code: '1000',
+//     message: 'Mock images fetched successfully.',
+//     result: {
+//         content: [
+//             'https://via.placeholder.com/150/0000FF/FFFFFF?text=MockImage1',
+//             'https://via.placeholder.com/150/FF0000/FFFFFF?text=MockImage2',
+//             'https://via.placeholder.com/150/00FF00/FFFFFF?text=MockImage3',
+//             'https://via.placeholder.com/150/FFFF00/000000?text=MockImage4',
+//             'https://via.placeholder.com/150/FF00FF/FFFFFF?text=MockImage5',
+//         ],
+//         page: 1,
+//         size: 5,
+//         totalElements: 10,
+//         totalPages: 2,
+//     },
+// };
 
 // ✨ OCR API를 위한 목 데이터 추가
 const mockOcrResponse: OcrResponse = {
@@ -98,14 +98,14 @@ const mockOcrResponse: OcrResponse = {
     result: '이것은 목업 OCR 결과 텍스트입니다. 실제 이미지에서 추출된 것처럼 보입니다.',
 };
 
-interface DirectUploadResponse {
-    isSuccess: boolean;
-    code: string;
-    message: string;
-    result: {
-        imageUrl: string; // 업로드된 이미지의 최종 Public URL
-    };
-}
+// interface DirectUploadResponse {
+//     isSuccess: boolean;
+//     code: string;
+//     message: string;
+//     result: {
+//         imageUrl: string; // 업로드된 이미지의 최종 Public URL
+//     };
+// }
 
 // ==========================================================
 //          ⬇️ API 호출 함수 ⬇️

@@ -1,24 +1,28 @@
 // src/pages/CardCustomizationCompletePage.tsx
 import html2canvas from 'html2canvas';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react'; // useState를 import 합니다.
 import { MdClose } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
 import { createCard } from '../../api/cardApi';
 // ✨ imageApi에서 uploadImage 함수를 임포트합니다.
+// 만약 uploadImageAndGetUrl 함수를 cardApi.ts로 옮겼다면, import { createCard, uploadImageAndGetUrl } from '../../api/cardApi'; 로 변경하세요.
 import { uploadImage } from '../../api/imageApi';
 
 const CardCustomizationCompletePage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const image = location.state?.image as string | undefined; // 카드 배경 이미지 (Base64 또는 URL)
+    const image = location.state?.image as string | undefined; // 카드 배경 이미지 (Public URL)
     const extractedText = location.state?.extractedText as string | undefined; // 카드에 들어갈 텍스트
-    // bookId를 location.state에서 가져옵니다. 이 값이 memberBookId로 사용됩니다.
-    const memberBookId = location.state?.bookId as number | undefined;
+    const memberBookId = location.state?.bookId as number | undefined; // 이 값이 memberBookId로 사용됩니다.
     const selectedFont = location.state?.font as string | undefined; // 선택된 폰트
 
     const cardRef = useRef<HTMLDivElement>(null); // html2canvas로 캡처할 카드 요소의 ref
+
+    // ✨ 저장 과정의 로딩 및 에러 상태를 관리합니다.
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
 
     // 카드 다운로드 처리 함수
     const handleDownload = async () => {
@@ -43,7 +47,6 @@ const CardCustomizationCompletePage: React.FC = () => {
                     return;
                 }
 
-                // navigator.canShare 및 navigator.share API를 사용하여 공유 기능 구현
                 if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'card.png', { type: 'image/png' })] })) {
                     const file = new File([blob], 'card.png', { type: 'image/png' });
 
@@ -53,8 +56,8 @@ const CardCustomizationCompletePage: React.FC = () => {
                         files: [file],
                     }).catch((error) => console.error('공유 실패:', error));
                 } else {
-                    // alert 대신 console.log로 메시지 출력 (UI에 커스텀 모달이 있다면 대체)
                     console.log('현재 브라우저에서 공유를 지원하지 않거나 파일 공유가 불가능합니다.');
+                    // 사용자에게 피드백을 줄 수 있는 UI (예: 커스텀 모달)를 여기에 추가
                 }
             }, 'image/png');
         }
@@ -62,54 +65,67 @@ const CardCustomizationCompletePage: React.FC = () => {
 
     // 카드를 저장하는 비동기 함수 (이미지 업로드 후 카드 생성 API 호출)
     const handleSave = async () => {
-        // 필수 정보가 없는 경우 에러 로깅 및 함수 종료
-        if (!cardRef.current || !extractedText || memberBookId === undefined) {
-            console.error('카드를 저장하는 데 필요한 정보가 부족합니다. (이미지, 텍스트 또는 책 ID)');
+        // 이미 저장 중이거나 필수 정보가 없는 경우 함수 종료
+        if (isSaving || !cardRef.current || !extractedText || memberBookId === undefined) {
+            if (!isSaving) { // 저장 중이 아닐 때만 에러 로깅
+                console.error('카드를 저장하는 데 필요한 정보가 부족합니다. (이미지, 텍스트 또는 책 ID)');
+                setSaveError('카드 저장에 필요한 정보가 부족합니다.');
+            }
             return;
         }
 
-        // 1. HTML 요소를 Canvas로 렌더링하고 Blob으로 변환
-        const canvas = await html2canvas(cardRef.current);
-        const blob = await new Promise<Blob | null>((resolve) => {
-            canvas.toBlob((b) => resolve(b), 'image/png');
-        });
-
-        if (!blob) {
-            console.error('캔버스에서 이미지 Blob 생성에 실패했습니다.');
-            return;
-        }
-
-        // 2. Blob을 File 객체로 변환 (업로드를 위해)
-        const cardImageFile = new File([blob], `reading_card_${Date.now()}.png`, { type: 'image/png' });
-
-        let uploadedImageUrl: string;
-        try {
-            // 3. imageApi의 uploadImage 함수를 사용하여 이미지를 서버에 업로드
-            // 이 함수는 Presigned URL을 받아와 실제 PUT 업로드를 수행하고 최종 Public URL을 반환합니다.
-            uploadedImageUrl = await uploadImage(cardImageFile);
-            console.log('생성된 카드 이미지가 성공적으로 업로드되었습니다. URL:', uploadedImageUrl);
-        } catch (uploadError) {
-            console.error('카드 이미지 업로드 실패:', uploadError);
-            // alert 대신 console.log로 메시지 출력 (UI에 커스텀 모달이 있다면 대체)
-            console.log('카드 이미지 업로드에 실패했습니다. 다시 시도해주세요.');
-            return; // 업로드 실패 시 카드 저장 중단
-        }
+        setIsSaving(true); // 저장 시작
+        setSaveError(null); // 에러 초기화
 
         try {
-            // 4. createCard API를 호출하여 카드를 저장합니다.
-            const response = await createCard({
-                memberBookId: memberBookId, // memberBookId 사용
-                content: extractedText,
-                imageUrl: uploadedImageUrl, // 업로드된 이미지의 Public URL 사용
+            // 1. HTML 요소를 Canvas로 렌더링하고 Blob으로 변환
+            const canvas = await html2canvas(cardRef.current, {
+                useCORS: true, // 이미지 로딩 시 CORS 문제 방지
+            });
+            const blob = await new Promise<Blob | null>((resolve) => {
+                canvas.toBlob((b) => resolve(b), 'image/png');
             });
 
-            console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
-            // 카드 상세 페이지로 이동 (예시 경로)
-            navigate(`/reading-card-detail/${response.result.cardId}`);
-        } catch (saveError) {
-            // alert 대신 console.log로 메시지 출력 (UI에 커스텀 모달이 있다면 대체)
-            console.log('카드 저장에 실패했습니다. 다시 시도해주세요.');
-            console.error('카드 저장 중 오류:', saveError);
+            if (!blob) {
+                throw new Error('캔버스에서 이미지 Blob 생성에 실패했습니다.');
+            }
+
+            // 2. Blob을 File 객체로 변환 (업로드를 위해)
+            const cardImageFile = new File([blob], `reading_card_${Date.now()}.png`, { type: 'image/png' });
+
+            let uploadedImageUrl: string;
+            try {
+                // 3. imageApi의 uploadImage 함수를 사용하여 최종 렌더링된 카드 이미지를 서버에 업로드
+                // 이 함수는 Presigned URL을 받아와 실제 PUT 업로드를 수행하고 최종 Public URL을 반환합니다.
+                uploadedImageUrl = await uploadImage(cardImageFile); // 또는 uploadImageAndGetUrl(cardImageFile)
+                console.log('생성된 카드 이미지가 성공적으로 업로드되었습니다. URL:', uploadedImageUrl);
+            } catch (uploadError: any) {
+                console.error('카드 이미지 업로드 실패:', uploadError);
+                throw new Error(`카드 이미지 업로드 실패: ${uploadError.message || '알 수 없는 오류'}`);
+            }
+
+            // 4. createCard API를 호출하여 카드의 메타데이터를 저장합니다.
+            try {
+                const response = await createCard({
+                    memberBookId: memberBookId, // memberBookId 사용
+                    content: extractedText,
+                    imageUrl: uploadedImageUrl, // 업로드된 최종 이미지의 Public URL 사용
+                });
+
+                console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
+                // 카드 상세 페이지로 이동
+                navigate(`/reading-card-detail/${response.result.cardId}`);
+            } catch (saveError: any) {
+                console.error('카드 메타데이터 저장 중 오류:', saveError);
+                throw new Error(`카드 저장 실패: ${saveError.message || '알 수 없는 오류'}`);
+            }
+
+        } catch (overallError: any) {
+            // 전체 저장 과정 중 발생한 모든 오류를 여기서 처리
+            setSaveError(overallError.message);
+            console.error('handleSave 전체 과정에서 오류 발생:', overallError);
+        } finally {
+            setIsSaving(false); // 저장 완료 (성공 또는 실패)
         }
     };
 
@@ -127,9 +143,28 @@ const CardCustomizationCompletePage: React.FC = () => {
 
     // 이미지, 추출된 텍스트 또는 책 ID가 없을 경우 로딩 상태를 보여주거나 리디렉션합니다.
     if (!image || !extractedText || memberBookId === undefined) {
-        // 필요한 데이터가 없으므로 잠시 로딩 메시지를 표시할 수 있습니다.
-        // useEffect가 이미 navigate를 호출할 것이므로 이 부분은 빠르게 지나갈 것입니다.
         return <div className="complete-page-container">카드 정보를 불러오는 중...</div>;
+    }
+
+    // ✨ 저장 중일 때 로딩 UI 표시
+    if (isSaving) {
+        return (
+            <div className="complete-page-container loading-state">
+                <p>독서카드를 저장 중입니다...</p>
+                {saveError && <p style={{ color: 'red' }}>오류: {saveError}</p>}
+            </div>
+        );
+    }
+
+    // ✨ 저장 실패 시 에러 메시지 표시
+    if (saveError) {
+        return (
+            <div className="complete-page-container error-state">
+                <p style={{ color: 'red' }}>카드 저장에 실패했습니다.</p>
+                <p style={{ color: 'red' }}>오류: {saveError}</p>
+                <button onClick={() => navigate('/make-card')} style={{ marginTop: '20px' }}>다시 시도하기</button>
+            </div>
+        );
     }
 
     return (

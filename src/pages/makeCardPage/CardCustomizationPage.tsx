@@ -1,6 +1,6 @@
 // src/pages/makeCardPage/CardCustomizationPage.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // useEffect를 import 합니다.
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationPage.css';
 
@@ -33,17 +33,26 @@ const CardCustomizationPage: React.FC = () => {
     const getBackgroundImage = () => {
         if (selectedBackground === 'uploaded') return image;
         const found = defaultBackgrounds.find((bg) => bg.label === selectedBackground);
-        return found?.url || image;
+        return found?.url || image; // 기본 이미지 없으면 촬영 사진
     };
 
-    if (!image || !extractedText) {
-        navigate('/card-complete', {
-            state: {
-                image: getBackgroundImage(),
-                extractedText,
-                bookId,
-            },
-        });
+    // ✨ 수정된 부분: useEffect를 사용하여 초기 데이터 확인 및 리디렉션
+    useEffect(() => {
+        if (!image || !extractedText || bookId === undefined) {
+            console.error('CardCustomizationPage: 필수 데이터 (이미지, 텍스트 또는 책 ID)가 누락되었습니다. 카드 생성 페이지로 리디렉션합니다.');
+            // 리디렉션 시 `replace: true`를 사용하여 뒤로 가기 버튼으로 다시 이 페이지로 돌아오지 않게 합니다.
+            navigate('/make-card', { replace: true });
+        }
+    }, [image, extractedText, bookId, navigate]); // 의존성 배열에 필요한 모든 변수 포함
+
+    // 필수 데이터가 없을 경우 렌더링을 일시 중단하거나 로딩 스피너를 보여줄 수 있습니다.
+    // useEffect에서 리디렉션을 처리하므로, 여기서는 간단히 로딩 메시지를 보여줍니다.
+    if (!image || !extractedText || bookId === undefined) {
+        return (
+            <div className="page-container">
+                <p>필수 정보를 불러오는 중입니다...</p>
+            </div>
+        );
     }
 
     return (
@@ -60,7 +69,7 @@ const CardCustomizationPage: React.FC = () => {
                                     image: getBackgroundImage(),
                                     extractedText,
                                     font: selectedFont,
-                                    bookId,
+                                    bookId, // bookId도 정확히 전달합니다.
                                 },
                             })
                         }
@@ -90,7 +99,7 @@ const CardCustomizationPage: React.FC = () => {
                                     onClick={() => setSelectedBackground('uploaded')}
                                 >
                                     {selectedBackground === 'uploaded' && (
-                                        <svg
+                                        <svg // SVG 코드는 그대로 유지
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="24"
                                             height="24"
@@ -124,7 +133,7 @@ const CardCustomizationPage: React.FC = () => {
                                         onClick={() => setSelectedBackground(bg.label)}
                                     >
                                         {selectedBackground === bg.label && (
-                                            <svg
+                                            <svg // SVG 코드는 그대로 유지
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="24"
                                                 height="24"
@@ -165,7 +174,7 @@ const CardCustomizationPage: React.FC = () => {
                                         style={{ fontFamily: font.value }}
                                     >
                                         {selectedFont === font.value && (
-                                            <svg
+                                            <svg // SVG 코드는 그대로 유지
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="24"
                                                 height="24"

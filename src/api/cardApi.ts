@@ -229,3 +229,55 @@ export async function getPresignedUrlForImageUpload(body: GetPresignedUrlRequest
         throw error;
     }
 }
+
+/**
+ * 이미지 파일을 S3에 직접 업로드하고 최종 Public URL을 반환하는 함수
+ * 이 함수는 먼저 백엔드로부터 Presigned URL을 받은 후, 해당 URL에 이미지를 직접 PUT 업로드합니다.
+ *
+* @param {File} file - 업로드할 이미지 파일 객체
+* @returns {Promise<string>} 업로드된 이미지의 최종 Public URL
+*/
+export async function uploadImageAndGetUrl(file: File): Promise<string> {
+   if (USE_MOCK_DATA) {
+       // 목 데이터 처리: 실제 업로드 없이 mock public URL 반환
+       return new Promise(resolve => setTimeout(() => resolve('https://mock-public-url.example.com/mock-image.jpg'), 500));
+   }
+
+   try {
+       // 1단계: 백엔드 API에 Presigned URL 요청
+       const presignedRequestData: GetPresignedUrlRequest = {
+           contentType: file.type,
+           contentLength: file.size,
+       };
+
+       const presignedResponse = await getPresignedUrlForImageUpload(presignedRequestData); // 새로 분리된 함수 호출
+
+       const { presignedUrl, publicUrl } = presignedResponse.result;
+
+       if (!presignedUrl || !publicUrl) {
+           throw new Error("백엔드 응답에 presignedUrl 또는 publicUrl이 누락되었습니다.");
+       }
+
+       // 2단계: 받은 presigned URL에 이미지를 직접 PUT 업로드 (S3)
+       const uploadResponse = await fetch(presignedUrl, {
+           method: 'PUT',
+           headers: {
+               'Content-Type': file.type, // S3에 업로드할 때 파일의 MIME 타입 지정
+               // 참고: Content-Length 헤더는 fetch API가 자동으로 설정하는 경우가 많아 명시하지 않아도 됨
+           },
+           body: file, // 이미지 파일 자체를 요청 본문에 담아 보냄
+       });
+
+       if (!uploadResponse.ok) {
+           // S3 업로드 실패 시 (주로 CORS 또는 Presigned URL 문제), S3는 HTTP 상태 코드로 응답
+           throw new Error(`S3 직접 업로드 실패: ${uploadResponse.statusText || 'Unknown S3 error'}`);
+       }
+
+       console.log('이미지 S3 업로드 성공. Public URL:', publicUrl);
+       return publicUrl; // 최종 Public URL 반환
+
+   } catch (error: any) {
+       console.error('이미지 업로드 과정에서 오류 발생:', error);
+       throw new Error(`이미지 업로드 실패: ${error.message || "알 수 없는 오류"}`);
+   }
+}

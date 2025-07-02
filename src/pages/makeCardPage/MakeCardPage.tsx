@@ -28,7 +28,7 @@ const MakeCardPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [bookId] = useState<number>(123); // 임의의 책 ID 설정 (실제 책 ID로 대체 필요)
+  const [bookId] = useState<number>(0); // 임의의 책 ID 설정 (실제 책 ID로 대체 필요)
 
   const defaultImages = [
     'https://picsum.photos/id/1018/350/500',
