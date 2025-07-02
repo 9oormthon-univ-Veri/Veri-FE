@@ -24,10 +24,10 @@ import CardCustomizationPage from './pages/makeCardPage/CardCustomizationPage';
 import CardCustomizationCompletePage from './pages/makeCardPage/CardCustomizationCompletePage';
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
-//const isAuthenticated = () => {
-//  const token = localStorage.getItem('accessToken');
-//  return !!token;
-//};
+const isAuthenticated = () => {
+  const token = localStorage.getItem('accessToken');
+  return !!token;
+};
 
 function App() {
   const location = useLocation();
@@ -35,11 +35,11 @@ function App() {
 
   useEffect(() => {
     // ✨ 이 블록을 주석 처리하거나 제거하여 로그인 리디렉션을 일시적으로 비활성화합니다.
-    // const publicPaths = ['/login'];
+    const publicPaths = ['/login'];
 
-    // if (!isAuthenticated() && !publicPaths.includes(location.pathname)) {
-    //   navigate('/login');
-    // }
+    if (!isAuthenticated() && !publicPaths.includes(location.pathname)) {
+      navigate('/login');
+    }
 
     // 개발 중 편의를 위해 로그인 무시
     // 주의: 실제 배포 시에는 이 로직을 다시 활성화하거나 적절한 인증 로직을 구현해야 합니다.

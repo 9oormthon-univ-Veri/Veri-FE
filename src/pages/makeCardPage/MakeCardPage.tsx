@@ -21,6 +21,8 @@ const MakeCardPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [bookId] = useState<number>(123); // 임의의 책 ID 설정
+
   const defaultImages = [
     'https://picsum.photos/id/1018/350/500',
     'https://picsum.photos/id/1015/350/500',
@@ -32,6 +34,7 @@ const MakeCardPage: React.FC = () => {
       navigate('/text-extraction-loading', {
         state: {
           image: capturedImage,
+          bookId: bookId,
         },
       });
     }
@@ -189,7 +192,7 @@ const MakeCardPage: React.FC = () => {
     <div className="page-container">
       <div className="make-card-page">
         <header className="detail-header">
-          <button className="header-left-arrow" onClick={() => navigate(-1)}>
+          <button className="header-left-arrow" onClick={() => navigate("/reading-card")}>
             <MdClose size={24} color="#333" />
           </button>
           <h3>독서카드 만들기</h3>

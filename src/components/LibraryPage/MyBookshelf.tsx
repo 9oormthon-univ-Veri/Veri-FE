@@ -48,7 +48,9 @@ const MyBookshelfSection: React.FC = () => {
           offset: 0, // 필요에 따라 조정
           page: 1,   // 필요에 따라 조정
         };
-        const response = await getAllBooks(queryParams); // getAllBooks API 호출 (accessToken 없음)
+        // 현재 이 부분에서 accessToken 없이 getAllBooks를 호출하고 있다고 주석을 달아주셨습니다.
+        // bookApi.ts의 getAllBooks 로직에 fetchWithAuth가 있으므로 accessToken이 필요합니다.
+        const response = await getAllBooks(queryParams); 
 
         if (response.isSuccess) {
           const mappedBooks: BookshelfItemType[] = response.result.books.map((book: Book) => ({
@@ -71,7 +73,7 @@ const MyBookshelfSection: React.FC = () => {
     };
 
     fetchBooks();
-  }, []); // 빈 배열은 컴포넌트가 처음 마운트될 때 한 번만 실행됨을 의미합니다.
+  }, []);
 
   const handleGoToBookshelf = () => {
     navigate('/my-bookshelf');

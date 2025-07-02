@@ -3,7 +3,7 @@
 import { fetchWithAuth, USE_MOCK_DATA } from './bookApi';
 import { mockMyCardsResponse, mockCardDetailResponse } from './mockData';
 
-const BASE_URL = "https://very.miensoap.me";
+const BASE_URL = "https://api.very.miensoap.me";
 
 // 인터페이스 정의 (기존 코드 그대로 유지, 문제 없음)
 export interface BookInfoForCard {
@@ -34,6 +34,22 @@ export interface GetCardDetailByIdResponse {
   code: string;
   message: string;
   result: Card | null;
+}
+
+export interface CreateCardRequest {
+  memberBookId: number;
+  content: string;
+  imageUrl: string;
+}
+
+export interface CreateCardResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    cardId: number;
+    createdAt: string;
+  };
 }
 
 // ==========================================================
@@ -113,5 +129,27 @@ export async function getCardDetailById(cardId: number): Promise<GetCardDetailBy
   }
 }
 
-// 필요하다면, 카드 생성/수정/삭제 등의 API 함수를 추가할 수 있습니다.
-// 예: POST /api/v1/cards, DELETE /api/v1/cards/{cardId}
+export async function createCard(body: CreateCardRequest): Promise<CreateCardResponse> {
+  const url = `${BASE_URL}/api/v1/cards`;
+
+  try {
+    const response = await fetchWithAuth(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data: CreateCardResponse = await response.json();
+
+    if (!data.isSuccess) {
+      throw new Error(data.message || '카드 생성 실패');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('카드 생성 중 오류:', error);
+    throw error;
+  }
+}

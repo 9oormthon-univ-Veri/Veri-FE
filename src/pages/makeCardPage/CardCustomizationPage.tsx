@@ -10,6 +10,7 @@ const CardCustomizationPage: React.FC = () => {
 
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
+    const bookId = location.state?.bookId as number | undefined;
 
     const [selectedTab, setSelectedTab] = useState<'image' | 'text'>('image');
 
@@ -40,6 +41,7 @@ const CardCustomizationPage: React.FC = () => {
             state: {
                 image: getBackgroundImage(),
                 extractedText,
+                bookId,
             },
         });
     }
@@ -58,6 +60,7 @@ const CardCustomizationPage: React.FC = () => {
                                     image: getBackgroundImage(),
                                     extractedText,
                                     font: selectedFont,
+                                    bookId,
                                 },
                             })
                         }

@@ -1,8 +1,9 @@
 import html2canvas from 'html2canvas';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react'; // useEffect를 import 합니다.
 import { MdClose } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
+import { createCard } from '../../api/cardApi';
 
 const CardCustomizationCompletePage: React.FC = () => {
     const location = useLocation();
@@ -10,8 +11,10 @@ const CardCustomizationCompletePage: React.FC = () => {
 
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
+    // bookId를 location.state에서 가져옵니다. 이전 페이지에서 반드시 넘겨줘야 합니다.
+    const bookId = location.state?.bookId as number | undefined; 
 
-    const cardRef = useRef<HTMLDivElement>(null); // 캡처 대상 참조
+    const cardRef = useRef<HTMLDivElement>(null);
     const selectedFont = location.state?.font as string | undefined;
 
     const handleDownload = async () => {
@@ -45,15 +48,67 @@ const CardCustomizationCompletePage: React.FC = () => {
         }
     };
 
-    if (!image || !extractedText) {
-        navigate('/make-card');
-        return null;
+    // 카드를 저장하는 비동기 함수
+    const handleSave = async () => {
+        if (!cardRef.current || !extractedText || bookId === undefined) {
+            console.error('카드를 저장하는 데 필요한 정보가 부족합니다. (이미지, 텍스트 또는 책 ID)');
+            return;
+        }
+
+        const canvas = await html2canvas(cardRef.current);
+        const blob = await new Promise<Blob | null>((resolve) => {
+            canvas.toBlob((b) => resolve(b), 'image/png');
+        });
+
+        if (!blob) {
+            console.error('이미지 생성에 실패했습니다.');
+            return;
+        }
+
+        const imageUrl = 'https://cdn.example.com/uploads/mock-uploaded-card.png';
+        console.log('생성된 카드 이미지 (임시) URL:', imageUrl);
+
+        try {
+            // createCard API를 호출하여 카드를 저장합니다.
+            const response = await createCard({
+                // ✨ 이 부분을 수정합니다. bookId 대신 memberBookId 사용.
+                // 현재 bookId 변수에 memberBookId로 사용할 값이 들어있다고 가정합니다.
+                memberBookId: bookId, 
+                content: extractedText,
+                imageUrl,
+            });
+
+            console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
+            navigate(`/reading-card-detail/${response.result.cardId}`);
+        } catch (err) {
+            alert('카드 저장에 실패했습니다. 다시 시도해주세요.');
+            console.error('카드 저장 중 오류:', err);
+        }
+    };
+
+    // ⭐️ useEffect 훅을 사용하여 컴포넌트가 마운트될 때 handleSave를 자동으로 호출합니다.
+    useEffect(() => {
+        // 이미지, 추출된 텍스트, 책 ID가 모두 존재할 때만 저장을 시도합니다.
+        if (image && extractedText && bookId !== undefined) {
+            handleSave();
+        } else {
+            // 필수 데이터가 없으면 사용자에게 메시지를 남기고 카드 생성 페이지로 돌려보냅니다.
+            console.error('자동 저장을 위한 필수 데이터가 누락되었습니다. 카드 생성 페이지로 리디렉션합니다.');
+            navigate('/make-card');
+        }
+    }, [image, extractedText, bookId, navigate]); // 의존성 배열에 변수들을 추가하여 필요할 때만 실행되게 합니다.
+
+    // 이미지, 추출된 텍스트 또는 책 ID가 없을 경우 로딩 상태를 보여주거나 리디렉션합니다.
+    if (!image || !extractedText || bookId === undefined) {
+        // 필요한 데이터가 없으므로 잠시 로딩 메시지를 표시할 수 있습니다.
+        // useEffect가 이미 navigate를 호출할 것이므로 이 부분은 빠르게 지나갈 것입니다.
+        return <div className="complete-page-container">카드 정보를 불러오는 중...</div>;
     }
 
     return (
         <div className="complete-page-container">
             <header className="detail-header">
-                <button className="header-left-arrow" onClick={() => navigate(-1)}>
+                <button className="header-left-arrow" onClick={() => navigate('/reading-card')}>
                     <MdClose size={24} color="#333" />
                 </button>
                 <h3>나의 독서카드</h3>
@@ -76,6 +131,7 @@ const CardCustomizationCompletePage: React.FC = () => {
                         <path d="M5 18.5C4.60218 18.5 4.22064 18.658 3.93934 18.9393C3.65804 19.2206 3.5 19.6022 3.5 20C3.5 20.3978 3.65804 20.7794 3.93934 21.0607C4.22064 21.342 4.60218 21.5 5 21.5H19C19.3978 21.5 19.7794 21.342 20.0607 21.0607C20.342 20.7794 20.5 20.3978 20.5 20C20.5 19.6022 20.342 19.2206 20.0607 18.9393C19.7794 18.658 19.3978 18.5 19 18.5H5ZM17.303 10.944C17.0217 10.6628 16.6402 10.5048 16.2425 10.5048C15.8448 10.5048 15.4633 10.6628 15.182 10.944L13.5 12.625V4C13.5 3.60218 13.342 3.22064 13.0607 2.93934C12.7794 2.65804 12.3978 2.5 12 2.5C11.6022 2.5 11.2206 2.65804 10.9393 2.93934C10.658 3.22064 10.5 3.60218 10.5 4V12.626L8.818 10.944C8.67873 10.8047 8.51339 10.6941 8.3314 10.6187C8.14942 10.5433 7.95435 10.5044 7.75735 10.5044C7.56035 10.5043 7.36527 10.5431 7.18325 10.6184C7.00123 10.6938 6.83583 10.8042 6.6965 10.9435C6.41511 11.2248 6.25697 11.6063 6.25687 12.0041C6.25683 12.2011 6.29558 12.3962 6.37093 12.5782C6.44627 12.7603 6.55673 12.9257 6.696 13.065L10.939 17.308C11.2203 17.5892 11.6018 17.7472 11.9995 17.7472C12.3972 17.7472 12.7787 17.5892 13.06 17.308L17.303 13.065C17.5842 12.7837 17.7422 12.4022 17.7422 12.0045C17.7422 11.6068 17.5842 11.2253 17.303 10.944Z" fill="#9BA2B1" />
                     </svg>
                 </button>
+                {/* 자동 저장 기능으로 인해 별도의 '저장하기' 버튼은 필요 없습니다. */}
             </div>
 
             <div className="card-preview-complete" ref={cardRef}>
@@ -93,7 +149,6 @@ const CardCustomizationCompletePage: React.FC = () => {
                     </p>
                 </div>
             </div>
-
         </div>
     );
 };

@@ -90,6 +90,38 @@ export interface GetTodaysRecommendationResponse {
   result: TodaysRecommendationBook[]; // 결과는 책 객체 배열
 }
 
+export interface PopularBookItem {
+  image: string; // imageUrl과 매핑될 필드
+  title: string;
+  author: string;
+  publisher: string;
+  isbn: string;
+}
+
+// 인기 도서 API 응답의 result 인터페이스
+export interface PopularBooksResult {
+  books: PopularBookItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+// 인기 도서 API 전체 응답 인터페이스
+export interface GetPopularBooksResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: PopularBooksResult;
+}
+
+// 인기 도서 API 쿼리 파라미터 인터페이스
+export interface GetPopularBooksQueryParams {
+  page?: number;
+  size?: number;
+}
+
+
 // ==========================================================
 //                 ⬇️ 개선된 API 호출 로직 ⬇️
 // ==========================================================
@@ -98,7 +130,7 @@ export interface GetTodaysRecommendationResponse {
 //     true로 설정하면 실제 API 호출 없이 목 데이터를 사용합니다.
 export const USE_MOCK_DATA = true; // ✨ 개발 시에는 true, 백엔드 연동 시 false로 변경
 
-const BASE_URL = "https://very.miensoap.me";
+const BASE_URL = "https://api.very.miensoap.me";
 
 /**
  * 모든 API 호출에 인증 헤더를 자동으로 추가하는 헬퍼 함수
@@ -108,40 +140,46 @@ const BASE_URL = "https://very.miensoap.me";
  */
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
-  // ✨ 3. 목 데이터 사용 시 토큰 유무를 검사하지 않습니다.
-  if (!USE_MOCK_DATA) {
-    const accessToken = getAccessToken();
-    if (!accessToken) {
-      throw new Error('Authentication required: No access token available. Please log in.');
-    }
+  // 목 데이터 사용 시 로직은 그대로 둡니다. (여기서는 중요하지 않음)
+  if (USE_MOCK_DATA) {
+      // ... (USE_MOCK_DATA 처리 로직. 현재 getAllBooks에서 직접 목 데이터 반환하므로 여기는 영향 없음)
   }
 
-  // 2. 인증 헤더를 추가합니다.
-  const authHeaders = {
-    'Authorization': `Bearer ${getAccessToken()}`,
-    'Content-Type': 'application/json',
-    ...options.headers, // 기존 헤더가 있다면 유지
+  const accessToken = getAccessToken();
+  
+  const headers: Record<string, string> = { 
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
   };
 
-  // 3. fetch 요청을 보냅니다.
+  // ✨ accessToken이 있을 경우에만 Authorization 헤더를 추가합니다.
+  if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+  } else {
+      // ✨ 토큰이 없는데 인증이 필수인 API라면 여기서 에러를 throw하거나 로그인 페이지로 리다이렉트합니다.
+      if (!USE_MOCK_DATA) {
+           console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}. This API call might fail if authentication is required.`);
+           // throw new Error('Authentication required: No access token available. Please log in.');
+           // 실제 서비스에서는 여기서 로그인 페이지로 리다이렉트하는 로직을 추가합니다.
+           // navigate('/login'); // navigate는 이 스코프에 없으니 주의
+      }
+  }
+
   const response = await fetch(url, {
-    ...options,
-    headers: authHeaders,
+      ...options,
+      headers: headers as HeadersInit, // 최종적으로 HeadersInit으로 단언하여 fetch에 전달
   });
 
-  // 4. 응답이 실패(4xx, 5xx)인 경우 에러를 throw 합니다.
   if (!response.ok) {
-    let errorMessage = `API call failed: ${response.status}`;
-    try {
-      // 응답 본문을 JSON으로 파싱 시도
-      const errorData = await response.json();
-      errorMessage += ` - ${errorData.message || response.statusText}`;
-    } catch (e) {
-      // JSON 파싱 실패 시, 응답 텍스트를 메시지에 추가
-      const text = await response.text();
-      errorMessage += ` - ${text || response.statusText}`;
-    }
-    throw new Error(errorMessage);
+      let errorMessage = `API call failed: ${response.status}`;
+      try {
+          const errorData = await response.json();
+          errorMessage += ` - ${errorData.message || response.statusText}`;
+      } catch (e) {
+          const text = await response.text();
+          errorMessage += ` - ${text || response.statusText}`;
+      }
+      throw new Error(errorMessage);
   }
 
   return response;
@@ -267,33 +305,66 @@ export async function getTodaysRecommendation(): Promise<GetTodaysRecommendation
  */
 export async function getRandomBook(): Promise<Book> {
   if (USE_MOCK_DATA) {
-      return new Promise((resolve, reject) => {
-          setTimeout(() => {
-              const books = mockAllBooksResponse.result.books;
-              if (books.length === 0) {
-                  reject(new Error("No books available in mock data."));
-                  return;
-              }
-              const randomIndex = Math.floor(Math.random() * books.length);
-              const randomBook = books[randomIndex];
-              
-              // 💡 여기서 `!`를 추가하여 TypeScript에게 undefined가 아님을 확신시킨다.
-              if (randomBook) { // 💡 또는 이렇게 조건문으로 undefined 여부를 검사하는 것이 더 안전합니다.
-                  resolve(randomBook);
-              } else {
-                  reject(new Error("Failed to select a random book. The book at the random index was undefined."));
-              }
-              
-          }, 500);
-      });
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const books = mockAllBooksResponse.result.books;
+        if (books.length === 0) {
+          reject(new Error("No books available in mock data."));
+          return;
+        }
+        const randomIndex = Math.floor(Math.random() * books.length);
+        const randomBook = books[randomIndex];
+
+        // 💡 여기서 `!`를 추가하여 TypeScript에게 undefined가 아님을 확신시킨다.
+        if (randomBook) { // 💡 또는 이렇게 조건문으로 undefined 여부를 검사하는 것이 더 안전합니다.
+          resolve(randomBook);
+        } else {
+          reject(new Error("Failed to select a random book. The book at the random index was undefined."));
+        }
+
+      }, 500);
+    });
   }
 
-  // 실제 API가 있다면 여기에 실제 호출 로직을 구현합니다.
-  // 예:
-  // const url = `${BASE_URL}/api/v0/bookshelf/random`;
-  // const response = await fetchWithAuth(url, { method: 'GET' });
-  // const data: Book = await response.json();
-  // return data;
-
   throw new Error('Real API for getRandomBook not implemented.');
+}
+
+export async function getPopularBooks(
+  params: GetPopularBooksQueryParams
+): Promise<GetPopularBooksResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 인기 도서 조회 성공',
+      result: {
+        books: [
+          // ✨ 이 부분의 URL을 변경합니다.
+          { image: 'https://placehold.co/100x150?text=Popular+1', title: '인기 도서 1', author: '인기 작가 1', publisher: '인기 출판사 1', isbn: '1111' },
+          { image: 'https://placehold.co/100x150?text=Popular+2', title: '인기 도서 2', author: '인기 작가 2', publisher: '인기 출판사 2', isbn: '2222' },
+          { image: 'https://placehold.co/100x150?text=Popular+3', title: '인기 도서 3', author: '인기 작가 3', publisher: '인기 출판사 3', isbn: '3333' },
+        ],
+        page: params.page || 1,
+        size: params.size || 10,
+        totalElements: 3,
+        totalPages: 1,
+      }
+    }), 500));
+  }
+
+  // 실제 API 호출 로직
+  const url = new URL(`${BASE_URL}/api/v0/bookshelf/popular`);
+  if (params.page !== undefined) {
+    url.searchParams.append('page', String(params.page));
+  }
+  if (params.size !== undefined) {
+    url.searchParams.append('size', String(params.size));
+  }
+
+  const response = await fetchWithAuth(url.toString(), {
+    method: 'GET',
+  });
+
+  const data: GetPopularBooksResponse = await response.json();
+  return data;
 }

@@ -11,20 +11,23 @@ const LoginPage: React.FC = () => {
 
   const handleKakaoLogin = async () => {
     try {
-      // 1. 임시 로그인 API 호출
       const accessToken = await mockLogin();
-      
-      // 2. 토큰을 로컬 스토리지에 저장
-      setAccessToken(accessToken);
-      
+
+      setAccessToken(accessToken); // 토큰 저장 함수 호출
+
       console.log('로그인 성공! 토큰 저장됨:', accessToken);
-      
-      // 3. 메인 페이지로 리디렉션
+
+      // ✨ 최종 확인 로그 추가
+      const storedToken = localStorage.getItem('accessToken');
+      console.log('LoginPage에서 최종 확인: 로컬 스토리지에 저장된 토큰:', storedToken);
+      if (!storedToken || storedToken !== accessToken) {
+          console.error('오류: 저장된 토큰이 예상과 다릅니다!');
+      }
+
       navigate('/'); 
-      
+
     } catch (error) {
       console.error('로그인 실패:', error);
-      // 사용자에게 에러 메시지를 표시할 수 있습니다.
       alert('로그인에 실패했습니다. 다시 시도해 주세요.');
     }
   };
