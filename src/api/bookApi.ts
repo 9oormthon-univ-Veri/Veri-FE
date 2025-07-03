@@ -1,23 +1,21 @@
 // src/api/bookApi.ts
 
-// auth.ts 파일에서 getAccessToken 함수를 임포트합니다.
 import { getAccessToken } from './auth';
-
-// ✨ 1. 목 데이터 파일을 임포트합니다.
 import {
   mockAllBooksResponse,
-  mockBookByIdResponse,
-  mockSearchBooksResponse,
+  // mockBookByIdResponse,
+  // mockSearchBooksResponse,
   mockTodaysRecommendation,
 } from './mockData';
 
-// 기존 인터페이스는 그대로 둡니다. (문제 없음)
-export type BookStatus = "READING" | "NOT_START" | "COMPLETED";
+export type BookStatus = "READING" | "DONE";
 
-export interface CardItem {
-  imageUrl: string;
+export interface CardSummary {
+  cardId: number;
+  cardImage: string;
 }
 
+// Book 인터페이스: getAllBooks 응답 및 상세 정보에서 사용될 필드 포함
 export interface Book {
   bookId: number;
   title: string;
@@ -26,6 +24,7 @@ export interface Book {
   score: number;
   startedAt: string;
   status: BookStatus;
+  cardSummaries?: CardSummary[]; // 상세 조회 시 포함될 수 있도록 추가
 }
 
 export interface BooksResult {
@@ -46,10 +45,10 @@ export interface GetAllBooksResponse {
 export interface GetAllBooksQueryParams {
   page?: number;
   size?: number;
-  offset?: number;
   sort?: string;
 }
 
+// GetBookByIdResponse 인터페이스: API 명세에 맞춰 score, startedAt, cardSummaries 포함
 export interface GetBookByIdResponse {
   isSuccess: boolean;
   code: string;
@@ -59,9 +58,10 @@ export interface GetBookByIdResponse {
     title: string;
     author: string;
     imageUrl: string;
-    rating: number; // score 대신 rating 필드로 변경
     status: BookStatus;
-    cards: CardItem[];
+    score: number; // API 명세에 따라 'score'
+    startedAt: string; // Book 인터페이스와의 일관성을 위해 추가 (API 명세에는 없었으나, 필요하다고 가정)
+    cardSummaries: CardSummary[]; // API 명세에 따라 'cardSummaries'
   } | null;
 }
 
@@ -69,6 +69,8 @@ export interface BookSearchResult {
   title: string;
   author: string;
   imageUrl: string;
+  publisher: string;
+  isbn: string;
 }
 
 export interface SearchBooksResponse {
@@ -78,7 +80,6 @@ export interface SearchBooksResponse {
   result: BookSearchResult[];
 }
 
-// ✨ 오늘의 추천 책을 위한 인터페이스 추가
 export interface TodaysRecommendationBook {
   bookId: number;
   title: string;
@@ -86,23 +87,21 @@ export interface TodaysRecommendationBook {
   imageUrl: string;
 }
 
-// ✨ 오늘의 추천 API 응답 인터페이스 추가
 export interface GetTodaysRecommendationResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: TodaysRecommendationBook[]; // 결과는 책 객체 배열
+  result: TodaysRecommendationBook[];
 }
 
 export interface PopularBookItem {
-  image: string; // imageUrl과 매핑될 필드
+  image: string;
   title: string;
   author: string;
   publisher: string;
   isbn: string;
 }
 
-// 인기 도서 API 응답의 result 인터페이스
 export interface PopularBooksResult {
   books: PopularBookItem[];
   page: number;
@@ -111,7 +110,6 @@ export interface PopularBooksResult {
   totalPages: number;
 }
 
-// 인기 도서 API 전체 응답 인터페이스
 export interface GetPopularBooksResponse {
   isSuccess: boolean;
   code: string;
@@ -119,59 +117,30 @@ export interface GetPopularBooksResponse {
   result: PopularBooksResult;
 }
 
-// 인기 도서 API 쿼리 파라미터 인터페이스
 export interface GetPopularBooksQueryParams {
   page?: number;
   size?: number;
 }
 
-
-// ==========================================================
-//                 ⬇️ 개선된 API 호출 로직 ⬇️
-// ==========================================================
-
-// ✨ 2. 목 데이터 사용 여부를 결정하는 스위치를 만듭니다.
-//     true로 설정하면 실제 API 호출 없이 목 데이터를 사용합니다.
-export const USE_MOCK_DATA = false; // ✨ 개발 시에는 true, 백엔드 연동 시 false로 변경
-
+export const USE_MOCK_DATA = false;
 const BASE_URL = "https://api.very.miensoap.me";
 
-/**
- * 모든 API 호출에 인증 헤더를 자동으로 추가하는 헬퍼 함수
- * @param url 요청 URL
- * @param options fetch 요청 옵션
- * @returns fetch Response 객체
- */
-
 export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
-  // 목 데이터 사용 시 로직은 그대로 둡니다. (여기서는 중요하지 않음)
-  if (USE_MOCK_DATA) {
-    // ... (USE_MOCK_DATA 처리 로직. 현재 getAllBooks에서 직접 목 데이터 반환하므로 여기는 영향 없음)
-  }
-
   const accessToken = getAccessToken();
-
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
 
-  // ✨ accessToken이 있을 경우에만 Authorization 헤더를 추가합니다.
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
-  } else {
-    // ✨ 토큰이 없는데 인증이 필수인 API라면 여기서 에러를 throw하거나 로그인 페이지로 리다이렉트합니다.
-    if (!USE_MOCK_DATA) {
-      console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}. This API call might fail if authentication is required.`);
-      // throw new Error('Authentication required: No access token available. Please log in.');
-      // 실제 서비스에서는 여기서 로그인 페이지로 리다이렉트하는 로직을 추가합니다.
-      // navigate('/login'); // navigate는 이 스코프에 없으니 주의
-    }
+  } else if (!USE_MOCK_DATA) {
+    console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}. This API call might fail if authentication is required.`);
   }
 
   const response = await fetch(url, {
     ...options,
-    headers: headers as HeadersInit, // 최종적으로 HeadersInit으로 단언하여 fetch에 전달
+    headers: headers as HeadersInit,
   });
 
   if (!response.ok) {
@@ -185,195 +154,139 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
     }
     throw new Error(errorMessage);
   }
-
   return response;
 };
 
-/**
- * 모든 책을 가져오는 API
- */
 export async function getAllBooks(
-
   params: GetAllBooksQueryParams): Promise<GetAllBooksResponse> {
-    if (USE_MOCK_DATA) {
-      return new Promise(resolve => setTimeout(() => resolve({
-        isSuccess: true,
-        code: '1000',
-        message: '목 책장 조회 성공',
-        result: {
-          // ✨ books 대신 memberBooks로 변경하고, 필드들도 Book 인터페이스에 맞게 변경
-          memberBooks: [
-            {
-              bookId: 1,
-              title: '목 책 1',
-              author: '목 작가 1',
-              imageUrl: 'https://placehold.co/100x150?text=My+Book+1',
-              score: 5,
-              startedAt: '2025-07-01T10:00:00.000Z',
-              status: 'READING'
-            },
-            {
-              bookId: 2,
-              title: '목 책 2',
-              author: '목 작가 2',
-              imageUrl: 'https://placehold.co/100x150?text=My+Book+2',
-              score: 4,
-              startedAt: '2025-06-20T10:00:00.000Z',
-              status: 'NOT_START'
-            },
-            // ... 다른 목업 책들도 API 스펙에 맞춰 수정
-          ],
-          // ✨ offset 제거
-          page: params.page || 1,
-          size: params.size || 10,
-          totalElements: 2, // 목업 데이터 개수에 맞춰 조정
-          totalPages: 1,
-        }
-      }), 500));
-    }
-  // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
   if (USE_MOCK_DATA) {
-    // 네트워크 지연을 흉내내기 위해 0.5초 지연시킵니다.
-    return new Promise(resolve => setTimeout(() => resolve(mockAllBooksResponse), 500));
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책장 조회 성공',
+      result: {
+        memberBooks: [
+          { bookId: 1, title: '목 책 1', author: '목 작가 1', imageUrl: 'https://placehold.co/100x150?text=My+Book+1', score: 5, startedAt: '2025-07-01T10:00:00.000Z', status: 'READING' },
+          { bookId: 3, title: '목 책 3', author: '목 작가 3', imageUrl: 'https://placehold.co/100x150?text=My+Book+3', score: 3, startedAt: '2025-05-15T10:00:00.000Z', status: 'DONE' },
+        ],
+        page: params.page || 1,
+        size: params.size || 10,
+        totalElements: 3,
+        totalPages: 1,
+      }
+    }), 500));
   }
 
-  // 실제 API 호출 로직
   const url = new URL(`${BASE_URL}/api/v0/bookshelf/all`);
-  if (params.offset !== undefined) {
-    url.searchParams.append('offset', String(params.offset));
-  }
-  if (params.page !== undefined) {
-    url.searchParams.append('page', String(params.page));
-  }
+  if (params.page !== undefined) url.searchParams.append('page', String(params.page));
+  if (params.size !== undefined) url.searchParams.append('size', String(params.size));
+  if (params.sort !== undefined) url.searchParams.append('sort', params.sort);
 
-  const response = await fetchWithAuth(url.toString(), {
-    method: 'GET',
-  });
-
+  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
   const data: GetAllBooksResponse = await response.json();
   return data;
 }
 
-/**
- * 특정 책을 ID로 가져오는 API
- */
-export async function getBookById(
-  memberBookId: number): Promise<GetBookByIdResponse> {
-  // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
+export async function getBookById(memberBookId: number): Promise<GetBookByIdResponse> {
   if (USE_MOCK_DATA) {
-    // 특정 ID에 맞는 목 데이터를 반환하거나, 에러를 시뮬레이션할 수 있습니다.
-    // 여기서는 memberBookId가 1일 때만 데이터가 있다고 가정합니다.
-    const mockResult = memberBookId === 1 ? mockBookByIdResponse : {
+    const mockSuccessResult: GetBookByIdResponse = {
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 상세 조회 성공',
+      result: {
+        bookId: memberBookId,
+        title: '목 책 상세 (ID: ' + memberBookId + ')',
+        author: '목 작가 상세',
+        imageUrl: 'https://placehold.co/200x300?text=Mock+Book+Detail',
+        status: 'DONE',
+        score: 5, // 'rating' 대신 'score' 사용
+        startedAt: '2025-07-01T10:00:00.000Z', // 'startedAt' 필드 추가
+        cardSummaries: [
+          { cardId: 101, cardImage: 'https://placehold.co/100x100?text=Card1' },
+          { cardId: 102, cardImage: 'https://placehold.co/100x100?text=Card2' },
+        ]
+      }
+    };
+
+    const mockNotFoundResult: GetBookByIdResponse = {
       isSuccess: false,
       code: '404',
       message: '책을 찾을 수 없습니다.',
       result: null
     };
-    return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
+
+    const resultToReturn = memberBookId === 1 ? mockSuccessResult : mockNotFoundResult;
+    return new Promise(resolve => setTimeout(() => resolve(resultToReturn), 500));
   }
 
-  // 실제 API 호출 로직
   const url = new URL(`${BASE_URL}/api/v0/bookshelf/detail`);
   url.searchParams.append('memberBookId', String(memberBookId));
 
-  const response = await fetchWithAuth(url.toString(), {
-    method: 'GET',
-  });
-
+  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
   const data: GetBookByIdResponse = await response.json();
   return data;
 }
 
-/**
- * 책 제목으로 검색하는 API
- */
-export async function searchBooksByTitle(
-  query: string): Promise<SearchBooksResponse> {
-  // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
+export async function searchBooksByTitle(query: string): Promise<SearchBooksResponse> {
   if (USE_MOCK_DATA) {
-    // 쿼리에 따라 다른 결과를 반환하도록 로직을 추가할 수 있습니다.
-    const mockResult = query.toLowerCase().includes('해리') ? mockSearchBooksResponse : {
+    const mockResult: SearchBooksResponse = {
       isSuccess: true,
       code: '1000',
-      message: '검색 결과가 없습니다.',
-      result: []
+      message: '목 검색 결과',
+      result: query.toLowerCase().includes('해리') ? [
+        { title: '해리포터와 마법사의 돌', author: 'J.K. 롤링', imageUrl: 'https://placehold.co/100x150?text=Harry+Potter', publisher: '목 출판사', isbn: '978-1234567890' }
+      ] : []
     };
     return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
   }
 
-  // 실제 API 호출 로직
   const url = new URL(`${BASE_URL}/api/v0/bookshelf/search`);
   url.searchParams.append('title', query);
 
-  const response = await fetchWithAuth(url.toString(), {
-    method: 'GET',
-  });
-
+  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
   const data: SearchBooksResponse = await response.json();
   return data;
 }
 
-/**
- * ✨ 오늘의 추천 도서를 가져오는 API 함수
- */
 export async function getTodaysRecommendation(): Promise<GetTodaysRecommendationResponse> {
-  // ✨ 목 데이터를 사용할 경우, 실제 API 호출 대신 목 데이터를 반환합니다.
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => {
-      setTimeout(() => resolve({
-        isSuccess: true,
-        code: '1000',
-        message: '요청에 성공하였습니다.',
-        result: mockTodaysRecommendation
-      }), 500);
-    });
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '요청에 성공하였습니다.',
+      result: mockTodaysRecommendation
+    }), 500));
   }
 
-  // 실제 API 호출 로직
   const url = `${BASE_URL}/api/v0/recommendation/today`;
-  const response = await fetchWithAuth(url, {
-    method: 'GET',
-  });
-
+  const response = await fetchWithAuth(url, { method: 'GET' });
   const data: GetTodaysRecommendationResponse = await response.json();
   return data;
 }
 
-// ... (기존 코드 생략) ...
-
-/**
- * ✨ 랜덤으로 책 한 권을 가져오는 API 함수 (수정)
- */
 export async function getRandomBook(): Promise<Book> {
   if (USE_MOCK_DATA) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        // ✨ 이 줄을 수정합니다: books 대신 memberBooks 사용
-        const books = mockAllBooksResponse.result.memberBooks; // <-- 여기를 수정합니다.
-
+        const books = mockAllBooksResponse.result.memberBooks; 
         if (books.length === 0) {
           reject(new Error("No books available in mock data."));
           return;
         }
         const randomIndex = Math.floor(Math.random() * books.length);
         const randomBook = books[randomIndex];
-
         if (randomBook) {
           resolve(randomBook);
         } else {
           reject(new Error("Failed to select a random book. The book at the random index was undefined."));
         }
-
       }, 500);
     });
   }
-
   throw new Error('Real API for getRandomBook not implemented.');
 }
 
-export async function getPopularBooks(
-  params: GetPopularBooksQueryParams
-): Promise<GetPopularBooksResponse> {
+export async function getPopularBooks(params: GetPopularBooksQueryParams): Promise<GetPopularBooksResponse> {
   if (USE_MOCK_DATA) {
     return new Promise(resolve => setTimeout(() => resolve({
       isSuccess: true,
@@ -381,7 +294,6 @@ export async function getPopularBooks(
       message: '목 인기 도서 조회 성공',
       result: {
         books: [
-          // ✨ 이 부분의 URL을 변경합니다.
           { image: 'https://placehold.co/100x150?text=Popular+1', title: '인기 도서 1', author: '인기 작가 1', publisher: '인기 출판사 1', isbn: '1111' },
           { image: 'https://placehold.co/100x150?text=Popular+2', title: '인기 도서 2', author: '인기 작가 2', publisher: '인기 출판사 2', isbn: '2222' },
           { image: 'https://placehold.co/100x150?text=Popular+3', title: '인기 도서 3', author: '인기 작가 3', publisher: '인기 출판사 3', isbn: '3333' },
@@ -394,19 +306,169 @@ export async function getPopularBooks(
     }), 500));
   }
 
-  // 실제 API 호출 로직
   const url = new URL(`${BASE_URL}/api/v0/bookshelf/popular`);
-  if (params.page !== undefined) {
-    url.searchParams.append('page', String(params.page));
-  }
-  if (params.size !== undefined) {
-    url.searchParams.append('size', String(params.size));
+  if (params.page !== undefined) url.searchParams.append('page', String(params.page));
+  if (params.size !== undefined) url.searchParams.append('size', String(params.size));
+
+  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
+  const data: GetPopularBooksResponse = await response.json();
+  return data;
+}
+
+export interface CreateBookRequest {
+  title: string;
+  image: string;
+  author: string;
+  publisher: string;
+  isbn: string;
+}
+
+export interface CreateBookResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    memberBookId: number;
+    createdAt: string;
+  } | null;
+}
+
+export async function createBook(bookData: CreateBookRequest): Promise<CreateBookResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 등록 성공',
+      result: {
+        memberBookId: Math.floor(Math.random() * 1000) + 1,
+        createdAt: new Date().toISOString(),
+      }
+    }), 500));
   }
 
-  const response = await fetchWithAuth(url.toString(), {
-    method: 'GET',
+  const url = `${BASE_URL}/api/v0/bookshelf`;
+  const response = await fetchWithAuth(url, {
+    method: 'POST',
+    body: JSON.stringify(bookData),
   });
 
-  const data: GetPopularBooksResponse = await response.json();
+  const data: CreateBookResponse = await response.json();
+  return data;
+}
+
+export interface DeleteBookResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: Record<string, never>;
+}
+
+export async function deleteBook(memberBookId: number): Promise<DeleteBookResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 삭제 성공',
+      result: {}
+    }), 500));
+  }
+
+  const url = new URL(`${BASE_URL}/api/v0/bookshelf`);
+  url.searchParams.append('memberBookId', String(memberBookId));
+
+  const response = await fetchWithAuth(url.toString(), { method: 'DELETE' });
+  const data: DeleteBookResponse = await response.json();
+  return data;
+}
+
+export interface UpdateBookStatusResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: Record<string, never>;
+}
+
+export async function updateBookStatusToStart(memberBookId: number): Promise<UpdateBookStatusResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 읽기 시작 성공',
+      result: {}
+    }), 500));
+  }
+
+  const url = new URL(`${BASE_URL}/api/v0/bookshelf/status/start`);
+  url.searchParams.append('memberBookId', String(memberBookId));
+
+  const response = await fetchWithAuth(url.toString(), { method: 'PATCH' });
+  const data: UpdateBookStatusResponse = await response.json();
+  return data;
+}
+
+export async function updateBookStatusToOver(memberBookId: number): Promise<UpdateBookStatusResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 읽기 완료 성공',
+      result: {}
+    }), 500));
+  }
+
+  const url = new URL(`${BASE_URL}/api/v0/bookshelf/status/over`);
+  url.searchParams.append('memberBookId', String(memberBookId));
+
+  const response = await fetchWithAuth(url.toString(), { method: 'PATCH' });
+  const data: UpdateBookStatusResponse = await response.json();
+  return data;
+}
+
+export interface RateBookRequest {
+  score: number;
+}
+
+export async function rateBook(memberBookId: number, score: number): Promise<UpdateBookStatusResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 평점 주기 성공',
+      result: {}
+    }), 500));
+  }
+
+  const url = new URL(`${BASE_URL}/api/v0/bookshelf/rate`);
+  url.searchParams.append('memberBookId', String(memberBookId));
+
+  const response = await fetchWithAuth(url.toString(), {
+    method: 'PATCH',
+    body: JSON.stringify({ score }),
+  });
+
+  const data: UpdateBookStatusResponse = await response.json();
+  return data;
+}
+
+export interface GetMyBooksCountResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: number;
+}
+
+export async function getMyBooksCount(): Promise<GetMyBooksCountResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 내 책 개수 조회 성공',
+      result: 5
+    }), 500));
+  }
+
+  const url = `${BASE_URL}/api/v0/bookshelf/my/count`;
+  const response = await fetchWithAuth(url, { method: 'GET' });
+  const data: GetMyBooksCountResponse = await response.json();
   return data;
 }

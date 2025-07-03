@@ -20,7 +20,7 @@ code {
 }
 
 .create-button-container{
-  position: relative;
+  position: fixed;
   align-items: center;
   bottom: 0px;
 

@@ -101,7 +101,7 @@
     white-space: nowrap;
 }
 .book-status-info .book-status.독서중 {
-    background-color: #4CAF50;
+    background-color: #20DC551A;
 }
 .book-status-info .book-status.독서완료 {
     background-color: #547a99;

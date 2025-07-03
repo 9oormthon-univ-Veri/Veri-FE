@@ -1,9 +1,11 @@
 // src/pages/MyBookshelfPage.tsx
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // useLocation 임포트 추가
 import './MyBookshelfPage.css';
 import { MdArrowBackIosNew } from 'react-icons/md';
 
+// Book 인터페이스 import 시 타입명 일치 확인
+// bookApi.ts에서 정의된 Book 타입에 score와 startedAt이 포함되어야 합니다.
 import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../api/bookApi';
 import BookshelfList from '../components/MyBookshelfPage/BookshelfList';
 
@@ -36,6 +38,7 @@ export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => 
         src={STAR_FILL_ICON} // 채워진 별 아이콘을 사용
         alt="half star"
         className="star half"
+        style={{ clipPath: 'inset(0 50% 0 0)' }} // 반쪽 별을 위한 스타일 (예시)
       />
     );
   }
@@ -60,57 +63,60 @@ export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => 
 
 function MyBookshelfPage() {
   const navigate = useNavigate();
-  const [books, setBooks] = useState<Book[]>([]); // BookItem 대신 Book 타입 사용
+  const location = useLocation(); // ✨ useLocation 훅 추가
+  const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest');
+  // API 명세에 맞춰 'newest' 또는 'oldest'로 설정
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
-  const accessToken = "your_dummy_access_token";
+  // fetchBooks 함수를 useCallback으로 감싸고, sortOrder가 변경될 때마다 재생성되도록 합니다.
+  const fetchBooks = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const queryParams: GetAllBooksQueryParams = {
+        page: 1, // 첫 페이지
+        size: 10, // 한 페이지에 10개씩 (필요에 따라 조정)
+        sort: sortOrder, // API 명세의 sort 파라미터에 맞춤 ('newest' 또는 'oldest')
+      };
+      const response = await getAllBooks(queryParams);
+
+      if (response.isSuccess) {
+        // API 응답의 result.memberBooks를 사용
+        setBooks(response.result.memberBooks);
+      } else {
+        setError(response.message || "책 목록을 가져오는데 실패했습니다.");
+      }
+    } catch (err: any) {
+      setError("책 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [sortOrder]); // sortOrder가 변경될 때마다 fetchBooks 함수가 재생성됩니다.
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const queryParams: GetAllBooksQueryParams = {
-          offset: 0,
-          page: 1
-        };
-        const response = await getAllBooks(queryParams);
-
-        if (response.isSuccess) {
-          setBooks(response.result.books);
-        } else {
-          setError(response.message || "책 목록을 가져오는데 실패했습니다.");
-        }
-      } catch (err: any) {
-        setError("책 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
+    // fetchBooks 함수가 변경될 때마다 (즉, sortOrder가 변경될 때마다) 데이터를 다시 불러옵니다.
+    // ✨ location.key를 의존성 배열에 추가하여 페이지에 접근할 때마다 새로고침을 유발합니다.
     fetchBooks();
-  }, [accessToken]);
+  }, [fetchBooks, location.key]); // ✨ location.key 추가
 
-  const sortedBooks = useMemo(() => {
-    const sorted = [...books].sort((a, b) => {
-      const dateA = new Date(a.date); // Book 타입에 date 필드 존재
-      const dateB = new Date(b.date); // Book 타입에 date 필드 존재
-
-      if (sortOrder === 'latest') {
-        return dateB.getTime() - dateA.getTime();
-      } else {
-        return dateA.getTime() - dateB.getTime();
-      }
-    });
-    return sorted;
-  }, [books, sortOrder]);
+  // API에서 이미 정렬을 처리하므로, 클라이언트 측에서 추가적인 useMemo 정렬은 필요 없습니다.
+  // const sortedBooks = useMemo(() => {
+  //   return books; // API에서 이미 정렬된 상태로 데이터를 받습니다.
+  // }, [books]);
 
   const handleSortClick = useCallback(() => {
-    setSortOrder(prevOrder => (prevOrder === 'latest' ? 'oldest' : 'latest'));
+    // sortOrder 상태를 변경하여 useEffect가 fetchBooks를 다시 호출하게 합니다.
+    setSortOrder(prevOrder => (prevOrder === 'newest' ? 'oldest' : 'newest'));
   }, []);
+
+  // "+ 등록하기" 버튼 클릭 핸들러
+  const handleCreateBookClick = useCallback(() => {
+    // 책 등록/생성 페이지로 이동 (경로는 실제 라우팅에 맞게 조정)
+    navigate('/create-book');
+  }, [navigate]);
 
   if (isLoading) {
     return (
@@ -131,29 +137,33 @@ function MyBookshelfPage() {
   return (
     <div className="page-container">
       <header className="detail-header">
-        <div className="header-left-arrow" onClick={() => navigate(-1)}>
+        <button className="header-left-arrow" onClick={() => navigate("/")}>
           <MdArrowBackIosNew size={24} color="#333" />
-        </div>
+        </button>
         <h3>나의책장</h3>
-        <div
-          className="dummy-box"
-        >
-        </div>
+        <div className="dummy-box"></div>
       </header>
 
-      <div className="header-margin">
-      </div>
+      <div className="header-margin"></div>
 
       <div className="sort-options">
         <span className="sort-button" onClick={handleSortClick}>
-          {sortOrder === 'latest' ? '최신순' : '오래된순'} &gt;
+          {sortOrder === 'newest' ? '최신순' : '오래된순'} &gt;
         </span>
       </div>
 
-      <BookshelfList books={sortedBooks} />
+      {books.length === 0 && !isLoading && !error ? (
+        <div className="no-books-message">
+          <p>등록된 책이 없습니다. 새로운 책을 등록해보세요!</p>
+        </div>
+      ) : (
+        // BookshelfList 컴포넌트는 이미 Book 타입을 받도록 되어 있으므로,
+        // score를 rating으로 매핑하는 추가 작업 없이 books를 직접 전달합니다.
+        <BookshelfList books={books} />
+      )}
 
       <div className="create-button-container">
-        <button className="create-button">
+        <button className="create-button" onClick={handleCreateBookClick}>
           + 등록하기
         </button>
       </div>

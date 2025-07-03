@@ -6,7 +6,7 @@ import { MdClose } from 'react-icons/md';
 import GalleryIcon from '/icons/gallery.svg';
 import CameraIcon from '/icons/camera.svg';
 
-// ✨ imageApi에서 uploadImage 함수를 임포트합니다.
+// imageApi에서 uploadImage 함수를 임포트합니다.
 import { uploadImage } from '../../api/imageApi';
 
 import './MakeCardPage.css';
@@ -14,7 +14,7 @@ import './MakeCardPage.css';
 const MakeCardPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // ✨ selectedGalleryImage와 capturedImage는 이제 Public URL (string)을 저장합니다.
+  // selectedGalleryImage와 capturedImage는 이제 Public URL (string)을 저장합니다.
   const [selectedGalleryImage, setSelectedGalleryImage] = useState<string | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -28,22 +28,17 @@ const MakeCardPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [bookId] = useState<number>(0); // 임의의 책 ID 설정 (실제 책 ID로 대체 필요)
-
-  const defaultImages = [
-    'https://picsum.photos/id/1018/350/500',
-    'https://picsum.photos/id/1015/350/500',
-    'https://picsum.photos/id/1025/350/500',
-  ];
+  const [bookId] = useState<number>(1); // 임의의 책 ID 설정 (실제 책 ID로 대체 필요)
 
   // 현재 표시할 이미지 목록 (업로드된 이미지 + 갤러리 이미지 + 기본 이미지)
+  // ✨ defaultImages를 제거하여 초기 화면이 비어있도록 합니다.
   const allAvailableImages = [];
   if (capturedImage) allAvailableImages.push(capturedImage);
   if (selectedGalleryImage) allAvailableImages.push(selectedGalleryImage);
-  allAvailableImages.push(...defaultImages);
+  // allAvailableImages.push(...defaultImages); // 이 줄을 주석 처리하거나 제거합니다.
   const imagesToDisplay = allAvailableImages;
 
-  // ✨ 이미지 업로드 및 OCR 페이지로 이동을 처리하는 공통 함수
+  // 이미지 업로드 및 OCR 페이지로 이동을 처리하는 공통 함수
   const processAndNavigateToOcr = useCallback(async (imageToProcess: string) => {
     setIsUploading(true);
     setUploadError(null);
@@ -74,13 +69,6 @@ const MakeCardPage: React.FC = () => {
     }
   }, [bookId, navigate]);
 
-  // ✨ "촬영된 사진 사용하기" 버튼 클릭 핸들러 수정
-  // const handleUseCapturedPhoto = () => {
-  //   if (capturedImage) {
-  //     processAndNavigateToOcr(capturedImage);
-  //   }
-  // };
-
   // Attach stream to video and handle play & readiness
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -106,17 +94,8 @@ const MakeCardPage: React.FC = () => {
     };
   }, [stream]);
 
-  // ✨ 이제 selectedGalleryImage와 capturedImage는 Public URL이므로, revokeObjectURL은 필요 없습니다.
-  //    defaultImages도 외부 URL이므로 revokeObjectURL은 필요 없습니다.
-  // useEffect(() => {
-  //     if (selectedGalleryImage) {
-  //         URL.revokeObjectURL(selectedGalleryImage);
-  //     }
-  //     if (capturedImage) {
-  //         URL.revokeObjectURL(capturedImage);
-  //     }
-  // }, [capturedImage, selectedGalleryImage]);
-
+  // selectedGalleryImage와 capturedImage는 Public URL이므로, revokeObjectURL은 필요 없습니다.
+  // defaultImages도 외부 URL이므로 revokeObjectURL은 필요 없습니다.
 
   const handleDotClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -131,7 +110,7 @@ const MakeCardPage: React.FC = () => {
     fileInputRef.current?.click(); // 파일 입력 필드 클릭
   };
 
-  // ✨ 갤러리 이미지 선택 시 바로 업로드 및 Public URL 저장
+  // 갤러리 이미지 선택 시 바로 업로드 및 Public URL 저장
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -193,7 +172,7 @@ const MakeCardPage: React.FC = () => {
     }
   };
 
-  // ✨ 촬영된 사진을 Base64로 저장하는 대신, 바로 Public URL로 변환하여 저장
+  // 촬영된 사진을 Base64로 저장하는 대신, 바로 Public URL로 변환하여 저장
   const handleTakePhoto = async () => {
     if (!isVideoReady) {
       setCameraError('카메라 준비가 되지 않았습니다. 잠시 후 다시 시도해주세요.');
@@ -297,6 +276,7 @@ const MakeCardPage: React.FC = () => {
               }}
             />
           ) : (
+            // ✨ 이미지가 없을 때 표시될 빈 화면 메시지
             <div className="no-image-message">
               <p>표시할 이미지가 없습니다.</p>
               <p>갤러리에서 선택하거나 카메라로 촬영해주세요.</p>
@@ -306,6 +286,7 @@ const MakeCardPage: React.FC = () => {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
 
+        {/* 이미지가 있을 때만 점 인디케이터 표시 */}
         {!isCameraActive && imagesToDisplay.length > 0 && (
           <div className="image-dots-container">
             {imagesToDisplay.map((_, idx) => (
@@ -337,12 +318,11 @@ const MakeCardPage: React.FC = () => {
           )}
         </div>
 
-        {/* 촬영된 사진이 있거나 갤러리에서 선택된 사진이 있을 때만 "사진 사용하기" 버튼 노출 */}
-        {(!isCameraActive && (capturedImage || selectedGalleryImage || imagesToDisplay[currentImageIndex])) && (
+        {/* 촬영된 사진이 있거나 갤러리에서 선택된 사진이 있거나, 기본 이미지가 있을 때만 "사진 사용하기" 버튼 노출 */}
+        {(!isCameraActive && imagesToDisplay[currentImageIndex]) && (
           <div className="use-photo-button-container" style={{ marginTop: '16px', textAlign: 'center' }}>
             <button
               className="use-photo-button"
-              // ✨ 여기서 유효성 검사를 추가합니다.
               onClick={() => {
                 const currentDisplayedImage = imagesToDisplay[currentImageIndex];
                 if (currentDisplayedImage) { // currentDisplayedImage가 undefined가 아닌지 확인

@@ -22,6 +22,7 @@ import TextExtractionLoadingPage from './pages/makeCardPage/TextExtractionLoadin
 import TextExtractionResultPage from './pages/makeCardPage/TextExtractionResultPage';
 import CardCustomizationPage from './pages/makeCardPage/CardCustomizationPage';
 import CardCustomizationCompletePage from './pages/makeCardPage/CardCustomizationCompletePage';
+import CreateBookDetailsPage from './pages/makeBookPage/MakeBookPage'; 
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
 const isAuthenticated = () => {
@@ -38,7 +39,7 @@ function App() {
     const publicPaths = ['/login'];
 
     if (!isAuthenticated() && !publicPaths.includes(location.pathname)) {
-      navigate('/login');
+      navigate('/login');
     }
 
     // 개발 중 편의를 위해 로그인 무시
@@ -73,6 +74,7 @@ function App() {
         <Route path="/text-extraction-result" element={<TextExtractionResultPage />} />
         <Route path="/customize-card" element={<CardCustomizationPage />} />
         <Route path="/card-complete" element={<CardCustomizationCompletePage />} />
+        <Route path="/create-book" element={<CreateBookDetailsPage />} />
         {/* 404 페이지 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>

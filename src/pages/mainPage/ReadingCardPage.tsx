@@ -4,17 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import './ReadingCardPage.css';
 import ReadingCardItem from '../../components/ReadingCardPage/ReadingCardItem';
 import ReadingCardGridItem from '../../components/ReadingCardPage/ReadingCardGridItem';
-// ✨ getMyCards와 함께 GetMyCardsQueryParams 타입을 임포트합니다.
-import { getMyCards, type Card, type GetMyCardsQueryParams } from '../../api/cardApi';
+// getMyCards, getCardDetailById, MyCardItem 타입 및 GetMyCardsQueryParams 타입을 임포트합니다.
+import { getMyCards, getCardDetailById, type MyCardItem, type GetMyCardsQueryParams } from '../../api/cardApi';
 
 // ReadingCardItemType 정의를 API 응답과 사용법에 맞게 업데이트
-// ✨ title과 date는 현재 API 스펙에 직접 없으므로, 임시 처리 필요
+// title은 이제 getCardDetailById를 통해 가져올 책 제목을 반영합니다.
 export interface ReadingCardItemType {
-    id: string; // cardId
-    title: string; // ✨ 새 스펙에 없음: "제목 없음" 또는 별도 처리 필요
-    contentPreview: string; // card.content (trimmed)
-    date: string; // ✨ 새 스펙에 없음: "날짜 정보 없음" 또는 별도 처리 필요
-    thumbnailUrl: string; // ✨ card.image (imageUrl 대신)
+    id: string; // MyCardItem.cardId
+    title: string; // getCardDetailById를 통해 가져올 책 제목
+    contentPreview: string; // MyCardItem.content (trimmed)
+    date: string; // MyCardItem 또는 Card 상세 정보에 생성 날짜 필드가 없으므로, "날짜 정보 없음" 또는 임시 값 사용
+    thumbnailUrl: string; // MyCardItem.image
 }
 
 function ReadingCardPage() {
@@ -22,19 +22,18 @@ function ReadingCardPage() {
     const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    // ✨ sortOrder는 이제 API의 'sort' 쿼리 파라미터 값과 일치하도록 변경합니다.
-    //    API 스펙에서 'newest', 'oldest' 등의 값이 명시되어 있다면 그에 따릅니다.
-    //    현재 스펙에 따르면 'newest'가 기본값이므로 그렇게 설정합니다.
+    // sortOrder는 이제 API의 'sort' 쿼리 파라미터 값과 일치하도록 변경합니다.
+    // API 스펙에 따르면 'newest'가 기본값이므로 그렇게 설정합니다.
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest'); // API의 sort 파라미터와 일치하도록
 
     const [activeTab, setActiveTab] = useState<'image' | 'text'>('image'); // 초기값은 '이미지' 탭
 
-    // ✨ API 호출 로직을 useCallback으로 감싸서 sortOrder 변경 시 재사용되도록 합니다.
+    // API 호출 로직을 useCallback으로 감싸서 sortOrder 변경 시 재사용되도록 합니다.
     const fetchCards = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         try {
-            // ✨ getMyCards에 쿼리 파라미터 객체를 전달합니다.
+            // 1. 독서 카드 목록을 가져옵니다.
             const queryParams: GetMyCardsQueryParams = {
                 page: 1, // 필요에 따라 페이지네이션 구현 시 동적으로 변경
                 size: 20, // 한 페이지에 가져올 카드 수 (적절히 조절)
@@ -43,21 +42,46 @@ function ReadingCardPage() {
             const response = await getMyCards(queryParams); // API 호출
 
             if (response.isSuccess) {
-                // response.result와 result.cards의 존재 여부를 안전하게 확인합니다.
                 if (response.result && Array.isArray(response.result.cards)) {
-                    const mappedCards: ReadingCardItemType[] = response.result.cards.map((card: Card) => ({
-                        id: String(card.cardId),
-                        // ✨ title: 백엔드 API에서 책 제목을 직접 제공하지 않으므로 임시 처리
-                        //    이 부분은 백엔드와 협의하여 스펙을 맞추는 것이 가장 좋습니다.
-                        title: "제목 없음", // 또는 카드 내용에서 추출하는 로직 구현
-                        contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
-                        // ✨ date: 백엔드 API에서 createdAt 필드가 제거되었으므로 임시 처리
-                        //    날짜 정보가 필요하다면 백엔드에 요청해야 합니다.
-                        date: "날짜 정보 없음", // 또는 `new Date().toISOString()` 등 임시 값
-                        // ✨ thumbnailUrl: card.imageUrl 대신 card.image 필드 사용
-                        thumbnailUrl: card.image,
-                    }));
+                    // 2. 각 카드에 대해 상세 정보를 비동기로 가져옵니다. (N+1 문제 발생 가능성 있음)
+                    // 이 방식은 각 카드마다 추가 API 호출을 발생시키므로, 카드 수가 많을 경우 성능에 영향을 줄 수 있습니다.
+                    // 이상적인 해결책은 getMyCards API가 책 제목을 직접 포함하도록 백엔드를 수정하는 것입니다.
+                    const detailedCardsPromises = response.result.cards.map(async (card: MyCardItem) => {
+                        try {
+                            const detailResponse = await getCardDetailById(card.cardId);
+                            if (detailResponse.isSuccess && detailResponse.result) {
+                                return {
+                                    id: String(card.cardId),
+                                    title: detailResponse.result.book.title, // 상세 정보에서 책 제목 가져오기
+                                    contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
+                                    date: "날짜 정보 없음", // 현재 API에 생성 날짜 필드 없음
+                                    thumbnailUrl: card.image,
+                                };
+                            } else {
+                                console.warn(`Failed to fetch detail for card ID ${card.cardId}:`, detailResponse.message);
+                                return {
+                                    id: String(card.cardId),
+                                    title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음", // 폴백 제목
+                                    contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
+                                    date: "날짜 정보 없음",
+                                    thumbnailUrl: card.image,
+                                };
+                            }
+                        } catch (detailErr) {
+                            console.error(`Error fetching detail for card ID ${card.cardId}:`, detailErr);
+                            return {
+                                id: String(card.cardId),
+                                title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음", // 에러 발생 시 폴백 제목
+                                contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
+                                date: "날짜 정보 없음",
+                                thumbnailUrl: card.image,
+                            };
+                        }
+                    });
+
+                    const mappedCards = await Promise.all(detailedCardsPromises);
                     setReadingCards(mappedCards);
+
                 } else {
                     console.warn("API는 성공을 반환했지만, 카드 데이터(result.cards)가 없거나 형식이 잘못되었습니다:", response);
                     setReadingCards([]); // 빈 배열로 설정하여 오류 없이 렌더링
@@ -74,31 +98,12 @@ function ReadingCardPage() {
         }
     }, [sortOrder]); // sortOrder가 변경될 때마다 fetchCards 함수가 재생성됩니다.
 
-    // useEffect 훅에서 fetchCards를 호출하고, sortOrder가 변경될 때마다 다시 호출되도록 설정
+    // useEffect 훅에서 fetchCards를 호출하고, fetchCards가 변경될 때마다 다시 호출되도록 설정
     useEffect(() => {
         fetchCards();
     }, [fetchCards]); // fetchCards 자체가 sortOrder에 의존하므로 여기에 fetchCards를 넣습니다.
 
-    // ✨ 정렬 로직은 이제 API에 sort 파라미터를 넘기므로, 프론트엔드에서 직접 정렬할 필요가 없습니다.
-    //    sortedReadingCards useMemo는 더 이상 필요 없으며, readingCards를 직접 사용합니다.
-    //    만약 API가 정렬을 지원하지 않거나 클라이언트 정렬이 필요한 경우에만 useMemo를 사용합니다.
-    //    현재는 sortOrder 상태를 변경하여 API를 다시 호출하는 방식이므로 제거합니다.
-    /*
-    const sortedReadingCards = useMemo(() => {
-        const sorted = [...readingCards].sort((a, b) => {
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-
-            if (sortOrder === 'latest') {
-                return dateB.getTime() - dateA.getTime();
-            } else { // 'oldest'
-                return dateA.getTime() - dateB.getTime();
-            }
-        });
-        return sorted;
-    }, [readingCards, sortOrder]); // 이 useMemo는 이제 필요 없음
-    */
-
+    // 정렬 로직은 이제 API에 sort 파라미터를 넘기므로, 프론트엔드에서 직접 정렬할 필요가 없습니다.
     const handleSortClick = useCallback(() => {
         // sortOrder 상태를 변경하여 useEffect가 fetchCards를 다시 호출하게 합니다.
         setSortOrder(prevOrder => (prevOrder === 'newest' ? 'oldest' : 'newest'));
@@ -156,7 +161,7 @@ function ReadingCardPage() {
 
                 {activeTab === 'image' && (
                     <div className="reading-card-grid-view">
-                        {readingCards.length > 0 ? ( // ✨ sortedReadingCards 대신 readingCards 사용
+                        {readingCards.length > 0 ? (
                             readingCards.map((card) => (
                                 <ReadingCardGridItem
                                     key={card.id}
@@ -175,7 +180,7 @@ function ReadingCardPage() {
 
                 {activeTab === 'text' && (
                     <div className="reading-card-text-view">
-                        {readingCards.length > 0 ? ( // ✨ sortedReadingCards 대신 readingCards 사용
+                        {readingCards.length > 0 ? (
                             readingCards.map((card) => (
                                 <ReadingCardItem
                                     key={card.id}

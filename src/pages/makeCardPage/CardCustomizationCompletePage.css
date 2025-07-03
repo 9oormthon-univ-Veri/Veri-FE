@@ -5,6 +5,10 @@
   min-height: 100vh;
 }
 
+.customization-complete-page-wapper{
+  margin: 20px;
+}
+
 .complete-header {
   display: flex;
   align-items: center;

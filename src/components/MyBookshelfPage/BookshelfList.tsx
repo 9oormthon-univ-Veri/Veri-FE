@@ -20,15 +20,21 @@ const BookshelfList: React.FC<BookshelfListProps> = ({ books }) => {
 
   const getStatusClass = (status: BookStatus) => {
     switch (status) {
-      case '독서중':
-        return 'status-reading';
-      case '완독':
-      case '미정':
-        return 'status-completed'; // '완독'과 동일한 스타일로 처리
-      case '읽고싶어요':
-        return 'status-want-to-read';
-      default:
-        return 'status-unknown';
+      // API에서 반환되는 BookStatus 값에 맞게 케이스를 수정합니다.
+      // 'READING', 'COMPLETED', 'WISH' 또는 기타 상태를 반영합니다.
+      // API 명세에 '독서중', '완독', '미정', '읽고싶어요' 대신 영문 ENUM이 사용될 가능성이 높습니다.
+      // bookApi.ts의 BookStatus 타입 정의를 참조했습니다.
+      case 'READING':
+        return '독서중';
+      case 'DONE':
+        return '완독'; // '완독'과 동일한 스타일로 처리
+      // 현재 BookStatus 타입에 '미정'과 '읽고싶어요'가 직접 정의되어 있지 않으므로,
+      // API 응답에 맞춰 'WISH' 또는 다른 적절한 ENUM으로 변경 필요
+      // 임시로 '미정'과 '읽고싶어요'를 제거하거나, bookApi.ts의 BookStatus를 확장해야 합니다.
+      // 여기서는 BookStatus에 명시된 'READING'과 'COMPLETED'만 사용하고,
+      // 그 외의 경우를 위해 default를 추가합니다.
+      default: // 예를 들어 'WISH' 등 새로운 상태가 추가될 경우 여기에 추가
+        return 'status-unknown'; // 알 수 없는 상태에 대한 기본 스타일
     }
   };
 
@@ -56,14 +62,21 @@ const BookshelfList: React.FC<BookshelfListProps> = ({ books }) => {
               <div className="book-top-info">
                 <h4 className="book-title-full">{book.title}</h4>
                 <p className="book-author-full">{book.author}</p>
-                <StarRatingFullPage rating={book.rating} />
+                {/* Book 인터페이스에 rating 대신 score가 있으므로 score를 전달 */}
+                <StarRatingFullPage rating={book.score} />
               </div>
               <div className="book-status-info">
-                  <span className={`book-status ${getStatusClass(book.status)}`}>
-                    {book.status}
-                  </span>
-                  <span className="book-date">{book.date}</span>
-                </div>
+                {/* BookStatus는 API 명세에 따라 "READING", "COMPLETED" 등으로 전달될 수 있습니다. */}
+                {/* getStatusClass 함수 내부의 switch case도 이에 맞게 조정했습니다. */}
+                <span className={`book-status ${getStatusClass(book.status)}`}>
+                  {book.status === 'READING' ? '독서중' : book.status === 'DONE' ? '완독' : book.status}
+                  {/* API 응답에 'WISH' 또는 다른 상태가 있다면 여기에 추가하여 한글로 표시할 수 있습니다. */}
+                </span>
+                {/* Book 인터페이스에 date 대신 startedAt이 있으므로 startedAt을 사용하고, 날짜 형식 지정 */}
+                <span className="book-date">
+                  {book.startedAt ? new Date(book.startedAt).toLocaleDateString('ko-KR') : ''}
+                </span>
+              </div>
             </div>
           </div>
         ))

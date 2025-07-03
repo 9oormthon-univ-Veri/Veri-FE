@@ -114,7 +114,7 @@ function LibraryPage() {
           <div className="profile-circle">
             {/* ✨ profileImageUrl 대신 image 필드 사용 */}
             {userData.image ? (
-              <img src={userData.image} className="profile-image" alt="프로필 이미지" />
+              <img src={userData.image} className="profile-image"/>
             ) : (
               // 이미지가 없을 때 기본 프로필 이미지 또는 플레이스홀더를 표시
               <div className="profile-placeholder" style={{ backgroundImage: 'url(/icons/default-profile.png)' }}></div>
@@ -128,7 +128,6 @@ function LibraryPage() {
           <img
             src={bookImageSrc}
             className="hero-book-sample"
-            alt="책 샘플 이미지"
           />
         </div>
       </section>
