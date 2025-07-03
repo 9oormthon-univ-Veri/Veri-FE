@@ -68,7 +68,7 @@ const MyBookshelfSection: React.FC = () => {
           // ✨ 그리고 .books 대신 .memberBooks를 사용합니다.
           if (response.result && Array.isArray(response.result.memberBooks)) {
             const mappedBooks: BookshelfItemType[] = response.result.memberBooks.map((book: Book) => ({
-              id: String(book.bookId),
+              id: String(book.memberBookId),
               coverUrl: book.imageUrl,
               title: book.title,
               author: book.author,
