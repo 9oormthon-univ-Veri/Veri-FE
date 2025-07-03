@@ -2,10 +2,10 @@
 
 import { getAccessToken } from './auth';
 import {
-  mockAllBooksResponse,
-  // mockBookByIdResponse,
-  // mockSearchBooksResponse,
-  mockTodaysRecommendation,
+  // mockAllBooksResponse,
+  // // mockBookByIdResponse,
+  // // mockSearchBooksResponse,
+  // mockTodaysRecommendation,
 } from './mockData';
 
 export type BookStatus = "READING" | "DONE";
@@ -248,43 +248,43 @@ export async function searchBooksByTitle(query: string): Promise<SearchBooksResp
   return data;
 }
 
-export async function getTodaysRecommendation(): Promise<GetTodaysRecommendationResponse> {
-  if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '요청에 성공하였습니다.',
-      result: mockTodaysRecommendation
-    }), 500));
-  }
+// export async function getTodaysRecommendation(): Promise<GetTodaysRecommendationResponse> {
+//   if (USE_MOCK_DATA) {
+//     return new Promise(resolve => setTimeout(() => resolve({
+//       isSuccess: true,
+//       code: '1000',
+//       message: '요청에 성공하였습니다.',
+//       result: mockTodaysRecommendation
+//     }), 500));
+//   }
 
-  const url = `${BASE_URL}/api/v0/recommendation/today`;
-  const response = await fetchWithAuth(url, { method: 'GET' });
-  const data: GetTodaysRecommendationResponse = await response.json();
-  return data;
-}
+//   const url = `${BASE_URL}/api/v0/recommendation/today`;
+//   const response = await fetchWithAuth(url, { method: 'GET' });
+//   const data: GetTodaysRecommendationResponse = await response.json();
+//   return data;
+// }
 
-export async function getRandomBook(): Promise<Book> {
-  if (USE_MOCK_DATA) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const books = mockAllBooksResponse.result.memberBooks; 
-        if (books.length === 0) {
-          reject(new Error("No books available in mock data."));
-          return;
-        }
-        const randomIndex = Math.floor(Math.random() * books.length);
-        const randomBook = books[randomIndex];
-        if (randomBook) {
-          resolve(randomBook);
-        } else {
-          reject(new Error("Failed to select a random book. The book at the random index was undefined."));
-        }
-      }, 500);
-    });
-  }
-  throw new Error('Real API for getRandomBook not implemented.');
-}
+// export async function getRandomBook(): Promise<Book> {
+//   if (USE_MOCK_DATA) {
+//     return new Promise((resolve, reject) => {
+//       setTimeout(() => {
+//         const books = mockAllBooksResponse.result.memberBooks; 
+//         if (books.length === 0) {
+//           reject(new Error("No books available in mock data."));
+//           return;
+//         }
+//         const randomIndex = Math.floor(Math.random() * books.length);
+//         const randomBook = books[randomIndex];
+//         if (randomBook) {
+//           resolve(randomBook);
+//         } else {
+//           reject(new Error("Failed to select a random book. The book at the random index was undefined."));
+//         }
+//       }, 500);
+//     });
+//   }
+//   throw new Error('Real API for getRandomBook not implemented.');
+// }
 
 export async function getPopularBooks(params: GetPopularBooksQueryParams): Promise<GetPopularBooksResponse> {
   if (USE_MOCK_DATA) {

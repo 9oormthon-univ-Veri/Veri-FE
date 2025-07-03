@@ -1,8 +1,6 @@
 // src/api/memberApi.ts
 
 import { fetchWithAuth } from './bookApi'; // fetchWithAuth 임포트
-import { USE_MOCK_DATA } from './bookApi'; // USE_MOCK_DATA 임포트 (만약 bookApi에 있다면)
-// 또는 USE_MOCK_DATA가 별도의 config 파일에 있다면 그곳에서 임포트합니다.
 
 const BASE_URL = "https://api.very.miensoap.me";
 
@@ -31,23 +29,20 @@ export interface GetMemberProfileResponse {
     result: MemberProfile | null;
 }
 
-// 💡 목 데이터를 임포트해야 합니다.
-import { mockMemberProfileResponse } from './mockData';
-
 /**
  * 회원 프로필 정보를 가져오는 API 호출 (Mock 또는 실제)
  */
 export async function getMemberProfile(): Promise<GetMemberProfileResponse> {
     // ✨ USE_MOCK_DATA 플래그를 사용하여 분기합니다.
-    if (USE_MOCK_DATA) {
-        // 목 데이터의 필드도 MemberProfile 인터페이스에 맞춰 수정해야 합니다.
-        // 예: mockMemberProfileResponse.result = { email: 'mock@example.com', nickname: 'MockUser', ... }
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(mockMemberProfileResponse);
-            }, 500); // 일관성을 위해 지연 시간 0.5초로 변경
-        });
-    }
+    // if (USE_MOCK_DATA) {
+    //     // 목 데이터의 필드도 MemberProfile 인터페이스에 맞춰 수정해야 합니다.
+    //     // 예: mockMemberProfileResponse.result = { email: 'mock@example.com', nickname: 'MockUser', ... }
+    //     return new Promise((resolve) => {
+    //         setTimeout(() => {
+    //             resolve(mockMemberProfileResponse);
+    //         }, 500); // 일관성을 위해 지연 시간 0.5초로 변경
+    //     });
+    // }
 
     // ✨ 실제 API 호출 로직
     const url = `${BASE_URL}/api/v1/members/me`;
