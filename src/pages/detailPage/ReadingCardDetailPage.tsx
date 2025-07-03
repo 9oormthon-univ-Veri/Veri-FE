@@ -43,19 +43,15 @@ function ReadingCardDetailPage() {
         const response = await getCardDetailById(cardId);
 
         if (response.isSuccess && response.result) {
-          // API 응답의 'id'를 'cardId'로 매핑하고,
-          // 'createdAt' 필드는 API 명세에 없으므로 포함하지 않습니다.
           setCardDetail({
             cardId: response.result.id,
             content: response.result.content,
             imageUrl: response.result.imageUrl,
-            book: {
+            book: response.result.book ? { // Check if book exists
               title: response.result.book.title,
               coverImageUrl: response.result.book.coverImageUrl,
               author: response.result.book.author,
-            },
-            // createdAt 필드는 API에서 제공되지 않으므로, 더 이상 여기에 설정하지 않습니다.
-            // 만약 날짜 정보가 필요하다면, 카드 생성 시점에 저장하거나 다른 API를 통해 가져와야 합니다.
+            } : null, // Set book to null if it doesn't exist
           });
         } else {
           setError(response.message || "독서 카드 상세 정보를 가져오는데 실패했습니다.");
@@ -89,7 +85,7 @@ function ReadingCardDetailPage() {
 
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `독서카드_${cardDetail?.book.title || '제목없음'}_${cardDetail?.cardId}.png`;
+      link.download = `독서카드_${cardDetail?.book?.title || '제목없음'}_${cardDetail?.cardId}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -119,12 +115,12 @@ function ReadingCardDetailPage() {
           return;
         }
 
-        const file = new File([blob], `독서카드_${cardDetail?.book.title || '제목없음'}.png`, { type: 'image/png' });
+        const file = new File([blob], `독서카드_${cardDetail?.book?.title || '제목없음'}.png`, { type: 'image/png' });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
-              title: `나의 독서카드: ${cardDetail?.book.title || '제목없음'}`,
+              title: `나의 독서카드: ${cardDetail?.book?.title || '제목없음'}`,
               text: cardDetail?.content || '나만의 독서카드를 공유해요!',
               files: [file],
             });
@@ -191,9 +187,6 @@ function ReadingCardDetailPage() {
     // }
   };
 
-  // createdAt 필드가 API에서 제공되지 않으므로, 날짜 포맷팅 함수는 더 이상 사용하지 않습니다.
-  // 대신 '날짜 정보 없음'을 직접 표시합니다.
-
   if (isLoading || isProcessing) {
     return (
       <div className="loading-page-container">
@@ -254,7 +247,7 @@ function ReadingCardDetailPage() {
         <div className="card-image-wrapper">
           <img
             src={cardDetail.imageUrl || 'https://placehold.co/300x400?text=No+Card+Image'}
-            alt={`독서 카드: ${cardDetail.book.title}`}
+            alt={`독서 카드: ${cardDetail.book?.title || '제목없음'}`}
             className="card-main-image"
             onError={(e) => {
               e.currentTarget.src = "https://placehold.co/300x400?text=No+Card+Image";
@@ -265,11 +258,13 @@ function ReadingCardDetailPage() {
 
         <div className="card-text-info">
           <button className="book-title-for-card-button" onClick={handleBookTitleClick}>
-            <p>{cardDetail.book.title}</p>
+            <p>
+              {cardDetail.book?.title || '책 정보 없음'}
+              {!cardDetail.book && <span className="no-book-info-message"> (책 정보 없음)</span>}
+            </p>
           </button>
 
           <p className="card-content-text">{cardDetail.content}</p>
-          {/* createdAt 필드가 API에서 제거되었으므로, 날짜 정보는 임시로 '날짜 정보 없음'을 표시합니다. */}
           <p className="card-upload-date">날짜 정보 없음</p>
         </div>
       </div>

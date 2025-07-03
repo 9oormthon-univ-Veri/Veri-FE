@@ -8,7 +8,7 @@ import {
   // mockTodaysRecommendation,
 } from './mockData';
 
-export type BookStatus = "READING" | "DONE";
+export type BookStatus =  "NOT_START" |"READING" | "DONE";
 
 export interface CardSummary {
   cardId: number;
@@ -17,7 +17,7 @@ export interface CardSummary {
 
 // Book 인터페이스: getAllBooks 응답 및 상세 정보에서 사용될 필드 포함
 export interface Book {
-  bookId: number;
+  memberBookId: number;
   title: string;
   author: string;
   imageUrl: string;
@@ -54,7 +54,7 @@ export interface GetBookByIdResponse {
   code: string;
   message: string;
   result: {
-    bookId: number;
+    memberBookId: number;
     title: string;
     author: string;
     imageUrl: string;
@@ -166,8 +166,8 @@ export async function getAllBooks(
       message: '목 책장 조회 성공',
       result: {
         memberBooks: [
-          { bookId: 1, title: '목 책 1', author: '목 작가 1', imageUrl: 'https://placehold.co/100x150?text=My+Book+1', score: 5, startedAt: '2025-07-01T10:00:00.000Z', status: 'READING' },
-          { bookId: 3, title: '목 책 3', author: '목 작가 3', imageUrl: 'https://placehold.co/100x150?text=My+Book+3', score: 3, startedAt: '2025-05-15T10:00:00.000Z', status: 'DONE' },
+          { memberBookId: 1, title: '목 책 1', author: '목 작가 1', imageUrl: 'https://placehold.co/100x150?text=My+Book+1', score: 5, startedAt: '2025-07-01T10:00:00.000Z', status: 'READING' },
+          { memberBookId: 3, title: '목 책 3', author: '목 작가 3', imageUrl: 'https://placehold.co/100x150?text=My+Book+3', score: 3, startedAt: '2025-05-15T10:00:00.000Z', status: 'DONE' },
         ],
         page: params.page || 1,
         size: params.size || 10,
@@ -194,7 +194,7 @@ export async function getBookById(memberBookId: number): Promise<GetBookByIdResp
       code: '1000',
       message: '목 책 상세 조회 성공',
       result: {
-        bookId: memberBookId,
+        memberBookId: memberBookId,
         title: '목 책 상세 (ID: ' + memberBookId + ')',
         author: '목 작가 상세',
         imageUrl: 'https://placehold.co/200x300?text=Mock+Book+Detail',

@@ -61,8 +61,7 @@ export interface Card {
   cardId: number; // API 응답에서 'id'로 오지만, 클라이언트에서 'cardId'로 사용할 예정
   content: string;
   imageUrl: string; // API 응답에서 'imageUrl'로 옴
-  // createdAt: string; // API 명세에 없으므로 제거
-  book: CardBookDetail; // 책 상세 정보 포함
+  book: CardBookDetail | null; // 책 상세 정보 포함
 }
 
 export interface GetMyCardsResponse {
