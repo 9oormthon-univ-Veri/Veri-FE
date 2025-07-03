@@ -43,9 +43,6 @@ function ReadingCardPage() {
 
             if (response.isSuccess) {
                 if (response.result && Array.isArray(response.result.cards)) {
-                    // 2. 각 카드에 대해 상세 정보를 비동기로 가져옵니다. (N+1 문제 발생 가능성 있음)
-                    // 이 방식은 각 카드마다 추가 API 호출을 발생시키므로, 카드 수가 많을 경우 성능에 영향을 줄 수 있습니다.
-                    // 이상적인 해결책은 getMyCards API가 책 제목을 직접 포함하도록 백엔드를 수정하는 것입니다.
                     const detailedCardsPromises = response.result.cards.map(async (card: MyCardItem) => {
                         try {
                             const detailResponse = await getCardDetailById(card.cardId);

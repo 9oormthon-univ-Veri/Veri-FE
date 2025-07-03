@@ -7,6 +7,7 @@ import MyBookshelfSection from '../../components/LibraryPage/MyBookshelf';
 import TodaysRecommendationSection from '../../components/LibraryPage/TodaysRecommendation';
 
 // ✨ memberApi에서 getMemberProfile을 임포트합니다.
+import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
 import { getPopularBooks, type GetPopularBooksQueryParams, type PopularBookItem } from '../../api/bookApi';
 
@@ -20,6 +21,7 @@ interface UserData {
 }
 
 function LibraryPage() {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,6 +80,10 @@ function LibraryPage() {
     fetchAllData();
   }, []); // 의존성 배열은 빈 채로 유지하여 컴포넌트 마운트 시 한 번만 실행
 
+  const handleProfileClick = () => {
+    navigate('/my-page')
+  };
+
   // 로딩, 에러, 데이터 없음 상태 처리
   if (isLoading) {
     return <div className="loading-page-container">데이터를 불러오는 중...</div>;
@@ -111,15 +117,13 @@ function LibraryPage() {
         </header>
 
         <div className="hero-content">
-          <div className="profile-circle">
-            {/* ✨ profileImageUrl 대신 image 필드 사용 */}
+        <button className="profile-circle" onClick={handleProfileClick} aria-label="프로필 보기">
             {userData.image ? (
-              <img src={userData.image} className="profile-image"/>
+              <img src={userData.image} className="profile-image" alt="프로필 이미지" />
             ) : (
-              // 이미지가 없을 때 기본 프로필 이미지 또는 플레이스홀더를 표시
               <div className="profile-placeholder" style={{ backgroundImage: 'url(/icons/default-profile.png)' }}></div>
             )}
-          </div>
+          </button>
           <div className="welcome-text">
             {/* ✨ name 대신 nickname 필드 사용 */}
             <h2>반가워요, {userData.nickname}님!</h2>

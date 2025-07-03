@@ -33,6 +33,7 @@
 }
 
 .profile-circle {
+    border: 0px;
     width: 48px;
     height: 48px;
     background-color: #ddd;
@@ -41,6 +42,7 @@
     /* 💡 이 속성을 추가하면 원 밖으로 튀어나온 부분이 잘립니다. */
     overflow: hidden;
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .profile-image {
@@ -168,6 +170,7 @@ section {
 }
 
 .my-bookshelf .book-title {
+    text-align: left;
     font-size: 13px;
     font-weight: bold;
     color: #333;
@@ -178,6 +181,7 @@ section {
 }
 
 .my-bookshelf .book-author {
+    text-align: left;
     font-size: 11px;
     color: #777;
     margin: 0;
@@ -234,6 +238,7 @@ section {
 }
 
 .hero-book-sample {
+    border: none;
     width: 150px;
     height: 200px;
     background-color: #f0f0f0;

@@ -93,7 +93,7 @@ const MyPage: React.FC = () => {
             <div className="my-page-profile-section" onClick={handleProfileClick}>
                 <div className="profile-avatar">
                     {userData.profileImageUrl ? (
-                        <img src={userData.profileImageUrl} className="avatar-image" alt="프로필 이미지" />
+                        <img src={userData.profileImageUrl} className="avatar-image" />
                     ) : (
                         <div className="avatar-placeholder"></div>
                     )}

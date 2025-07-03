@@ -24,6 +24,7 @@
   border-radius: 30px;
   background: var(--gr, linear-gradient(163deg, #0CE189 11.43%, #0EB36F 95.34%));
   border : none;
+  cursor: pointer;
 }
 
 /* 새로 추가된 텍스트 스타일 */

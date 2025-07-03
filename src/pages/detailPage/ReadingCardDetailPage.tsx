@@ -182,6 +182,15 @@ function ReadingCardDetailPage() {
     // 실제 구현 시: navigate('/customize-card', { state: { cardData: cardDetail } });
   }, [cardDetail]);
 
+  const handleBookTitleClick = () => {
+    alert("책 ID 정보를 찾을 수 없습니다.");
+    // if (cardDetail && cardDetail.book && cardDetail.book.bookId) {
+    //   navigate(`/book-detail/${cardDetail.book.bookId}`);
+    // } else {
+    //   alert("책 ID 정보를 찾을 수 없습니다.");
+    // }
+  };
+
   // createdAt 필드가 API에서 제공되지 않으므로, 날짜 포맷팅 함수는 더 이상 사용하지 않습니다.
   // 대신 '날짜 정보 없음'을 직접 표시합니다.
 
@@ -255,7 +264,10 @@ function ReadingCardDetailPage() {
         </div>
 
         <div className="card-text-info">
-          <p className="book-title-for-card">{cardDetail.book.title}</p>
+          <button className="book-title-for-card-button" onClick={handleBookTitleClick}>
+            <p>{cardDetail.book.title}</p>
+          </button>
+
           <p className="card-content-text">{cardDetail.content}</p>
           {/* createdAt 필드가 API에서 제거되었으므로, 날짜 정보는 임시로 '날짜 정보 없음'을 표시합니다. */}
           <p className="card-upload-date">날짜 정보 없음</p>

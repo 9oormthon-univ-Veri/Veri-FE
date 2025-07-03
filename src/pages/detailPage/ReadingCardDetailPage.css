@@ -45,11 +45,30 @@
     padding: 0 20px; /* 좌우 패딩 */
 }
 
-.book-title-for-card {
+.book-title-for-card-button {
     font-size: 1.1em;
     font-weight: bold;
     color: #555;
     margin-bottom: 8px;
+
+    border: none;
+    background: none;
+    margin: 0px;
+    padding: 0px;
+
+    cursor: pointer;
+}
+
+.book-title-for-card-button p {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+
+    border: none;
+    background: none;
+    margin: 0px;
+    padding: 0px;
 }
 
 .card-content-text {
