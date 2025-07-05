@@ -6,22 +6,21 @@ import { FiDownload, FiShare2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
-// cardApi에서 Card 타입과 getCardDetailById, deleteCard 함수를 임포트
 import { getCardDetailById, deleteCard, type Card } from '../../api/cardApi';
 import './ReadingCardDetailPage.css';
 
 function ReadingCardDetailPage() {
-  const { id } = useParams<{ id: string }>(); // URL 파라미터에서 cardId 가져오기
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [cardDetail, setCardDetail] = useState<Card | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false); // 다운로드/공유/삭제 등 처리 중 상태
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const cardContentRef = useRef<HTMLDivElement>(null); // 캡처할 요소의 ref
+  const cardContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -43,18 +42,22 @@ function ReadingCardDetailPage() {
         const response = await getCardDetailById(cardId);
 
         if (response.isSuccess && response.result) {
+          // **Modification Start**
+          // Safely access book properties using optional chaining
+          const bookData = response.result.book;
           setCardDetail({
             cardId: response.result.id,
             content: response.result.content,
             imageUrl: response.result.imageUrl,
             createdAt: response.result.createdAt,
-            book: {
-              id: response.result.book.id,
-              title: response.result.book.title,
-              coverImageUrl: response.result.book.coverImageUrl,
-              author: response.result.book.author,
-            },
+            book: bookData ? {
+              id: bookData.id,
+              title: bookData.title,
+              coverImageUrl: bookData.coverImageUrl,
+              author: bookData.author,
+            } : null, // Set book to null if bookData is not available
           });
+          // **Modification End**
         } else {
           setError(response.message || "독서 카드 상세 정보를 가져오는데 실패했습니다.");
         }
@@ -74,7 +77,6 @@ function ReadingCardDetailPage() {
     }
   }, [id]);
 
-  // 독서 카드 다운로드 기능
   const handleDownload = useCallback(async () => {
     if (!cardContentRef.current) {
       alert('다운로드할 카드를 찾을 수 없습니다.');
@@ -100,7 +102,6 @@ function ReadingCardDetailPage() {
     }
   }, [cardDetail]);
 
-  // 독서 카드 공유 기능
   const handleShare = useCallback(async () => {
     if (!cardContentRef.current) {
       alert('공유할 카드를 찾을 수 없습니다.');
@@ -145,7 +146,6 @@ function ReadingCardDetailPage() {
     }
   }, [cardDetail]);
 
-  // 독서 카드 삭제 기능
   const handleDeleteCard = useCallback(async () => {
     if (!cardDetail || !cardDetail.cardId) {
       alert('삭제할 독서 카드 정보가 없습니다.');
@@ -154,12 +154,12 @@ function ReadingCardDetailPage() {
 
     if (window.confirm('정말로 이 독서 카드를 삭제하시겠습니까?')) {
       setIsProcessing(true);
-      setMenuOpen(false); // 메뉴 닫기
+      setMenuOpen(false);
       try {
         const response = await deleteCard(cardDetail.cardId);
         if (response.isSuccess) {
           alert('독서 카드가 성공적으로 삭제되었습니다.');
-          navigate('/reading-card'); // 독서 카드 목록 페이지로 이동
+          navigate('/reading-card');
         } else {
           alert(`독서 카드 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
         }
@@ -172,25 +172,25 @@ function ReadingCardDetailPage() {
     }
   }, [cardDetail, navigate]);
 
-  // 독서 카드 수정 기능 (현재는 알림만, 실제 구현 시 navigate)
   const handleEditCard = useCallback(() => {
     if (!cardDetail) return;
-    setMenuOpen(false); // 메뉴 닫기
+    setMenuOpen(false);
     alert('독서 카드 수정 기능은 아직 구현되지 않았습니다.');
-    // 실제 구현 시: navigate('/customize-card', { state: { cardData: cardDetail } });
   }, [cardDetail]);
 
   const handleBookTitleClick = () => {
-    alert("책 ID 정보를 찾을 수 없습니다.");
+    // Check if cardDetail and cardDetail.book exist before accessing id
     if (cardDetail && cardDetail.book && cardDetail.book.id) {
       navigate(`/book-detail/${cardDetail.book.id}`);
+    } else {
+      alert("책 ID 정보를 찾을 수 없습니다.");
     }
   };
 
   const formatDateTime = (isoDate: string) => {
     const date = new Date(isoDate);
     const year = date.getFullYear();
-    const month = (`0${date.getMonth() + 1}`).slice(-2); // 0부터 시작하므로 +1
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
     const day = (`0${date.getDate()}`).slice(-2);
     const hour = (`0${date.getHours()}`).slice(-2);
     const minute = (`0${date.getMinutes()}`).slice(-2);

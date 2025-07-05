@@ -64,7 +64,7 @@ export interface Card {
   content: string;
   imageUrl: string; // API 응답에서 'imageUrl'로 옴
   createdAt: string,
-  book: CardBookDetail; // 책 상세 정보 포함
+  book: CardBookDetail | null; // 책 상세 정보 포함
 }
 
 export interface GetMyCardsResponse {
@@ -86,18 +86,18 @@ export interface GetCardDetailByIdResponse {
   code: string;
   message: string;
   result: {
-    id: number; // API 응답의 cardId 필드명
+    id: number;
     content: string;
-    imageUrl: string; // API 응답의 이미지 URL 필드명
+    imageUrl: string;
     "createdAt": string,
-    book: CardBookDetail;
+    book: CardBookDetail | null;
   } | null;
 }
 
 export interface CreateCardRequest {
   memberBookId: number;
   content: string;
-  imageUrl: string; // API 명세에 'imageUrl'로 되어있음
+  imageUrl: string;
 }
 
 export interface CreateCardResponse {

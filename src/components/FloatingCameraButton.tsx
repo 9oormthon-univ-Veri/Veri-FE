@@ -6,7 +6,7 @@ function FloatingCameraButton() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/camera'); // 카메라 페이지로 이동
+    navigate('/make-card'); // 카메라 페이지로 이동
   };
 
   return (

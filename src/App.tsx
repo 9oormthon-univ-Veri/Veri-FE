@@ -9,7 +9,6 @@ import './App.css';
 // Import page components
 import LibraryPage from './pages/mainPage/LibraryPage';
 import ReadingCardPage from './pages/mainPage/ReadingCardPage';
-import CameraPage from './pages/mainPage/CameraPage';
 import CommunityPage from './pages/mainPage/CommunityPage';
 import BookmarkPage from './pages/bookmarkPage';
 import MyPage from './pages/mainPage/MyPage';
@@ -62,7 +61,6 @@ function App() {
         <Route path="/" element={<LibraryPage />} />
         <Route path="/library" element={<LibraryPage />} />
         <Route path="/reading-card" element={<ReadingCardPage />} />
-        <Route path="/camera" element={<CameraPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/bookmark" element={<BookmarkPage />} />
         <Route path="/my-page" element={<MyPage />} />
