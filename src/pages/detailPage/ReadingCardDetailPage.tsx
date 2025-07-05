@@ -87,7 +87,7 @@ function ReadingCardDetailPage() {
 
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `독서카드_${cardDetail?.book.title || '제목없음'}_${cardDetail?.cardId}.png`;
+      link.download = `독서카드_${cardDetail?.book?.title || '제목없음'}_${cardDetail?.cardId}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -117,12 +117,12 @@ function ReadingCardDetailPage() {
           return;
         }
 
-        const file = new File([blob], `독서카드_${cardDetail?.book.title || '제목없음'}.png`, { type: 'image/png' });
+        const file = new File([blob], `독서카드_${cardDetail?.book?.title || '제목없음'}.png`, { type: 'image/png' });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
-              title: `나의 독서카드: ${cardDetail?.book.title || '제목없음'}`,
+              title: `나의 독서카드: ${cardDetail?.book?.title || '제목없음'}`,
               text: cardDetail?.content || '나만의 독서카드를 공유해요!',
               files: [file],
             });
@@ -257,7 +257,7 @@ function ReadingCardDetailPage() {
         <div className="card-image-wrapper">
           <img
             src={cardDetail.imageUrl || 'https://placehold.co/300x400?text=No+Card+Image'}
-            alt={`독서 카드: ${cardDetail.book.title}`}
+            alt={`독서 카드: ${cardDetail.book?.title || '제목없음'}`}
             className="card-main-image"
             onError={(e) => {
               e.currentTarget.src = "https://placehold.co/300x400?text=No+Card+Image";
@@ -268,7 +268,10 @@ function ReadingCardDetailPage() {
 
         <div className="card-text-info">
           <button className="book-title-for-card-button" onClick={handleBookTitleClick}>
-            <p>{cardDetail.book.title}</p>
+            <p>
+              {cardDetail.book?.title || '책 정보 없음'}
+              {!cardDetail.book && <span className="no-book-info-message"> (책 정보 없음)</span>}
+            </p>
           </button>
 
           <p className="card-content-text">{cardDetail.content}</p>

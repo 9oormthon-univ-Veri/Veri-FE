@@ -203,7 +203,7 @@ function BookDetailPage() {
                 // GetBookByIdResponse의 result는 Book 인터페이스와 거의 일치하지만,
                 // cardSummaries는 Book 인터페이스에 직접 포함되어 있지 않으므로 별도로 처리
                 const fetchedBook: Book = {
-                    bookId: response.result.bookId,
+                    memberBookId: response.result.memberBookId,
                     title: response.result.title,
                     author: response.result.author,
                     imageUrl: response.result.imageUrl,
@@ -246,7 +246,7 @@ function BookDetailPage() {
 
     // ✨ 책 삭제 핸들러
     const handleDeleteBook = useCallback(async () => {
-        if (!book || !book.bookId) {
+        if (!book || !book.memberBookId) {
             setError("책 정보가 불완전하여 삭제할 수 없습니다.");
             return;
         }
@@ -258,7 +258,7 @@ function BookDetailPage() {
             setMenuOpen(false); // 메뉴 닫기
 
             try {
-                const response = await deleteBook(book.bookId); // deleteBook API 호출
+                const response = await deleteBook(book.memberBookId); // deleteBook API 호출
                 if (response.isSuccess) {
                     alert('책이 성공적으로 삭제되었습니다.');
                     navigate('/my-bookshelf'); // 삭제 후 나의 책장으로 이동
@@ -276,7 +276,7 @@ function BookDetailPage() {
 
     // ✨ 별점 수정 핸들러
     const handleSaveRating = useCallback(async (newRating: number) => {
-        if (!book || !book.bookId) {
+        if (!book || !book.memberBookId) {
             setError("책 정보가 불완전하여 별점을 업데이트할 수 없습니다.");
             return;
         }
@@ -285,7 +285,7 @@ function BookDetailPage() {
         setIsRateModalOpen(false); // 모달 닫기
 
         try {
-            const response = await rateBook(book.bookId, newRating); // rateBook API 호출
+            const response = await rateBook(book.memberBookId, newRating); // rateBook API 호출
             if (response.isSuccess) {
                 alert('별점이 성공적으로 업데이트되었습니다.');
                 // UI 업데이트: book 상태의 score를 변경
@@ -303,7 +303,7 @@ function BookDetailPage() {
 
     // ✨ 상태 변경 핸들러
     const handleSaveStatus = useCallback(async (newStatus: BookStatus) => {
-        if (!book || !book.bookId) {
+        if (!book || !book.memberBookId) {
             setError("책 정보가 불완전하여 상태를 업데이트할 수 없습니다.");
             return;
         }
@@ -314,9 +314,9 @@ function BookDetailPage() {
         try {
             let response;
             if (newStatus === 'READING') {
-                response = await updateBookStatusToStart(book.bookId); // 읽기 시작 API 호출
+                response = await updateBookStatusToStart(book.memberBookId); // 읽기 시작 API 호출
             } else if (newStatus === 'DONE') { // 백엔드에서 'DONE'으로 보냄
-                response = await updateBookStatusToOver(book.bookId); // 읽기 완료 API 호출
+                response = await updateBookStatusToOver(book.memberBookId); // 읽기 완료 API 호출
             } else { 
                  // 예상치 못한 상태 값 처리 (백엔드에서 READING, DONE만 보낸다고 했으므로 이 블록은 사실상 실행되지 않음)
                 console.warn(`알 수 없는 책 상태: ${newStatus}. API 호출을 건너뜁니다.`);
@@ -423,7 +423,7 @@ function BookDetailPage() {
 
             {/* cardSummaries를 MyReadingCardSection에 전달 */}
             {/* Book 타입에 cardSummaries가 직접 없으므로, 타입 단언을 사용하여 접근 */}
-            <MyReadingCardSection cards={(book as Book & { cardSummaries?: CardSummary[] }).cardSummaries || []} bookId={book.bookId} /> 
+            <MyReadingCardSection cards={(book as Book & { cardSummaries?: CardSummary[] }).cardSummaries || []} bookId={book.memberBookId} /> 
 
             {/* 평점 수정 모달 */}
             {book && (
