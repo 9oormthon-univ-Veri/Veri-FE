@@ -51,7 +51,7 @@ export interface CardBookDetail {
 
 // GET /api/v1/cards/my 응답의 카드 아이템
 export interface MyCardItem {
-  cardId: number;
+  cardId: number | undefined;
   content: string;
   image: string; // 'image' 필드 사용
   created: string;

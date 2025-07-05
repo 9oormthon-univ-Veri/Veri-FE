@@ -11,7 +11,7 @@ import { getMyCards, getCardDetailById, type MyCardItem, type GetMyCardsQueryPar
 // title은 이제 getCardDetailById를 통해 가져올 책 제목을 반영합니다.
 export interface ReadingCardItemType {
     id: string; // MyCardItem.cardId
-    title: string; // getCardDetailById를 통해 가져올 책 제목
+    title: string | undefined; // FIX: title 타입을 string | undefined로 변경하여 API 응답의 유연성을 반영
     contentPreview: string; // MyCardItem.content (trimmed)
     date: string; // MyCardItem 또는 Card 상세 정보에 생성 날짜 필드가 없으므로, "날짜 정보 없음" 또는 임시 값 사용
     thumbnailUrl: string; // MyCardItem.image
@@ -44,12 +44,28 @@ function ReadingCardPage() {
             if (response.isSuccess) {
                 if (response.result && Array.isArray(response.result.cards)) {
                     const detailedCardsPromises = response.result.cards.map(async (card: MyCardItem) => {
+                        // FIX: card.cardId가 undefined일 경우를 처리합니다.
+                        if (card.cardId === undefined) {
+                            console.warn(`Card item with undefined cardId skipped:`, card);
+                            // 유효하지 않은 cardId를 가진 카드는 건너뛰거나, 기본값을 반환할 수 있습니다.
+                            // 여기서는 상세 정보를 가져오지 않고 기본 형태를 반환합니다.
+                            return {
+                                id: String(Date.now()) + Math.random(), // 고유한 임시 ID 생성
+                                title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음 (ID 없음)",
+                                contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
+                                date: card.created,
+                                thumbnailUrl: card.image,
+                            };
+                        }
+
                         try {
-                            const detailResponse = await getCardDetailById(card.cardId);
+                            // card.cardId가 number임을 TypeScript에 명시 (undefined 체크 후)
+                            const detailResponse = await getCardDetailById(card.cardId as number);
                             if (detailResponse.isSuccess && detailResponse.result) {
                                 return {
                                     id: String(card.cardId),
-                                    title: detailResponse.result.book.title, // 상세 정보에서 책 제목 가져오기
+                                    // detailResponse.result.book이 null일 수 있으므로 안전하게 접근
+                                    title: detailResponse.result.book?.title, // 이제 ReadingCardItemType의 title이 undefined를 허용합니다.
                                     contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
                                     date: card.created, // 현재 API에 생성 날짜 필드 없음
                                     thumbnailUrl: card.image,
@@ -58,6 +74,7 @@ function ReadingCardPage() {
                                 console.warn(`Failed to fetch detail for card ID ${card.cardId}:`, detailResponse.message);
                                 return {
                                     id: String(card.cardId),
+                                    // 폴백 제목도 string | undefined 타입에 할당 가능
                                     title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음", // 폴백 제목
                                     contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
                                     date: card.created,
@@ -68,6 +85,7 @@ function ReadingCardPage() {
                             console.error(`Error fetching detail for card ID ${card.cardId}:`, detailErr);
                             return {
                                 id: String(card.cardId),
+                                // 에러 발생 시 폴백 제목도 string | undefined 타입에 할당 가능
                                 title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음", // 에러 발생 시 폴백 제목
                                 contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
                                 date: card.created,
@@ -76,7 +94,12 @@ function ReadingCardPage() {
                         }
                     });
 
-                    const mappedCards = await Promise.all(detailedCardsPromises);
+                    // Promise.allSettled를 사용하여 모든 Promise가 완료되도록 보장 (실패한 Promise도 처리)
+                    const results = await Promise.allSettled(detailedCardsPromises);
+                    const mappedCards = results
+                        .filter(result => result.status === 'fulfilled' && result.value !== undefined)
+                        .map(result => (result as PromiseFulfilledResult<ReadingCardItemType>).value);
+
                     setReadingCards(mappedCards);
 
                 } else {
