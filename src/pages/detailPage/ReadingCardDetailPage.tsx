@@ -43,19 +43,17 @@ function ReadingCardDetailPage() {
         const response = await getCardDetailById(cardId);
 
         if (response.isSuccess && response.result) {
-          // API 응답의 'id'를 'cardId'로 매핑하고,
-          // 'createdAt' 필드는 API 명세에 없으므로 포함하지 않습니다.
           setCardDetail({
             cardId: response.result.id,
             content: response.result.content,
             imageUrl: response.result.imageUrl,
+            createdAt: response.result.createdAt,
             book: {
+              id: response.result.book.id,
               title: response.result.book.title,
               coverImageUrl: response.result.book.coverImageUrl,
               author: response.result.book.author,
             },
-            // createdAt 필드는 API에서 제공되지 않으므로, 더 이상 여기에 설정하지 않습니다.
-            // 만약 날짜 정보가 필요하다면, 카드 생성 시점에 저장하거나 다른 API를 통해 가져와야 합니다.
           });
         } else {
           setError(response.message || "독서 카드 상세 정보를 가져오는데 실패했습니다.");
@@ -184,15 +182,20 @@ function ReadingCardDetailPage() {
 
   const handleBookTitleClick = () => {
     alert("책 ID 정보를 찾을 수 없습니다.");
-    // if (cardDetail && cardDetail.book && cardDetail.book.bookId) {
-    //   navigate(`/book-detail/${cardDetail.book.bookId}`);
-    // } else {
-    //   alert("책 ID 정보를 찾을 수 없습니다.");
-    // }
+    if (cardDetail && cardDetail.book && cardDetail.book.id) {
+      navigate(`/book-detail/${cardDetail.book.id}`);
+    }
   };
 
-  // createdAt 필드가 API에서 제공되지 않으므로, 날짜 포맷팅 함수는 더 이상 사용하지 않습니다.
-  // 대신 '날짜 정보 없음'을 직접 표시합니다.
+  const formatDateTime = (isoDate: string) => {
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = (`0${date.getMonth() + 1}`).slice(-2); // 0부터 시작하므로 +1
+    const day = (`0${date.getDate()}`).slice(-2);
+    const hour = (`0${date.getHours()}`).slice(-2);
+    const minute = (`0${date.getMinutes()}`).slice(-2);
+    return `${year}년 ${month}월 ${day}일 ${hour}:${minute}`;
+  };
 
   if (isLoading || isProcessing) {
     return (
@@ -269,8 +272,7 @@ function ReadingCardDetailPage() {
           </button>
 
           <p className="card-content-text">{cardDetail.content}</p>
-          {/* createdAt 필드가 API에서 제거되었으므로, 날짜 정보는 임시로 '날짜 정보 없음'을 표시합니다. */}
-          <p className="card-upload-date">날짜 정보 없음</p>
+          <p className="card-upload-date">{cardDetail.createdAt ? formatDateTime(cardDetail.createdAt) : '업로드일 정보 없음'}</p>
         </div>
       </div>
 

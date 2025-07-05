@@ -51,7 +51,7 @@ function ReadingCardPage() {
                                     id: String(card.cardId),
                                     title: detailResponse.result.book.title, // 상세 정보에서 책 제목 가져오기
                                     contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
-                                    date: "날짜 정보 없음", // 현재 API에 생성 날짜 필드 없음
+                                    date: card.created, // 현재 API에 생성 날짜 필드 없음
                                     thumbnailUrl: card.image,
                                 };
                             } else {
@@ -60,7 +60,7 @@ function ReadingCardPage() {
                                     id: String(card.cardId),
                                     title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음", // 폴백 제목
                                     contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
-                                    date: "날짜 정보 없음",
+                                    date: card.created,
                                     thumbnailUrl: card.image,
                                 };
                             }
@@ -70,7 +70,7 @@ function ReadingCardPage() {
                                 id: String(card.cardId),
                                 title: card.content.length > 30 ? card.content.substring(0, 30) + '...' : card.content || "제목 없음", // 에러 발생 시 폴백 제목
                                 contentPreview: card.content.length > 100 ? card.content.substring(0, 100) + '...' : card.content,
-                                date: "날짜 정보 없음",
+                                date: card.created,
                                 thumbnailUrl: card.image,
                             };
                         }

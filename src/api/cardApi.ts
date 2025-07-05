@@ -43,6 +43,7 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
 
 // GET /api/v1/cards/{cardId} 응답의 book 상세 정보
 export interface CardBookDetail {
+  id: number;
   title: string;
   coverImageUrl: string; // API 명세에 'coverImageUrl'로 되어있음
   author: string;
@@ -53,6 +54,7 @@ export interface MyCardItem {
   cardId: number;
   content: string;
   image: string; // 'image' 필드 사용
+  created: string;
 }
 
 // 독서카드 상세 정보 (GET /api/v1/cards/{cardId} 응답에 맞춰)
@@ -61,7 +63,7 @@ export interface Card {
   cardId: number; // API 응답에서 'id'로 오지만, 클라이언트에서 'cardId'로 사용할 예정
   content: string;
   imageUrl: string; // API 응답에서 'imageUrl'로 옴
-  // createdAt: string; // API 명세에 없으므로 제거
+  createdAt: string,
   book: CardBookDetail; // 책 상세 정보 포함
 }
 
@@ -87,6 +89,7 @@ export interface GetCardDetailByIdResponse {
     id: number; // API 응답의 cardId 필드명
     content: string;
     imageUrl: string; // API 응답의 이미지 URL 필드명
+    "createdAt": string,
     book: CardBookDetail;
   } | null;
 }
@@ -146,8 +149,8 @@ export interface GetMyCardsCountResponse {
 export async function getMyCards(params: GetMyCardsQueryParams = {}): Promise<GetMyCardsResponse> {
   if (USE_MOCK_DATA) {
     const mockCards: MyCardItem[] = [
-      { cardId: 1, content: '첫 번째 독서카드 내용', image: 'https://placehold.co/150x200?text=Card1' },
-      { cardId: 2, content: '두 번째 독서카드 내용', image: 'https://placehold.co/150x200?text=Card2' },
+      { cardId: 1, content: '첫 번째 독서카드 내용', created: "2025-07-03T11:41:16.019Z", image: 'https://placehold.co/150x200?text=Card1' },
+      { cardId: 2, content: '두 번째 독서카드 내용', created: "2025-07-03T11:41:16.019Z", image: 'https://placehold.co/150x200?text=Card2' },
     ];
     return new Promise(resolve => setTimeout(() => resolve({
       isSuccess: true,
@@ -192,7 +195,9 @@ export async function getCardDetailById(cardId: number): Promise<GetCardDetailBy
         content: `이것은 독서카드 ${cardId}의 내용입니다. 책의 중요한 구절이나 감상을 담고 있습니다. 
                   이 카드는 독서 경험을 시각적으로 기록하고 공유하는 데 도움이 됩니다.`,
         imageUrl: `https://placehold.co/300x400?text=Card+${cardId}+Detail+Image`, // API 명세에 'imageUrl'로 되어있음
+        createdAt: "2025-07-03T11:47:09.032Z",
         book: {
+          id: 0,
           title: '목 책 제목',
           coverImageUrl: 'https://placehold.co/100x150?text=BookCover',
           author: '목 작가',
