@@ -35,12 +35,11 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
-    gap: 10px; /* LibraryPage.css의 gap과 통일 */
-    padding-bottom: 8px; /* LibraryPage.css와 통일 */
     -ms-overflow-style: none;
 }
 
 .horizontalScrollContainer::-webkit-scrollbar {
+    
     display: none;
 }
 
@@ -55,7 +54,6 @@
     
     background-color: #fff;
     border-radius: 8px;
-    box-sizing: border-box; /* 패딩 포함 */
     cursor: pointer;
 }
 

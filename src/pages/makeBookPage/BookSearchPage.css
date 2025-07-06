@@ -3,16 +3,17 @@
 .search-header {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
+    padding: 30px 20px 0px 20px;
     background-color: #fff;
-    border-bottom: 1px solid #eee;
-    gap: 10px; /* 아이콘과 폼 사이 간격 */
-    position: sticky; /* 상단 고정 */
+    gap: 10px;
+    position: sticky;
     top: 0;
     z-index: 100;
 }
 
 .header-left-icon {
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -29,26 +30,55 @@
     position: absolute;
     left: 10px;
     color: #999;
+    transition: opacity 0.3s ease
 }
 
 .search-input {
     width: 100%;
-    padding: 10px 10px 10px 40px; /* 아이콘 공간 확보 */
-    border: 1px solid #ddd;
-    border-radius: 20px;
+    padding: 10px 10px 10px 40px;
+    background: var(--Grey_2, #E7E9EF);
+    border-radius: 10px;
     font-size: 16px;
+    border: none;
     outline: none;
-    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+    box-sizing: border-box;
+    color: var(--Grey_1, #9BA2B1);
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.56px;
+    transition: padding-left 0.3s ease;
 }
 
 .search-input:focus {
-    border-color: #0CE19A;
+    border: 1px solid var(--Grey_2, #E7E9EF);
+    background: #FFF;
+    padding-left: 10px;
+}
+
+.clear-search-button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    z-index: 10;
+    color: #999;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .recent-searches-section {
     padding: 15px;
     background-color: #fff;
-    border-bottom: 1px solid #eee;
 }
 
 .section-title {
@@ -60,7 +90,8 @@
 .recent-search-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* 태그 사이 간격 */
+    gap: 8px;
+    /* 태그 사이 간격 */
 }
 
 .search-tag {
@@ -72,7 +103,8 @@
     font-size: 13px;
     color: #333;
     cursor: pointer;
-    white-space: nowrap; /* 태그 내용이 한 줄로 유지되도록 */
+    white-space: nowrap;
+    /* 태그 내용이 한 줄로 유지되도록 */
 }
 
 .search-tag span:first-child {
@@ -89,11 +121,16 @@
 /* 검색 결과 영역 */
 .search-results-area {
     padding: 15px;
-    flex-grow: 1; /* 남은 공간을 채우도록 */
-    overflow-y: auto; /* 결과가 많을 경우 개별 스크롤 가능 */
+    flex-grow: 1;
+    /* 남은 공간을 채우도록 */
+    overflow-y: auto;
+    /* 결과가 많을 경우 개별 스크롤 가능 */
 }
 
-.loading-message, .error-message, .no-results-message, .initial-message {
+.loading-message,
+.error-message,
+.no-results-message,
+.initial-message {
     text-align: center;
     color: #666;
     font-size: 15px;
@@ -109,44 +146,60 @@
     display: grid;
     /* 3열 그리드로 설정: 각 열의 최소 너비는 100px이고, 남은 공간을 균등하게 채움 */
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px; /* 그리드 아이템 사이 간격 */
-    justify-content: center; /* 그리드 아이템들을 중앙 정렬 */
-    padding: 10px 0; /* 그리드 자체의 상하 패딩 */
+    gap: 10px;
+    /* 그리드 아이템 사이 간격 */
+    justify-content: center;
+    /* 그리드 아이템들을 중앙 정렬 */
+    padding: 10px 0;
+    /* 그리드 자체의 상하 패딩 */
 }
 
 .book-item {
     display: flex;
-    flex-direction: column; /* 이미지와 텍스트를 세로로 정렬 */
-    align-items: center; /* 내용을 가로 중앙 정렬 */
+    flex-direction: column;
+    /* 이미지와 텍스트를 세로로 정렬 */
+    align-items: center;
+    /* 내용을 가로 중앙 정렬 */
     text-align: center;
     background-color: #fff;
     border-radius: 8px;
-    overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+    overflow: hidden;
+    /* 내용이 넘칠 경우 숨김 */
 }
 
 .book-cover-thumbnail {
-    width: 120px; /* 이미지 너비 고정 */
-    height: 200px; /* 이미지 높이 고정 */
-    object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+    width: 120px;
+    /* 이미지 너비 고정 */
+    height: 200px;
+    /* 이미지 높이 고정 */
+    object-fit: cover;
+    /* 이미지가 잘리지 않고 채워지도록 */
     border-radius: 4px;
     margin-bottom: 8px;
     /* 이미지 없는 경우 대체 배경 색상 */
     background-color: #e0e0e0;
-    display: block; /* 이미지 하단 여백 제거 */
+    display: block;
+    /* 이미지 하단 여백 제거 */
 }
 
 .book-details {
-    width: 100%; /* 부모 요소의 너비를 채우도록 */
+    width: 100%;
+    /* 부모 요소의 너비를 채우도록 */
 }
 
 .book-details p {
-    margin: 0; /* 단락 기본 마진 제거 */
+    margin: 0;
+    /* 단락 기본 마진 제거 */
     font-size: 13px;
     color: #333;
-    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 */
-    overflow: hidden; /* 넘치는 텍스트 숨기기 */
-    text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
-    width: 100%; /* ellipsis를 위해 너비 지정 */
+    white-space: nowrap;
+    /* 텍스트가 한 줄로 표시되도록 */
+    overflow: hidden;
+    /* 넘치는 텍스트 숨기기 */
+    text-overflow: ellipsis;
+    /* 넘치는 텍스트 ...으로 표시 */
+    width: 100%;
+    /* ellipsis를 위해 너비 지정 */
 }
 
 .book-title {
@@ -175,7 +228,8 @@
     align-items: center;
     gap: 15px;
     margin-top: 20px;
-    padding-bottom: 20px; /* 하단 여백 추가 */
+    padding-bottom: 20px;
+    /* 하단 여백 추가 */
 }
 
 .pagination-controls button {
