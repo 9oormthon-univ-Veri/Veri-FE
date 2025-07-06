@@ -32,11 +32,10 @@
 
 .book-cover-detail-container {
     width: 100%;
-    /* 더 큰 표지 이미지 */
     height: 400px;
-    /* 2:3 비율 */
-    margin: 0 auto 3cap auto;
-    /* 중앙 정렬 및 하단 여백 */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
     background-color: #f0f0f0;
 }
 

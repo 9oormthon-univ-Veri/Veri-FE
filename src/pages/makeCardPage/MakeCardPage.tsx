@@ -28,7 +28,7 @@ const MakeCardPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [bookId] = useState<number>(1); // 임의의 책 ID 설정 (실제 책 ID로 대체 필요)
+  const [bookId] = useState<number>(6); // 임의의 책 ID 설정 (실제 책 ID로 대체 필요)
 
   // 현재 표시할 이미지 목록 (업로드된 이미지 + 갤러리 이미지 + 기본 이미지)
   // ✨ defaultImages를 제거하여 초기 화면이 비어있도록 합니다.

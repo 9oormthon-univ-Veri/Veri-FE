@@ -137,6 +137,10 @@ function ReadingCardPage() {
         navigate('/make-card');
     };
 
+    const handleSearchClick = () => {
+        navigate('/book-search');
+    };
+
     if (isLoading) {
         return <div className="loading-page-container">독서 카드를 불러오는 중...</div>;
     }
@@ -152,7 +156,9 @@ function ReadingCardPage() {
                     <div className="color-main-icon" />
                     <div className="header-icons">
                         <div className="color-notificationl-icon"></div>
-                        <div className="color-search-icon"></div>
+                        <button type="button" className="search-button" aria-label="검색" onClick={handleSearchClick}>
+                            <img src="/icons/TopBar/search_fill.svg" alt="" aria-hidden="true" />
+                        </button>
                     </div>
                 </header>
                 <div className="header-margin">

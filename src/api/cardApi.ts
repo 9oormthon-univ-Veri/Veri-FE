@@ -2,7 +2,7 @@
 
 import { getAccessToken } from './auth';
 
-const BASE_URL = "https://api.very.miensoap.me";
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 export const USE_MOCK_DATA = false; // Set to true for mock data
 
 // Helper for authenticated fetch

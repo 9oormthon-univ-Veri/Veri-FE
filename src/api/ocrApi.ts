@@ -1,6 +1,6 @@
 // src/api/ocrApi.ts
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''; // 환경변수에서 baseUrl 불러오기
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // OCR API 응답 타입
 export interface OCRResponse {

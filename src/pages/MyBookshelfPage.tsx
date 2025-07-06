@@ -115,7 +115,7 @@ function MyBookshelfPage() {
   // "+ 등록하기" 버튼 클릭 핸들러
   const handleCreateBookClick = useCallback(() => {
     // 책 등록/생성 페이지로 이동 (경로는 실제 라우팅에 맞게 조정)
-    navigate('/create-book');
+    navigate('/book-search'); // 책 검색 페이지로 이동
   }, [navigate]);
 
   if (isLoading) {

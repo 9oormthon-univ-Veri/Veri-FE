@@ -1,5 +1,5 @@
 // src/api/bookApi.ts
-
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 import { getAccessToken } from './auth';
 import {
   // mockAllBooksResponse,
@@ -123,7 +123,6 @@ export interface GetPopularBooksQueryParams {
 }
 
 export const USE_MOCK_DATA = false;
-const BASE_URL = "https://api.very.miensoap.me";
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
   const accessToken = getAccessToken();

@@ -2,7 +2,7 @@
 
 import { fetchWithAuth } from './bookApi'; // fetchWithAuth 임포트
 
-const BASE_URL = "https://api.very.miensoap.me";
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // API 응답의 기본 구조는 그대로 유지
 export interface DefaultApiResponse<T> {

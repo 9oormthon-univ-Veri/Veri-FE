@@ -1,6 +1,6 @@
 // src/api/auth.ts
 
-const BASE_URL = "https://api.very.miensoap.me";
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // JWT 디코딩을 위한 타입 정의
 interface JwtPayload {

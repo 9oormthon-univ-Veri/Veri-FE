@@ -1,20 +1,21 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './BookDetailPage.css';
-import { MdArrowBackIosNew } from 'react-icons/md'; 
-import { MdKeyboardArrowRight } from 'react-icons/md'; 
+import DeleteConfirmationModal from '../../components/BookDetailPage/DeleteConfirmationModal';
+import { MdArrowBackIosNew } from 'react-icons/md';
+import { MdKeyboardArrowRight } from 'react-icons/md';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md'; // MdEdit 임포트 추가
 
 // bookApi에서 필요한 타입과 함수들을 정확히 임포트
-import { 
-    getBookById, 
-    deleteBook, 
-    updateBookStatusToStart, 
-    updateBookStatusToOver, 
+import {
+    getBookById,
+    deleteBook,
+    updateBookStatusToStart,
+    updateBookStatusToOver,
     rateBook,
-    type Book, 
+    type Book,
     type BookStatus, // BookStatus 타입 임포트
     type CardSummary // CardSummary 타입 임포트
 } from '../../api/bookApi';
@@ -35,7 +36,7 @@ const RateBookModal: React.FC<RateBookModalProps> = ({ isOpen, onClose, currentR
     useEffect(() => {
         // 모달이 열릴 때마다 현재 평점으로 초기화
         if (isOpen) {
-            setNewRating(currentRating); 
+            setNewRating(currentRating);
         }
     }, [isOpen, currentRating]);
 
@@ -104,7 +105,7 @@ const UpdateStatusModal: React.FC<UpdateStatusModalProps> = ({ isOpen, onClose, 
                     >
                         {/* 백엔드에서 "READING"과 "DONE"만 보낸다고 했으므로, 옵션을 두 개로 제한합니다. */}
                         <option value="READING">읽는 중</option>
-                        <option value="DONE">읽기 완료</option> 
+                        <option value="DONE">읽기 완료</option>
                     </select>
                 </div>
                 <div className="modal-actions">
@@ -151,7 +152,7 @@ const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = ({ cards, book
                 <div className="card-list">
                     {cards.map((card, index) => (
                         // cardId가 고유하다고 가정하고 key로 사용
-                        <div key={card.cardId || index} className="card-item-container"> 
+                        <div key={card.cardId || index} className="card-item-container">
                             <img src={card.cardImage} alt={`Reading Card ${index + 1}`} className="reading-card-image" /> {/* cardImage 사용 */}
                         </div>
                     ))}
@@ -171,7 +172,7 @@ function BookDetailPage() {
     const [book, setBook] = useState<Book | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    
+
     // 모달 상태
     const [isRateModalOpen, setIsRateModalOpen] = useState(false);
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -179,6 +180,7 @@ function BookDetailPage() {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -189,6 +191,8 @@ function BookDetailPage() {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+
 
     const fetchBookDetails = useCallback(async (memberBookId: number) => {
         setIsLoading(true);
@@ -213,10 +217,10 @@ function BookDetailPage() {
                 };
                 // cardSummaries는 Book 타입에 직접 없으므로, 필요에 따라 임시로 추가
                 // 또는 MyReadingCardSection에 직접 전달
-                setBook({ 
-                    ...fetchedBook, 
+                setBook({
+                    ...fetchedBook,
                     // GetBookByIdResponse.result.cardSummaries를 직접 할당
-                    cardSummaries: response.result.cardSummaries 
+                    cardSummaries: response.result.cardSummaries
                 } as Book & { cardSummaries: CardSummary[] }); // 타입 단언으로 cardSummaries 추가
             } else {
                 setError(response.message || "책 상세 정보를 가져오는데 실패했습니다.");
@@ -245,32 +249,41 @@ function BookDetailPage() {
     }, []);
 
     // ✨ 책 삭제 핸들러
-    const handleDeleteBook = useCallback(async () => {
+    const handleDeleteBook = useCallback(() => { // Make this function synchronous as it just opens the modal
         if (!book || !book.memberBookId) {
             setError("책 정보가 불완전하여 삭제할 수 없습니다.");
             return;
         }
+        setMenuOpen(false); // Close the dropdown menu
+        setIsDeleteConfirmModalOpen(true); // Open the custom delete confirmation modal
+    }, [book]); // No need for 'navigate' in dependencies here anymore
 
-        // 사용자에게 삭제 확인 메시지 표시 (실제 서비스에서는 커스텀 모달 사용 권장)
-        // alert 대신 커스텀 모달을 사용해야 합니다. 여기서는 편의상 alert 사용.
-        if (window.confirm('정말로 이 책을 서재에서 삭제하시겠습니까?')) { 
-            setIsSavingChanges(true); // 저장 중 로딩 상태 시작
-            setMenuOpen(false); // 메뉴 닫기
+    const confirmDeleteBook = useCallback(async () => {
+        if (!book || !book.memberBookId) {
+            setError("책 정보가 불완전하여 삭제할 수 없습니다.");
+            // Optionally close the modal here if there's an error before the API call
+            setIsDeleteConfirmModalOpen(false);
+            return;
+        }
 
-            try {
-                const response = await deleteBook(book.memberBookId); // deleteBook API 호출
-                if (response.isSuccess) {
-                    alert('책이 성공적으로 삭제되었습니다.');
-                    navigate('/my-bookshelf'); // 삭제 후 나의 책장으로 이동
-                } else {
-                    alert(`책 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
-                }
-            } catch (err: any) {
-                console.error('책 삭제 중 오류 발생:', err);
-                alert(`책 삭제 중 오류가 발생했습니다: ${err.message}`);
-            } finally {
-                setIsSavingChanges(false); // 저장 중 로딩 상태 종료
+        setIsSavingChanges(true); // Start saving loading state
+        // The modal will be closed by the `onClose` prop or after confirm
+        // setIsDeleteConfirmModalOpen(false); // Can be called here or handled by the modal's `onConfirm` prop
+
+        try {
+            const response = await deleteBook(book.memberBookId); // deleteBook API 호출
+            if (response.isSuccess) {
+                alert('책이 성공적으로 삭제되었습니다.');
+                navigate('/my-bookshelf'); // 삭제 후 나의 책장으로 이동
+            } else {
+                alert(`책 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
             }
+        } catch (err: any) {
+            console.error('책 삭제 중 오류 발생:', err);
+            alert(`책 삭제 중 오류가 발생했습니다: ${err.message}`);
+        } finally {
+            setIsSavingChanges(false); // 저장 중 로딩 상태 종료
+            setIsDeleteConfirmModalOpen(false); // Ensure modal closes after attempt
         }
     }, [book, navigate]);
 
@@ -317,8 +330,8 @@ function BookDetailPage() {
                 response = await updateBookStatusToStart(book.memberBookId); // 읽기 시작 API 호출
             } else if (newStatus === 'DONE') { // 백엔드에서 'DONE'으로 보냄
                 response = await updateBookStatusToOver(book.memberBookId); // 읽기 완료 API 호출
-            } else { 
-                 // 예상치 못한 상태 값 처리 (백엔드에서 READING, DONE만 보낸다고 했으므로 이 블록은 사실상 실행되지 않음)
+            } else {
+                // 예상치 못한 상태 값 처리 (백엔드에서 READING, DONE만 보낸다고 했으므로 이 블록은 사실상 실행되지 않음)
                 console.warn(`알 수 없는 책 상태: ${newStatus}. API 호출을 건너뜁니다.`);
                 setIsSavingChanges(false);
                 return;
@@ -415,7 +428,7 @@ function BookDetailPage() {
                     <div className="start-date-section">
                         <span className="section-label">시작일</span>
                         {/* startedAt이 문자열 ISO 형식이라고 가정하고 날짜 형식화 */}
-                        <span className="start-date-value">{book.startedAt ? new Date(book.startedAt).toLocaleDateString('ko-KR') : '미정'}</span> 
+                        <span className="start-date-value">{book.startedAt ? new Date(book.startedAt).toLocaleDateString('ko-KR') : '미정'}</span>
                         <MdEdit size={16} color="#888" className="edit-icon" onClick={() => setIsStatusModalOpen(true)} />
                     </div>
                 </div>
@@ -423,7 +436,7 @@ function BookDetailPage() {
 
             {/* cardSummaries를 MyReadingCardSection에 전달 */}
             {/* Book 타입에 cardSummaries가 직접 없으므로, 타입 단언을 사용하여 접근 */}
-            <MyReadingCardSection cards={(book as Book & { cardSummaries?: CardSummary[] }).cardSummaries || []} bookId={book.memberBookId} /> 
+            <MyReadingCardSection cards={(book as Book & { cardSummaries?: CardSummary[] }).cardSummaries || []} bookId={book.memberBookId} />
 
             {/* 평점 수정 모달 */}
             {book && (
@@ -443,6 +456,15 @@ function BookDetailPage() {
                     onClose={() => setIsStatusModalOpen(false)}
                     currentStatus={book.status}
                     onSave={handleSaveStatus}
+                    isLoading={isSavingChanges}
+                />
+            )}
+
+            {book && ( // book 객체가 존재할 때만 모달을 렌더링하는 조건
+                <DeleteConfirmationModal
+                    isOpen={isDeleteConfirmModalOpen} // <--- 이 부분이 핵심입니다!
+                    onClose={() => setIsDeleteConfirmModalOpen(false)}
+                    onConfirm={confirmDeleteBook}
                     isLoading={isSavingChanges}
                 />
             )}

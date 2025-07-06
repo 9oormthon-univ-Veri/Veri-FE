@@ -182,12 +182,9 @@ code {
   /* 예시 크기 */
 }
 
-
 .header-icons {
   display: flex;
-  /* 아이콘들을 나란히 정렬하기 위해 Flexbox 활성화 */
   align-items: center;
-  /* 아이콘들이 세로 중앙에 오도록 정렬 */
   gap: 10px;
 }
 
@@ -197,6 +194,13 @@ code {
   margin-left: 12px;
   /* 아이콘들 사이의 간격 */
   color: #ffffff;
+}
+
+.search-button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
 }
 
 .detail-header {
@@ -292,16 +296,6 @@ code {
   mask-size: contain;
   -webkit-mask-size: contain;
   margin-left: 10px;
-}
-
-.color-search-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #391BE233;
-  mask: url('/icons/TopBar/search.svg') no-repeat center;
-  -webkit-mask: url('/icons/TopBar/search.svg') no-repeat center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
 }
 
 /* SVG 아이콘 대신 사용할 임시 배경 이미지 (실제 앱에서는 SVG 또는 폰트 아이콘 사용) */

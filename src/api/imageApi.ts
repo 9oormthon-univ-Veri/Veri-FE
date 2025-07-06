@@ -2,7 +2,7 @@
 
 import { fetchWithAuth, USE_MOCK_DATA } from './bookApi'; // Adjust path if needed
 
-const BASE_URL = "https://api.very.miensoap.me";
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // ==========================================================
 //          ⬇️ 인터페이스 정의 ⬇️

@@ -1,57 +1,86 @@
 /* src/pages/LibraryPage.css */
 
-.book-sample-image {
+/* icon-button 기본 스타일 (추가됨) */
+.icon-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* 아이콘 크기에 맞춰 조절 */
+    height: 24px; /* 아이콘 크기에 맞춰 조절 */
+    margin-left: 10px; /* 아이콘 간 간격 */
+}
+
+.icon-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* .book-sample-image는 사용되지 않는 것 같으니 확인 후 제거하거나 hero-book-sample에 통합 */
+/* .book-sample-image {
     width: 200px;
     height: 300px;
-}
+} */
 
 /* 라이브러리 히어로 섹션 (배경 이미지와 상단 아이콘, 프로필, 책 커버) */
 .library-hero-section {
     position: relative;
-    height: 300px;
+    height: 270px;
     overflow: hidden;
-    padding: 0;
+}
+
+.hero-background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: blur(10px);
+    object-fit: cover;
+    z-index: 0;
 }
 
 .hero-content {
     position: absolute;
-    /* 절대 위치로 변경 */
     bottom: 0;
-    /* 하단에 붙이기 */
     right: 0;
-    /* 오른쪽에 붙이기 */
     left: 0;
     display: flex;
     justify-content: space-between;
-    /* 좌우 끝으로 벌리기 */
     align-items: flex-end;
-    /* 아이템들을 하단에 정렬 (선택 사항) */
     padding-inline: 20px;
     z-index: 2;
     box-sizing: border-box;
-    /* 패딩 포함 너비 계산 */
 }
 
 .profile-circle {
     border: 0px;
     width: 48px;
     height: 48px;
-    background-color: #ddd;
+    background-color: #ffffff; /* 프로필 배경색을 흰색으로 변경했네요 */
     border-radius: 50%;
     margin-right: 12px;
-    /* 💡 이 속성을 추가하면 원 밖으로 튀어나온 부분이 잘립니다. */
     overflow: hidden;
     margin-bottom: 20px;
     cursor: pointer;
 }
 
+.profile-placeholder {
+    width: 100%; /* <--- 다시 100%로 설정 */
+    height: 100%; /* <--- 다시 100%로 설정 */
+    background-size: cover; /* <--- 이미지가 컨테이너를 꽉 채우면서 비율 유지 */
+    background-position: center; /* <--- 이미지를 컨테이너 중앙에 위치 */
+    background-repeat: no-repeat;
+}
+
 .profile-image {
     width: 100%;
-    /* 부모 컨테이너의 너비를 꽉 채움 */
     height: 100%;
-    /* 부모 컨테이너의 높이를 꽉 채움 */
     object-fit: cover;
-    /* 이미지 비율을 유지하며 컨테이너를 채우도록 조정 */
 }
 
 .welcome-text h2 {
@@ -142,7 +171,8 @@ section {
 }
 
 .my-bookshelf .bookshelf-item {
-    width: 100px;
+    height: 200px;
+    width: 110px;
     background-color: #fff;
     border-radius: 8px;
     padding: 10px;
@@ -150,9 +180,8 @@ section {
 }
 
 .my-bookshelf .book-cover-thumbnail {
+    height: 100%;
     width: 100%;
-    padding-bottom: 150%;
-    /* 2:3 비율 */
     position: relative;
     background-color: #f0f0f0;
     border-radius: 4px;
@@ -200,8 +229,7 @@ section {
 
 .todays-recommendation .recommended-book-item .book-cover-thumbnail {
     width: 100%;
-    padding-bottom: 150%;
-    /* 2:3 비율 */
+    padding-bottom: 150%; /* 2:3 비율 */
     position: relative;
     background-color: #f0f0f0;
     border-radius: 4px;
@@ -251,6 +279,7 @@ section {
 .hero-background {
     width: 100%;
     filter: blur(10px);
+    /* height와 position 속성이 여전히 없습니다. */
 }
 
 .recommendation-section-header {
