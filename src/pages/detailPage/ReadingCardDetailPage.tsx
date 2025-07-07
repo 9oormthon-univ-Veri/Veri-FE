@@ -8,6 +8,7 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 import { getCardDetailById, deleteCard, type Card } from '../../api/cardApi';
 import './ReadingCardDetailPage.css';
+import { useTabDataStore } from '../../store/tabDataStore';
 
 function ReadingCardDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -158,6 +159,8 @@ function ReadingCardDetailPage() {
       try {
         const response = await deleteCard(cardDetail.cardId);
         if (response.isSuccess) {
+          // 서재 데이터 캐시 무효화
+          useTabDataStore.getState().clearLibraryData();
           alert('독서 카드가 성공적으로 삭제되었습니다.');
           navigate('/reading-card');
         } else {

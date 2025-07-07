@@ -23,7 +23,7 @@ interface RecommendedBookType {
 }
 
 // 개별 추천 책 아이템을 렌더링하는 내부 컴포넌트
-const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ id, coverUrl, title, author }) => {
+const SingleRecommendedBookItem: React.FC<RecommendedBookType> = React.memo(({ id, coverUrl, title, author }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -54,53 +54,17 @@ const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ id, coverUrl
       <p className="book-author">{author}</p>
     </div>
   );
-};
+});
 
-// '오늘의 추천' 섹션 전체를 담당하는 컴포넌트
-const TodaysRecommendationSection: React.FC = () => {
-  const [recommendedBooks, setRecommendedBooks] = useState<RecommendedBookType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface TodaysRecommendationSectionProps {
+  books: any[];
+}
 
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // ✨ getTodaysRecommendation 대신 getPopularBooks 호출
-        // API 쿼리 파라미터 설정 (예: 1페이지의 5개 아이템)
-        const queryParams: GetPopularBooksQueryParams = {
-          page: 1,
-          size: 5,
-        };
-        const response = await getPopularBooks(queryParams); // ✨ API 호출
-
-        if (response.isSuccess && response.result && response.result.books) {
-          // API 응답 데이터를 RecommendedBookType에 맞게 매핑
-          const mappedBooks: RecommendedBookType[] = response.result.books.map((book: PopularBookItem) => ({
-            id: book.isbn, // PopularBookItem에는 bookId가 없으므로, ISBN을 고유 ID로 사용
-            coverUrl: book.image, // PopularBookItem의 'image' 필드를 'coverUrl'로 매핑
-            title: book.title,
-            author: book.author,
-          }));
-          setRecommendedBooks(mappedBooks);
-        } else {
-          // response.result나 response.result.books가 없을 경우도 처리
-          setError(response.message || "오늘의 추천 도서를 가져오는데 실패했습니다.");
-        }
-      } catch (err: any) {
-        console.error('추천 도서 데이터를 불러오는 중 오류 발생:', err);
-        setError(`추천 도서를 불러오는 데 실패했습니다: ${err.message}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecommendations();
-  }, []); // 컴포넌트가 처음 마운트될 때 한 번만 실행
-
-  if (isLoading) {
+const TodaysRecommendationSection: React.FC<TodaysRecommendationSectionProps> = React.memo(({ books }) => {
+  if (!books) {
+    return null;
+  }
+  if (books.length === 0) {
     return (
       <section className="todays-recommendation">
         <div className="recommendation-section-header">
@@ -108,26 +72,11 @@ const TodaysRecommendationSection: React.FC = () => {
           <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
         </div>
         <div className="recommendation-list horizontal-scroll-container">
-          <p className="loading-message">오늘의 추천 데이터를 불러오는 중...</p>
+          <p className="no-cards-message">추천 도서가 없습니다.</p>
         </div>
       </section>
     );
   }
-
-  if (error) {
-    return (
-      <section className="todays-recommendation">
-        <div className="recommendation-section-header">
-          <h3>오늘의 추천</h3>
-          <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
-        </div>
-        <div className="recommendation-list horizontal-scroll-container">
-          <p className="error-message" style={{ color: 'red' }}>{error}</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="todays-recommendation">
       <div className="recommendation-section-header">
@@ -135,22 +84,18 @@ const TodaysRecommendationSection: React.FC = () => {
         <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
       </div>
       <div className="recommendation-list horizontal-scroll-container">
-        {recommendedBooks.length > 0 ? (
-          recommendedBooks.map((book) => (
-            <SingleRecommendedBookItem
-              key={book.id} // key로 id (isbn) 사용
-              id={book.id}
-              coverUrl={book.coverUrl}
-              title={book.title}
-              author={book.author}
-            />
-          ))
-        ) : (
-          <p className="no-cards-message">추천 도서가 없습니다.</p>
-        )}
+        {books.map((book: any) => (
+          <SingleRecommendedBookItem
+            key={book.isbn}
+            id={book.isbn}
+            coverUrl={book.image}
+            title={book.title}
+            author={book.author}
+          />
+        ))}
       </div>
     </section>
   );
-};
+});
 
 export default TodaysRecommendationSection;

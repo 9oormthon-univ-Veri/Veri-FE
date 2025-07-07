@@ -16,7 +16,7 @@ interface ReadingCardItemType {
 }
 
 // 개별 독서카드 아이템을 렌더링하는 내부 컴포넌트
-const SingleReadingCard: React.FC<ReadingCardItemType> = ({ id, coverUrl, title, contentPreview }) => {
+const SingleReadingCard: React.FC<ReadingCardItemType> = React.memo(({ id, coverUrl, title, contentPreview }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -43,117 +43,55 @@ const SingleReadingCard: React.FC<ReadingCardItemType> = ({ id, coverUrl, title,
       <p className={styles.cardText}>{contentPreview}</p>
     </div>
   );
-};
+});
 
-// '나의 독서카드' 섹션 전체를 담당하는 컴포넌트
-const MyReadingCardSection: React.FC = () => {
+interface MyReadingCardSectionProps {
+  cards: any[];
+}
+
+const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = React.memo(({ cards }) => {
   const navigate = useNavigate();
-  const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCards = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        // getMyCards에 쿼리 파라미터를 전달합니다.
-        const queryParams: GetMyCardsQueryParams = {
-          page: 1,
-          size: 5,
-          sort: 'newest',
-        };
-        const response = await getMyCards(queryParams);
-
-        if (response.isSuccess) {
-          if (response.result && Array.isArray(response.result.cards)) {
-            // ✨ response.result.cards는 MyCardItem[] 타입이므로, 이에 맞춰 매핑합니다.
-            const mappedCards: ReadingCardItemType[] = response.result.cards.map((card: MyCardItem) => ({
-              id: String(card.cardId),
-              coverUrl: card.image, // MyCardItem의 'image' 필드를 'coverUrl'로 사용
-              title: "책 제목 정보 없음", // MyCardItem에 책 제목 정보가 없으므로 임시 처리
-              readingDate: "날짜 정보 없음", // MyCardItem에 날짜 정보가 없으므로 임시 처리
-              contentPreview: card.content.length > 50 ? card.content.substring(0, 50) + '...' : card.content,
-            }));
-            setReadingCards(mappedCards);
-          } else {
-            console.warn("API는 성공을 반환했지만, 카드 데이터(result.cards)가 없거나 형식이 잘못되었습니다:", response);
-            setReadingCards([]);
-            setError("독서 카드를 불러왔으나, 표시할 내용이 없습니다.");
-          }
-        } else {
-          setError(response.message || "독서 카드를 가져오는데 실패했습니다.");
-        }
-      } catch (err: any) {
-        console.error('독서 카드를 불러오는 중 오류 발생:', err);
-        setError(`독서 카드를 불러오는 데 실패했습니다: ${err.message}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCards();
-  }, []); // 의존성 배열은 빈 채로 유지하여 컴포넌트 마운트 시 한 번만 실행
-
-  // 로딩, 에러, 데이터 없음 상태 처리
-  if (isLoading) {
+  // API 호출 및 useState 제거
+  if (!cards) {
+    return null;
+  }
+  if (cards.length === 0) {
     return (
       <section className={styles.myReadingCards}>
         <div className={styles.sectionHeader}>
           <h3>나의 독서카드</h3>
-          <span className={styles.moreLink} onClick={() => navigate('/reading-card')}> {/* 책갈피 페이지 대신 독서카드 메인 페이지로 이동 */}
+          <span className={styles.moreLink} onClick={() => navigate('/reading-card')}>
             독서카드 보러가기 &gt;
           </span>
         </div>
-        <div className={`${styles.horizontalScrollContainer}`}>
-          <p className={styles.loadingMessage}>독서 카드를 불러오는 중...</p>
+        <div className={styles.horizontalScrollContainer}>
+          <p className={styles.noCardsMessage}>등록된 독서 카드가 없습니다.</p>
         </div>
       </section>
     );
   }
-
-  if (error) {
-    return (
-      <section className={styles.myReadingCards}>
-        <div className={styles.sectionHeader}>
-          <h2>나의 독서카드</h2>
-          <span className={styles.moreLink} onClick={() => navigate('/reading-card')}> {/* 책갈피 페이지 대신 독서카드 메인 페이지로 이동 */}
-            독서카드 보러가기 &gt;
-          </span>
-        </div>
-        <div className={`${styles.horizontalScrollContainer}`}>
-          <p className={styles.errorMessage}>{error}</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className={styles.myReadingCards}>
       <div className={styles.sectionHeader}>
         <h3>나의 독서카드</h3>
-        <span className={styles.moreLink} onClick={() => navigate('/reading-card')}> {/* 책갈피 페이지 대신 독서카드 메인 페이지로 이동 */}
+        <span className={styles.moreLink} onClick={() => navigate('/reading-card')}>
           독서카드 보러가기 &gt;
         </span>
       </div>
       <div className={styles.horizontalScrollContainer}>
-        {readingCards.length > 0 ? (
-          readingCards.map((card) => (
-            <SingleReadingCard
-              key={card.id}
-              id={card.id}
-              coverUrl={card.coverUrl}
-              title={card.title}
-              readingDate={card.readingDate}
-              contentPreview={card.contentPreview}
-            />
-          ))
-        ) : (
-          <p className={styles.noCardsMessage}>등록된 독서 카드가 없습니다.</p>
-        )}
+        {cards.map((card: any) => (
+          <SingleReadingCard
+            key={card.cardId}
+            id={String(card.cardId)}
+            coverUrl={card.image}
+            title={"책 제목 정보 없음"}
+            readingDate={"날짜 정보 없음"}
+            contentPreview={card.content.length > 50 ? card.content.substring(0, 50) + '...' : card.content}
+          />
+        ))}
       </div>
     </section>
   );
-};
+});
 
 export default MyReadingCardSection;

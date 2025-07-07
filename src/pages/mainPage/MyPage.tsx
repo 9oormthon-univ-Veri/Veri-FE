@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
 import { getMemberProfile, type GetMemberProfileResponse, type MemberProfile } from '../../api/memberApi';
+import { useTabDataStore } from '../../store/tabDataStore';
 
 interface UserData {
     email: string;
@@ -14,20 +15,23 @@ interface UserData {
 
 const MyPage: React.FC = () => {
     const navigate = useNavigate();
-    const [userData, setUserData] = useState<UserData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const { myPageData, setMyPageData } = useTabDataStore();
+    const [isLoading, setIsLoading] = useState(!myPageData);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (myPageData) {
+            setIsLoading(false);
+            return;
+        }
         const fetchUserData = async () => {
             setIsLoading(true);
             setError(null);
             try {
                 const response: GetMemberProfileResponse = await getMemberProfile();
-
                 if (response.isSuccess && response.result) {
                     const apiResult: MemberProfile = response.result;
-                    setUserData({
+                    setMyPageData({
                         email: apiResult.email,
                         nickname: apiResult.nickname,
                         numOfReadBook: apiResult.numOfReadBook,
@@ -39,16 +43,14 @@ const MyPage: React.FC = () => {
                 } else {
                     setError(response.message || '사용자 데이터를 불러오는 데 실패했습니다.');
                 }
-            } catch (err) {
-                console.error('Error fetching user data:', err);
+            } catch (err: any) {
                 setError('사용자 데이터를 불러오는 중 네트워크 오류가 발생했습니다.');
             } finally {
                 setIsLoading(false);
             }
         };
-
         fetchUserData();
-    }, []);
+    }, [myPageData, setMyPageData]);
 
     const handleProfileClick = () => {
         console.log('프로필 상세 페이지로 이동');
@@ -69,14 +71,13 @@ const MyPage: React.FC = () => {
     if (isLoading) {
         return <div className="loading-page-container">사용자 데이터를 불러오는 중...</div>;
     }
-
     if (error) {
         return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
     }
-
-    if (!userData) {
+    if (!myPageData) {
         return <div className="loading-page-container">사용자 데이터를 찾을 수 없습니다.</div>;
     }
+    const userData = myPageData;
 
     return (
         <div className="page-container">

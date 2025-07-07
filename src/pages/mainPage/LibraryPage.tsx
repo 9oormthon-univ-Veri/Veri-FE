@@ -7,72 +7,75 @@ import TodaysRecommendationSection from '../../components/LibraryPage/TodaysReco
 import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
 import { getPopularBooks, type GetPopularBooksQueryParams, type PopularBookItem } from '../../api/bookApi';
-
-interface UserData {
-  email: string;
-  nickname: string;
-  image: string;
-  numOfReadBook: number;
-  numOfCard: number;
-}
+import { useTabDataStore } from '../../store/tabDataStore';
+import { getMyCards } from '../../api/cardApi';
+import { getAllBooks } from '../../api/bookApi';
 
 function LibraryPage() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { libraryData, setLibraryData } = useTabDataStore();
+  const [isLoading, setIsLoading] = useState(libraryData ? false : true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (libraryData) {
+      setIsLoading(false);
+      return;
+    }
     const fetchAllData = async () => {
-      setIsLoading(true); // 데이터 로딩 시작
-      setError(null);    // 에러 초기화
-
+      setIsLoading(true);
+      setError(null);
       try {
-        // 1. 사용자 프로필 API 호출
+        // 1. 사용자 프로필
         const userResponse = await getMemberProfile();
-
+        let userData = null;
         if (userResponse.isSuccess && userResponse.result) {
-          setUserData({
+          userData = {
             email: userResponse.result.email,
             nickname: userResponse.result.nickname,
             image: userResponse.result.image,
             numOfReadBook: userResponse.result.numOfReadBook,
             numOfCard: userResponse.result.numOfCard,
-          });
+          };
         } else {
           setError(userResponse.message || "사용자 프로필을 가져오는데 실패했습니다.");
         }
-
-        // 2. 인기 책을 가져오는 API 호출
+        // 2. 인기 책
         const popularBooksParams: GetPopularBooksQueryParams = {
           page: 1,
-          size: 1,
+          size: 5,
         };
         const popularResponse = await getPopularBooks(popularBooksParams);
-
+        let bookImageUrl = null;
+        let popularBooks = null;
         if (popularResponse.isSuccess && popularResponse.result && popularResponse.result.books.length > 0) {
           const firstPopularBook: PopularBookItem | undefined = popularResponse.result.books[0];
-
           if (firstPopularBook) {
-            setBookImageUrl(firstPopularBook.image);
-          } else {
-            console.warn('첫 번째 인기 도서가 존재하지 않습니다. 기본 이미지를 사용합니다.');
+            bookImageUrl = firstPopularBook.image;
           }
-        } else {
-          console.warn('인기 도서를 가져오지 못했거나 결과가 없습니다. 기본 이미지를 사용합니다.');
+          popularBooks = popularResponse.result.books;
         }
-
+        // 3. 내 카드
+        const myCardsResponse = await getMyCards({ page: 1, size: 5, sort: 'newest' });
+        let myCards = null;
+        if (myCardsResponse.isSuccess && myCardsResponse.result && Array.isArray(myCardsResponse.result.cards)) {
+          myCards = myCardsResponse.result.cards;
+        }
+        // 4. 내 책
+        const myBooksResponse = await getAllBooks({ page: 1, size: 5 });
+        let myBooks = null;
+        if (myBooksResponse.isSuccess && myBooksResponse.result && Array.isArray(myBooksResponse.result.memberBooks)) {
+          myBooks = myBooksResponse.result.memberBooks;
+        }
+        setLibraryData({ userData, bookImageUrl, myCards, myBooks, popularBooks });
       } catch (err: any) {
-        console.error('데이터를 불러오는 중 오류 발생:', err);
         setError('데이터를 불러오는 데 실패했습니다: ' + err.message);
       } finally {
-        setIsLoading(false); // 데이터 로딩 완료
+        setIsLoading(false);
       }
     };
-
     fetchAllData();
-  }, []); // 의존성 배열은 빈 채로 유지하여 컴포넌트 마운트 시 한 번만 실행
+  }, [libraryData, setLibraryData]);
 
   const handleProfileClick = () => {
     navigate('/my-page');
@@ -82,29 +85,24 @@ function LibraryPage() {
     navigate('/book-search');
   };
 
-  // 로딩, 에러, 데이터 없음 상태 처리
   if (isLoading) {
     return <div className="loading-page-container">데이터를 불러오는 중...</div>;
   }
-
   if (error) {
     return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
   }
-
-  if (!userData) {
-    // isLoading이 false이고 userData가 여전히 null이면 데이터 로딩 실패로 간주
+  if (!libraryData || !libraryData.userData) {
     return <div className="loading-page-container">사용자 데이터를 찾을 수 없습니다.</div>;
   }
-
-  // hero-background와 hero-book-sample에 사용할 이미지 경로를 따로 정의합니다.
-  const heroBackgroundImageSrc = bookImageUrl || '/images/sample_book_background.png'; // 배경 이미지
-  const heroBookSampleImageSrc = bookImageUrl || '/images/sample_book.png';       // 중앙 책 이미지
+  const userData = libraryData.userData;
+  const heroBackgroundImageSrc = libraryData.bookImageUrl || '/images/sample_book_background.png';
+  const heroBookSampleImageSrc = libraryData.bookImageUrl || '/images/sample_book.png';
 
   return (
     <div className="page-container">
       <div className="library-hero-section">
         <img
-          src={heroBackgroundImageSrc} // ✨ 변경된 변수 사용
+          src={heroBackgroundImageSrc}
           className="hero-background"
           alt="Hero background"
         />
@@ -123,7 +121,6 @@ function LibraryPage() {
             {userData.image && userData.image.trim() !== '' && userData.image !== 'https://example.com/image.jpg' ? (
               <img src={userData.image} className="profile-image" alt="프로필 이미지" />
             ) : (
-              // profile-placeholder 배경 이미지 경로 수정
               <div className="profile-placeholder" style={{ backgroundImage: 'url(/images/sample_user.png)' }}></div>
             )}
           </button>
@@ -132,17 +129,16 @@ function LibraryPage() {
             <p>오늘도 책 잘 기록해 봐요...</p>
           </div>
           <img
-            src={heroBookSampleImageSrc} // ✨ 변경된 변수 사용
+            src={heroBookSampleImageSrc}
             className="hero-book-sample"
             alt="Hero book sample"
           />
         </div>
       </div>
 
-      {/* 다른 컴포넌트 섹션들 */}
-      <MyReadingCardSection />
-      <MyBookshelfSection />
-      <TodaysRecommendationSection />
+      <MyReadingCardSection cards={libraryData?.myCards || []} />
+      <MyBookshelfSection books={libraryData?.myBooks || []} />
+      <TodaysRecommendationSection books={libraryData?.popularBooks || []} />
     </div>
   );
 }

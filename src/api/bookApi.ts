@@ -305,7 +305,7 @@ export async function getPopularBooks(params: GetPopularBooksQueryParams): Promi
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/popular`);
+  const url = new URL(`${BASE_URL}/api/v2/bookshelf/popular`);
   if (params.page !== undefined) url.searchParams.append('page', String(params.page));
   if (params.size !== undefined) url.searchParams.append('size', String(params.size));
 

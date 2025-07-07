@@ -7,6 +7,7 @@ import { MdKeyboardArrowRight } from 'react-icons/md';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md'; // MdEdit 임포트 추가
+import { useTabDataStore } from '../../store/tabDataStore';
 
 // bookApi에서 필요한 타입과 함수들을 정확히 임포트
 import {
@@ -261,20 +262,17 @@ function BookDetailPage() {
     const confirmDeleteBook = useCallback(async () => {
         if (!book || !book.memberBookId) {
             setError("책 정보가 불완전하여 삭제할 수 없습니다.");
-            // Optionally close the modal here if there's an error before the API call
             setIsDeleteConfirmModalOpen(false);
             return;
         }
-
-        setIsSavingChanges(true); // Start saving loading state
-        // The modal will be closed by the `onClose` prop or after confirm
-        // setIsDeleteConfirmModalOpen(false); // Can be called here or handled by the modal's `onConfirm` prop
-
+        setIsSavingChanges(true);
         try {
-            const response = await deleteBook(book.memberBookId); // deleteBook API 호출
+            const response = await deleteBook(book.memberBookId);
             if (response.isSuccess) {
+                // 서재 데이터 캐시 무효화
+                useTabDataStore.getState().clearLibraryData();
                 alert('책이 성공적으로 삭제되었습니다.');
-                navigate('/my-bookshelf'); // 삭제 후 나의 책장으로 이동
+                navigate('/my-bookshelf');
             } else {
                 alert(`책 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
             }
@@ -282,8 +280,8 @@ function BookDetailPage() {
             console.error('책 삭제 중 오류 발생:', err);
             alert(`책 삭제 중 오류가 발생했습니다: ${err.message}`);
         } finally {
-            setIsSavingChanges(false); // 저장 중 로딩 상태 종료
-            setIsDeleteConfirmModalOpen(false); // Ensure modal closes after attempt
+            setIsSavingChanges(false);
+            setIsDeleteConfirmModalOpen(false);
         }
     }, [book, navigate]);
 
@@ -320,26 +318,23 @@ function BookDetailPage() {
             setError("책 정보가 불완전하여 상태를 업데이트할 수 없습니다.");
             return;
         }
-
-        setIsSavingChanges(true); // 저장 중 로딩 상태 시작
-        setIsStatusModalOpen(false); // 모달 닫기
-
+        setIsSavingChanges(true);
+        setIsStatusModalOpen(false);
         try {
             let response;
             if (newStatus === 'READING') {
-                response = await updateBookStatusToStart(book.memberBookId); // 읽기 시작 API 호출
-            } else if (newStatus === 'DONE') { // 백엔드에서 'DONE'으로 보냄
-                response = await updateBookStatusToOver(book.memberBookId); // 읽기 완료 API 호출
+                response = await updateBookStatusToStart(book.memberBookId);
+            } else if (newStatus === 'DONE') {
+                response = await updateBookStatusToOver(book.memberBookId);
             } else {
-                // 예상치 못한 상태 값 처리 (백엔드에서 READING, DONE만 보낸다고 했으므로 이 블록은 사실상 실행되지 않음)
                 console.warn(`알 수 없는 책 상태: ${newStatus}. API 호출을 건너뜁니다.`);
                 setIsSavingChanges(false);
                 return;
             }
-
             if (response.isSuccess) {
+                // 서재 데이터 캐시 무효화
+                useTabDataStore.getState().clearLibraryData();
                 alert('책 상태가 성공적으로 업데이트되었습니다.');
-                // UI 업데이트: book 상태의 status를 변경
                 setBook(prevBook => prevBook ? { ...prevBook, status: newStatus } : null);
             } else {
                 alert(response.message || '책 상태 업데이트에 실패했습니다.');
@@ -348,7 +343,7 @@ function BookDetailPage() {
             console.error('책 상태 업데이트 중 오류가 발생했습니다:', err);
             alert(`책 상태 업데이트 중 오류가 발생했습니다: ${err.message}`);
         } finally {
-            setIsSavingChanges(false); // 저장 중 로딩 상태 종료
+            setIsSavingChanges(false);
         }
     }, [book]);
 
