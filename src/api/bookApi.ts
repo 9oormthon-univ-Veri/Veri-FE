@@ -19,6 +19,7 @@ export interface Book {
   imageUrl: string;
   score: number;
   startedAt: string;
+  endedAt: string;
   status: BookStatus;
   cardSummaries?: CardSummary[]; // 상세 조회 시 포함될 수 있도록 추가
 }
@@ -57,6 +58,7 @@ export interface GetBookByIdResponse {
     status: BookStatus;
     score: number; // API 명세에 따라 'score'
     startedAt: string; // Book 인터페이스와의 일관성을 위해 추가 (API 명세에는 없었으나, 필요하다고 가정)
+    endedAt: string;
     cardSummaries: CardSummary[]; // API 명세에 따라 'cardSummaries'
   } | null;
 }
@@ -161,8 +163,8 @@ export async function getAllBooks(
       message: '목 책장 조회 성공',
       result: {
         memberBooks: [
-          { memberBookId: 1, title: '목 책 1', author: '목 작가 1', imageUrl: 'https://placehold.co/100x150?text=My+Book+1', score: 5, startedAt: '2025-07-01T10:00:00.000Z', status: 'READING' },
-          { memberBookId: 3, title: '목 책 3', author: '목 작가 3', imageUrl: 'https://placehold.co/100x150?text=My+Book+3', score: 3, startedAt: '2025-05-15T10:00:00.000Z', status: 'DONE' },
+          { memberBookId: 1, title: '목 책 1', author: '목 작가 1', imageUrl: 'https://placehold.co/100x150?text=My+Book+1', score: 5, startedAt: '2025-07-01T10:00:00.000Z', endedAt: '2025-07-01T10:00:00.000Z', status: 'READING' },
+          { memberBookId: 3, title: '목 책 3', author: '목 작가 3', imageUrl: 'https://placehold.co/100x150?text=My+Book+3', score: 3, startedAt: '2025-05-15T10:00:00.000Z', endedAt: '2025-07-01T10:00:00.000Z', status: 'DONE' },
         ],
         page: params.page || 1,
         size: params.size || 10,
@@ -196,6 +198,7 @@ export async function getBookById(memberBookId: number): Promise<GetBookByIdResp
         status: 'DONE',
         score: 5, // 'rating' 대신 'score' 사용
         startedAt: '2025-07-01T10:00:00.000Z', // 'startedAt' 필드 추가
+        endedAt: '2025-07-10T10:00:00.000Z', // 'endedAt' 필드 추가
         cardSummaries: [
           { cardId: 101, cardImage: 'https://placehold.co/100x100?text=Card1' },
           { cardId: 102, cardImage: 'https://placehold.co/100x100?text=Card2' },

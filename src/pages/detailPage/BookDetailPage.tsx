@@ -90,6 +90,7 @@ function BookDetailPage() {
                     score: response.result.score,
                     status: response.result.status,
                     startedAt: response.result.startedAt || new Date().toISOString(),
+                    endedAt: response.result.endedAt || new Date().toISOString(),
                 };
                 setBook({
                     ...fetchedBook,
@@ -250,6 +251,10 @@ function BookDetailPage() {
                         <span className="section-label">시작일</span>
                         <span className="start-date-value">
                             {book.startedAt ? new Date(book.startedAt).toLocaleDateString('ko-KR') : '미정'}
+                        </span>
+                        <span className="section-label">종료일</span>
+                        <span className="start-date-value">
+                            {book.startedAt ? new Date(book.endedAt).toLocaleDateString('ko-KR') : '미정'}
                         </span>
                     </div>
                 </div>
