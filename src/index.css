@@ -155,6 +155,7 @@ code {
 
 .header-margin {
   height: 80px;
+  width: 100%;
   background-color: #fff;
 }
 
@@ -216,6 +217,7 @@ code {
 }
 
 .detail-header .header-left-arrow {
+  width: auto;
   background: none;
   border: none;
   cursor: pointer;

@@ -164,7 +164,7 @@
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
-    /* 내용이 넘칠 경우 숨김 */
+    cursor: pointer;
 }
 
 .book-cover-thumbnail {

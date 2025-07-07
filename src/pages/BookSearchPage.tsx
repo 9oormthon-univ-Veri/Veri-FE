@@ -5,9 +5,9 @@ import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
 
 import './BookSearchPage.css';
-import type { BookItem, BookSearchResponseResult } from '../../api/bookSearchApi';
-import { searchBooks } from '../../api/bookSearchApi';
-import { removeAccessToken } from '../../api/auth';
+import type { BookItem, BookSearchResponseResult } from '../api/bookSearchApi';
+import { searchBooks } from '../api/bookSearchApi';
+import { removeAccessToken } from '../api/auth';
 
 const BookSearchPage: React.FC = () => {
     const navigate = useNavigate();
@@ -105,7 +105,6 @@ const BookSearchPage: React.FC = () => {
 
             if (!response.isSuccess || !response.result) {
                 setSearchError(response.message || '책 검색에 실패했습니다. (데이터를 가져올 수 없습니다)');
-                // 실패 시 BookSearchResponseResult 타입에 맞는 빈 객체를 반환
                 return { books: [], totalPages: 0, page: 1, size: size, totalElements: 0 };
             }
 
@@ -119,14 +118,13 @@ const BookSearchPage: React.FC = () => {
             } else {
                 setSearchError(`검색 중 오류 발생: ${error.message}`);
             }
-            // 에러 발생 시 BookSearchResponseResult 타입에 맞는 빈 객체를 반환
             return { books: [], totalPages: 0, page: 1, size: size, totalElements: 0 };
         }
     }, [navigate]);
 
     // pageToFetch 매개변수 제거
     const handleSearch = useCallback(async (event: React.FormEvent | null, currentSearchTerm: string = searchTerm) => {
-        event?.preventDefault(); // 폼 제출 기본 동작 방지
+        event?.preventDefault();
 
         const trimmedSearchTerm = currentSearchTerm.trim();
 
@@ -136,14 +134,14 @@ const BookSearchPage: React.FC = () => {
             setCurrentPage(1);
             setHasMore(false);
             setSearchedQuery('');
-            setIsInputFocused(false); // 검색어가 없으면 포커스 상태 해제하여 최근 검색어 표시
+            setIsInputFocused(false);
             return;
         }
 
         setIsSearching(true);
-        setSearchResults([]); // 새 검색 시작 시 기존 결과 초기화
-        setSearchedQuery(trimmedSearchTerm); // 현재 검색된 쿼리 저장
-        setCurrentPage(1); // 항상 1페이지부터 검색 시작
+        setSearchResults([]);
+        setSearchedQuery(trimmedSearchTerm);
+        setCurrentPage(1);
 
         const resultData = await fetchData(trimmedSearchTerm, 1, pageSize);
 
@@ -152,8 +150,8 @@ const BookSearchPage: React.FC = () => {
         setSearchResults(resultData.books);
         setHasMore(resultData.page < resultData.totalPages);
 
-        inputRef.current?.focus();
-        setIsInputFocused(false);
+        inputRef.current?.focus(); // 검색 완료 후에도 포커스 유지
+        // setIsInputFocused(false); // 검색 완료 후 포커스 해제하여 검색 결과만 보이게
 
         if (resultData.books.length > 0) {
             setRecentSearches(prevSearches => {
@@ -184,10 +182,13 @@ const BookSearchPage: React.FC = () => {
         }
     }, [searchedQuery, currentPage, pageSize, loadingMore, isSearching, hasMore, fetchData]);
 
-
     const handleDeleteRecentSearch = useCallback((itemToDelete: string) => {
         setRecentSearches(prevSearches => prevSearches.filter(item => item !== itemToDelete));
     }, []);
+
+    const handleBookItemClick = useCallback((book: BookItem) => {
+        navigate('/book-add', { state: { bookInfo: book } });
+    }, [navigate]);
 
     return (
         <div className="page-container">
@@ -259,7 +260,12 @@ const BookSearchPage: React.FC = () => {
                         {searchResults.map((book, index) => {
                             const isLastElement = searchResults.length === index + 1;
                             return (
-                                <div ref={isLastElement && hasMore ? lastBookElementRef : null} key={book.isbn} className="book-item">
+                                <div
+                                    ref={isLastElement && hasMore ? lastBookElementRef : null}
+                                    key={book.isbn}
+                                    className="book-item"
+                                    onClick={() => handleBookItemClick(book)}
+                                >
                                     <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
                                     <div className="book-details">
                                         <p className="book-title">{book.title}</p>

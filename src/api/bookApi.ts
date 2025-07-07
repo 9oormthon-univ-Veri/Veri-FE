@@ -2,13 +2,9 @@
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 import { getAccessToken } from './auth';
 import {
-  // mockAllBooksResponse,
-  // // mockBookByIdResponse,
-  // // mockSearchBooksResponse,
-  // mockTodaysRecommendation,
 } from './mockData';
 
-export type BookStatus =  "NOT_START" |"READING" | "DONE";
+export type BookStatus = "NOT_START" | "READING" | "DONE";
 
 export interface CardSummary {
   cardId: number;
@@ -176,7 +172,7 @@ export async function getAllBooks(
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/all`);
+  const url = new URL(`${BASE_URL}/api/v2/bookshelf/my`); // Changed to v2
   if (params.page !== undefined) url.searchParams.append('page', String(params.page));
   if (params.size !== undefined) url.searchParams.append('size', String(params.size));
   if (params.sort !== undefined) url.searchParams.append('sort', params.sort);
@@ -218,8 +214,8 @@ export async function getBookById(memberBookId: number): Promise<GetBookByIdResp
     return new Promise(resolve => setTimeout(() => resolve(resultToReturn), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/detail`);
-  url.searchParams.append('memberBookId', String(memberBookId));
+  const url = new URL(`${BASE_URL}/api/v2/bookshelf/${memberBookId}`); // Changed to v2 and used path parameter
+  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
 
   const response = await fetchWithAuth(url.toString(), { method: 'GET' });
   const data: GetBookByIdResponse = await response.json();
@@ -239,51 +235,13 @@ export async function searchBooksByTitle(query: string): Promise<SearchBooksResp
     return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/search`);
+  const url = new URL(`${BASE_URL}/api/v2/bookshelf/search`); // Changed to v2
   url.searchParams.append('title', query);
 
   const response = await fetchWithAuth(url.toString(), { method: 'GET' });
   const data: SearchBooksResponse = await response.json();
   return data;
 }
-
-// export async function getTodaysRecommendation(): Promise<GetTodaysRecommendationResponse> {
-//   if (USE_MOCK_DATA) {
-//     return new Promise(resolve => setTimeout(() => resolve({
-//       isSuccess: true,
-//       code: '1000',
-//       message: '요청에 성공하였습니다.',
-//       result: mockTodaysRecommendation
-//     }), 500));
-//   }
-
-//   const url = `${BASE_URL}/api/v0/recommendation/today`;
-//   const response = await fetchWithAuth(url, { method: 'GET' });
-//   const data: GetTodaysRecommendationResponse = await response.json();
-//   return data;
-// }
-
-// export async function getRandomBook(): Promise<Book> {
-//   if (USE_MOCK_DATA) {
-//     return new Promise((resolve, reject) => {
-//       setTimeout(() => {
-//         const books = mockAllBooksResponse.result.memberBooks; 
-//         if (books.length === 0) {
-//           reject(new Error("No books available in mock data."));
-//           return;
-//         }
-//         const randomIndex = Math.floor(Math.random() * books.length);
-//         const randomBook = books[randomIndex];
-//         if (randomBook) {
-//           resolve(randomBook);
-//         } else {
-//           reject(new Error("Failed to select a random book. The book at the random index was undefined."));
-//         }
-//       }, 500);
-//     });
-//   }
-//   throw new Error('Real API for getRandomBook not implemented.');
-// }
 
 export async function getPopularBooks(params: GetPopularBooksQueryParams): Promise<GetPopularBooksResponse> {
   if (USE_MOCK_DATA) {
@@ -305,7 +263,7 @@ export async function getPopularBooks(params: GetPopularBooksQueryParams): Promi
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/popular`);
+  const url = new URL(`${BASE_URL}/api/v2/bookshelf/popular`); // Changed to v2
   if (params.page !== undefined) url.searchParams.append('page', String(params.page));
   if (params.size !== undefined) url.searchParams.append('size', String(params.size));
 
@@ -345,7 +303,7 @@ export async function createBook(bookData: CreateBookRequest): Promise<CreateBoo
     }), 500));
   }
 
-  const url = `${BASE_URL}/api/v0/bookshelf`;
+  const url = `${BASE_URL}/api/v2/bookshelf`; // Changed to v2
   const response = await fetchWithAuth(url, {
     method: 'POST',
     body: JSON.stringify(bookData),
@@ -372,8 +330,8 @@ export async function deleteBook(memberBookId: number): Promise<DeleteBookRespon
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf`);
-  url.searchParams.append('memberBookId', String(memberBookId));
+  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}`; // Changed to v2 and used path parameter
+  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
 
   const response = await fetchWithAuth(url.toString(), { method: 'DELETE' });
   const data: DeleteBookResponse = await response.json();
@@ -397,8 +355,8 @@ export async function updateBookStatusToStart(memberBookId: number): Promise<Upd
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/status/start`);
-  url.searchParams.append('memberBookId', String(memberBookId));
+  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/status/start`; // Changed to v2 and used path parameter
+  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
 
   const response = await fetchWithAuth(url.toString(), { method: 'PATCH' });
   const data: UpdateBookStatusResponse = await response.json();
@@ -415,8 +373,8 @@ export async function updateBookStatusToOver(memberBookId: number): Promise<Upda
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/status/over`);
-  url.searchParams.append('memberBookId', String(memberBookId));
+  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/status/over`; // Changed to v2 and used path parameter
+  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
 
   const response = await fetchWithAuth(url.toString(), { method: 'PATCH' });
   const data: UpdateBookStatusResponse = await response.json();
@@ -437,8 +395,8 @@ export async function rateBook(memberBookId: number, score: number): Promise<Upd
     }), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v0/bookshelf/rate`);
-  url.searchParams.append('memberBookId', String(memberBookId));
+  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/rate`; // Changed to v2 and used path parameter
+  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
 
   const response = await fetchWithAuth(url.toString(), {
     method: 'PATCH',
@@ -448,6 +406,37 @@ export async function rateBook(memberBookId: number, score: number): Promise<Upd
   const data: UpdateBookStatusResponse = await response.json();
   return data;
 }
+
+// New interface for UpdateBookContentRequest based on PATCH /api/v2/bookshelf/{memberBookId}/modify
+export interface UpdateBookContentRequest {
+  title?: string;
+  image?: string;
+  author?: string;
+  publisher?: string;
+  isbn?: string;
+  // Add other fields if 'modify' allows them to be updated
+}
+
+export async function updateBookContent(memberBookId: number, bookData: UpdateBookContentRequest): Promise<UpdateBookStatusResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: '목 책 내용 수정 성공',
+      result: {}
+    }), 500));
+  }
+
+  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/modify`; // Changed to v2 and used path parameter
+  const response = await fetchWithAuth(url.toString(), {
+    method: 'PATCH',
+    body: JSON.stringify(bookData),
+  });
+
+  const data: UpdateBookStatusResponse = await response.json();
+  return data;
+}
+
 
 export interface GetMyBooksCountResponse {
   isSuccess: boolean;
@@ -466,8 +455,45 @@ export async function getMyBooksCount(): Promise<GetMyBooksCountResponse> {
     }), 500));
   }
 
-  const url = `${BASE_URL}/api/v0/bookshelf/my/count`;
+  const url = `${BASE_URL}/api/v2/bookshelf/my/count`; // Changed to v2
   const response = await fetchWithAuth(url, { method: 'GET' });
   const data: GetMyBooksCountResponse = await response.json();
   return data;
+}
+
+export interface UpdateBookStatusRequest {
+  score: number;
+  startedAt: string; // ISO 8601 format
+  endedAt: string;   // ISO 8601 format
+}
+
+export interface UpdateBookStatusResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: Record<string, never>;
+}
+
+export async function updateBookStatus(
+  memberBookId: number, // This is correctly defined as a parameter here
+  data: UpdateBookStatusRequest
+): Promise<UpdateBookStatusResponse> {
+  if (USE_MOCK_DATA) {
+    return new Promise(resolve => setTimeout(() => resolve({
+      isSuccess: true,
+      code: '1000',
+      message: 'Mock 책 상태 수정 성공',
+      result: {}
+    }), 500));
+  }
+
+  // Corrected: memberBookId is now part of the URL
+  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/modify`;
+  const response = await fetchWithAuth(url, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+
+  const result: UpdateBookStatusResponse = await response.json();
+  return result;
 }

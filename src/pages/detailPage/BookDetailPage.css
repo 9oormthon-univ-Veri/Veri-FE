@@ -160,6 +160,7 @@
 }
 
 .my-reading-card-section .see-all-button {
+    width: auto;
     display: flex;
     align-items: center;
     background: none;

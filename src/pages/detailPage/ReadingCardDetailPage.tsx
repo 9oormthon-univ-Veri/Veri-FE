@@ -1,6 +1,7 @@
+// src/pages/ReadingCardDetailPage/ReadingCardDetailPage.tsx
+
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import html2canvas from 'html2canvas';
 import { MdArrowBackIosNew } from 'react-icons/md';
 import { FiDownload, FiShare2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -20,7 +21,6 @@ function ReadingCardDetailPage() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const cardContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -42,8 +42,6 @@ function ReadingCardDetailPage() {
         const response = await getCardDetailById(cardId);
 
         if (response.isSuccess && response.result) {
-          // **Modification Start**
-          // Safely access book properties using optional chaining
           const bookData = response.result.book;
           setCardDetail({
             cardId: response.result.id,
@@ -55,9 +53,8 @@ function ReadingCardDetailPage() {
               title: bookData.title,
               coverImageUrl: bookData.coverImageUrl,
               author: bookData.author,
-            } : null, // Set book to null if bookData is not available
+            } : null,
           });
-          // **Modification End**
         } else {
           setError(response.message || "독서 카드 상세 정보를 가져오는데 실패했습니다.");
         }
@@ -77,74 +74,14 @@ function ReadingCardDetailPage() {
     }
   }, [id]);
 
-  const handleDownload = useCallback(async () => {
-    if (!cardContentRef.current) {
-      alert('다운로드할 카드를 찾을 수 없습니다.');
-      return;
+  // handleShare 함수를 DownloadCardPage로 이동하도록 변경
+  const handleShare = useCallback(() => {
+    if (cardDetail) {
+      navigate('/download-card', { state: { cardDetail: cardDetail, action: 'share' } });
+    } else {
+      alert('공유할 독서 카드 정보를 불러오지 못했습니다.');
     }
-    setIsProcessing(true);
-    try {
-      const canvas = await html2canvas(cardContentRef.current, { useCORS: true });
-      const dataUrl = canvas.toDataURL('image/png');
-
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `독서카드_${cardDetail?.book?.title || '제목없음'}_${cardDetail?.cardId}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      alert('독서카드가 다운로드되었습니다!');
-    } catch (err: any) {
-      console.error('독서카드 다운로드 실패:', err);
-      alert(`독서카드 다운로드에 실패했습니다: ${err.message}`);
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [cardDetail]);
-
-  const handleShare = useCallback(async () => {
-    if (!cardContentRef.current) {
-      alert('공유할 카드를 찾을 수 없습니다.');
-      return;
-    }
-    setIsProcessing(true);
-    try {
-      const canvas = await html2canvas(cardContentRef.current, { useCORS: true });
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
-          console.error('Blob 생성에 실패했습니다.');
-          alert('독서카드 공유에 실패했습니다.');
-          setIsProcessing(false);
-          return;
-        }
-
-        const file = new File([blob], `독서카드_${cardDetail?.book?.title || '제목없음'}.png`, { type: 'image/png' });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              title: `나의 독서카드: ${cardDetail?.book?.title || '제목없음'}`,
-              text: cardDetail?.content || '나만의 독서카드를 공유해요!',
-              files: [file],
-            });
-            console.log('독서카드 공유 성공');
-          } catch (error: any) {
-            console.error('독서카드 공유 실패:', error);
-            if (error.name !== 'AbortError') {
-              alert(`독서카드 공유에 실패했습니다: ${error.message}`);
-            }
-          }
-        } else {
-          alert('현재 브라우저에서는 파일 공유를 지원하지 않습니다.');
-        }
-        setIsProcessing(false);
-      }, 'image/png');
-    } catch (err: any) {
-      console.error('독서카드 공유 준비 실패:', err);
-      alert(`독서카드 공유 준비에 실패했습니다: ${err.message}`);
-      setIsProcessing(false);
-    }
-  }, [cardDetail]);
+  }, [cardDetail, navigate]);
 
   const handleDeleteCard = useCallback(async () => {
     if (!cardDetail || !cardDetail.cardId) {
@@ -179,7 +116,6 @@ function ReadingCardDetailPage() {
   }, [cardDetail]);
 
   const handleBookTitleClick = () => {
-    // Check if cardDetail and cardDetail.book exist before accessing id
     if (cardDetail && cardDetail.book && cardDetail.book.id) {
       navigate(`/book-detail/${cardDetail.book.id}`);
     } else {
@@ -196,6 +132,16 @@ function ReadingCardDetailPage() {
     const minute = (`0${date.getMinutes()}`).slice(-2);
     return `${year}년 ${month}월 ${day}일 ${hour}:${minute}`;
   };
+
+  // 기존 handleGoToDownloadPage 유지
+  const handleGoToDownloadPage = useCallback(() => {
+    if (cardDetail) {
+      navigate('/download-card', { state: { cardDetail: cardDetail, action: 'download' } }); // action 추가
+    } else {
+      alert('다운로드할 독서 카드 정보를 불러오지 못했습니다.');
+    }
+  }, [cardDetail, navigate]);
+
 
   if (isLoading || isProcessing) {
     return (
@@ -253,7 +199,8 @@ function ReadingCardDetailPage() {
 
       <div className="header-margin"></div>
 
-      <div className="card-content-area" ref={cardContentRef}>
+      {/* The main card content area - this will be captured by html2canvas on the download page */}
+      <div className="card-content-area">
         <div className="card-image-wrapper">
           <img
             src={cardDetail.imageUrl || 'https://placehold.co/300x400?text=No+Card+Image'}
@@ -280,10 +227,11 @@ function ReadingCardDetailPage() {
       </div>
 
       <div className="action-buttons-container-revised">
-        <button className="action-button-revised download-button-revised" onClick={handleDownload} disabled={isProcessing}>
+        <button className="action-button-revised download-button-revised" onClick={handleGoToDownloadPage} disabled={isProcessing}>
           <FiDownload size={24} />
           <span>다운로드</span>
         </button>
+        {/* '공유하기' 버튼도 DownloadCardPage로 이동하도록 변경 */}
         <button className="action-button-revised share-button-revised" onClick={handleShare} disabled={isProcessing}>
           <FiShare2 size={24} />
           <span>공유하기</span>

@@ -221,15 +221,17 @@ section {
 
 /* 오늘의 추천 섹션 */
 .todays-recommendation .recommended-book-item {
-    width: 100px;
+    height: 200px;
+    width: 110px;
     background-color: #fff;
     border-radius: 8px;
-    padding: 10px;
+    padding: 5px;
+    text-align: center;
 }
 
 .todays-recommendation .recommended-book-item .book-cover-thumbnail {
+    height: 100%;
     width: 100%;
-    padding-bottom: 150%; /* 2:3 비율 */
     position: relative;
     background-color: #f0f0f0;
     border-radius: 4px;
@@ -274,6 +276,7 @@ section {
     overflow: hidden;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
+    object-fit: cover;
 }
 
 .hero-background {
