@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './TextExtractionResultPage.css';
 
@@ -9,17 +9,8 @@ const TextExtractionResultPage: React.FC = () => {
     // 이전 페이지에서 넘어온 image, extractedText, bookId를 받아옵니다.
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
-    const bookId = location.state?.bookId as number | undefined; // ⭐️ bookId 추가
 
     const [editableText, setEditableText] = useState<string>(extractedText || '');
-
-    useEffect(() => {
-        // 이미지, 추출된 텍스트, bookId 중 하나라도 없으면 카드 생성 페이지로 돌려보냅니다.
-        if (!image || !extractedText || bookId === undefined) { // ⭐️ bookId 검사 추가
-            console.error('TextExtractionResultPage: 필수 데이터 (이미지, 텍스트 또는 책 ID) 누락, make-card로 리디렉션.');
-            navigate('/make-card');
-        }
-    }, [image, extractedText, bookId, navigate]); // ⭐️ 의존성 배열에 bookId 추가
 
     const handleRetake = () => {
         navigate('/make-card'); // 재촬영 시에는 bookId를 다시 선택해야 할 수 있으므로, 초기 페이지로 이동
@@ -31,14 +22,13 @@ const TextExtractionResultPage: React.FC = () => {
             state: {
                 image,
                 extractedText: editableText,
-                bookId, // ⭐️ bookId 전달
             },
         });
     };
 
     // 이미지, 추출된 텍스트 또는 책 ID가 없을 경우 아무것도 렌더링하지 않습니다.
     // useEffect에서 이미 리디렉션 처리를 하므로, 이 부분은 빠르게 지나갈 것입니다.
-    if (!image || !extractedText || bookId === undefined) {
+    if (!image || !extractedText) {
         return null;
     }
 

@@ -21,9 +21,11 @@ import TextExtractionLoadingPage from './pages/makeCardPage/TextExtractionLoadin
 import TextExtractionResultPage from './pages/makeCardPage/TextExtractionResultPage';
 import CardCustomizationPage from './pages/makeCardPage/CardCustomizationPage';
 import CardCustomizationCompletePage from './pages/makeCardPage/CardCustomizationCompletePage';
-import BookSearchPage from './pages/BookSearchPage'; 
+import BookSearchPage from './pages/BookSearchPage';
 import DownloadCardPage from './pages/DownloadCardPage';
 import BookAddPage from './pages/BookAddPage';
+import OAuthCallbackPage from './pages/OAuthCallbackPage';
+import CardBookSearchPage from './pages/makeCardPage/CardBookSearchPage';
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
 const isAuthenticated = () => {
@@ -33,28 +35,40 @@ const isAuthenticated = () => {
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate(); // 이 변수는 로그인 성공 시 LoginPage에서 사용될 수 있으므로 유지
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // ✨ 이 블록을 주석 처리하거나 제거하여 로그인 리디렉션을 일시적으로 비활성화합니다.
-    const publicPaths = ['/login'];
+    // ✨ 로그인 리디렉션 로직 (이전과 동일)
+    const publicPaths = ['/login', '/oauth/callback/kakao']; // Add OAuth callback to public paths
 
     if (!isAuthenticated() && !publicPaths.includes(location.pathname)) {
       navigate('/login');
     }
 
-    // 개발 중 편의를 위해 로그인 무시
-    // 주의: 실제 배포 시에는 이 로직을 다시 활성화하거나 적절한 인증 로직을 구현해야 합니다.
+    window.scrollTo(0, 0);
   }, [location.pathname, navigate]);
 
   const showTabBar = [
     '/',
     '/library',
     '/reading-card',
-    '/camera',
     '/community',
     '/my-page'
   ].includes(location.pathname);
+
+  // You might want to hide the FloatingCameraButton on paths where it doesn't make sense,
+  // for example, on pages where card creation isn't the primary action or during the card creation flow itself.
+  const showFloatingCameraButton = showTabBar && ![
+    '/make-card',
+    '/text-extraction-loading',
+    '/text-extraction-result',
+    '/customize-card',
+    '/card-complete',
+    '/book-search',
+    '/book-add',
+    '/download-card'
+  ].includes(location.pathname);
+
 
   return (
     <div className="App">
@@ -77,11 +91,13 @@ function App() {
         <Route path="/book-search" element={<BookSearchPage />} />
         <Route path="/download-card" element={<DownloadCardPage />} />
         <Route path="/book-add" element={<BookAddPage />} />
+        <Route path="/oauth/callback/kakao" element={<OAuthCallbackPage />} />
+        <Route path="/card-book-search" element={<CardBookSearchPage />} />
         {/* 404 페이지 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>
       {showTabBar && <TabBar />}
-      {showTabBar && <FloatingCameraButton />}
+      {showFloatingCameraButton && <FloatingCameraButton />}
     </div>
   );
 }

@@ -23,7 +23,7 @@ const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = ({ cards, book
     const navigate = useNavigate();
 
     const handleSeeAllCards = useCallback(() => {
-        navigate(`/book-detail/${bookId}/cards`);
+        navigate(`/reading-card`);
     }, [navigate, bookId]);
 
     return (
@@ -248,14 +248,18 @@ function BookDetailPage() {
                     </div>
 
                     <div className="start-date-section">
-                        <span className="section-label">시작일</span>
-                        <span className="start-date-value">
-                            {book.startedAt ? new Date(book.startedAt).toLocaleDateString('ko-KR') : '미정'}
-                        </span>
-                        <span className="section-label">종료일</span>
-                        <span className="start-date-value">
-                            {book.startedAt ? new Date(book.endedAt).toLocaleDateString('ko-KR') : '미정'}
-                        </span>
+                        <div className="start-date">
+                            <span className="section-label">시작일</span>
+                            <span className="start-date-value">
+                                {book.startedAt ? new Date(book.startedAt).toLocaleDateString('ko-KR') : '미정'}
+                            </span>
+                        </div>
+                        <div className="end-date">
+                            <span className="section-label">종료일</span>
+                            <span className="start-date-value">
+                                {book.startedAt ? new Date(book.endedAt).toLocaleDateString('ko-KR') : '미정'}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

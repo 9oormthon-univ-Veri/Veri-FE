@@ -156,6 +156,7 @@ section {
 .recommended-book-item {
     display: flex;
     flex-shrink: 0;
+    height: auto;
     width: 100px;
     text-align: center;
     flex-direction: column;
@@ -180,7 +181,7 @@ section {
 }
 
 .my-bookshelf .book-cover-thumbnail {
-    height: 100%;
+    height: 90%;
     width: 100%;
     position: relative;
     background-color: #f0f0f0;
@@ -230,7 +231,6 @@ section {
 }
 
 .todays-recommendation .recommended-book-item .book-cover-thumbnail {
-    height: 100%;
     width: 100%;
     position: relative;
     background-color: #f0f0f0;

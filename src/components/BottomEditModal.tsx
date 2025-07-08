@@ -48,7 +48,6 @@ const StarRatingInput: React.FC<StarRatingInputProps> = ({ initialRating, onRati
             onMouseEnter={() => setHoverRating(index)}
             onMouseLeave={() => setHoverRating(0)}
           >
-            {/* ✨ SVG 이미지 사용 */}
             <img
               src={isFilled ? STAR_FILL_ICON : STAR_LINE_ICON}
               alt={isFilled ? "채워진 별" : "빈 별"}

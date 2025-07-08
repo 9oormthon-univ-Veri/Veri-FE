@@ -1,16 +1,24 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { MdArrowBackIosNew } from 'react-icons/md';
 import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
 
-import './BookSearchPage.css';
-import type { BookItem, BookSearchResponseResult } from '../api/bookSearchApi';
-import { searchBooks } from '../api/bookSearchApi';
-import { removeAccessToken } from '../api/auth';
+import './CardBookSearchPage.css';
+import type { BookItem, BookSearchResponseResult } from '../../api/bookSearchApi';
+import { searchBooks } from '../../api/bookSearchApi';
+import { removeAccessToken } from '../../api/auth';
+import { createBook } from '../../api/bookApi';
+import type { CreateBookRequest } from '../../api/bookApi';
 
-const BookSearchPage: React.FC = () => {
+const CardBookSearchPage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation(); // Use useLocation to get state passed from CardCustomizationPage
+
+    // Get initial image and extractedText from location state if available
+    const initialImage = location.state?.image as string | undefined;
+    const initialExtractedText = location.state?.extractedText as string | undefined;
+
     const [searchTerm, setSearchTerm] = useState('');
     const [searchedQuery, setSearchedQuery] = useState('');
     const [recentSearches, setRecentSearches] = useState<string[]>(() => {
@@ -36,6 +44,10 @@ const BookSearchPage: React.FC = () => {
     const observer = useRef<IntersectionObserver | null>(null);
     const [loadingMore, setLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(false);
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
 
     const lastBookElementRef = useCallback((node: HTMLDivElement | null) => {
         if (loadingMore || isSearching) return;
@@ -78,26 +90,23 @@ const BookSearchPage: React.FC = () => {
     }, []);
 
     const handleInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-        // 'X' 버튼을 클릭한 경우에는 blur 이벤트 무시 (즉, 포커스 상태 유지)
         if (e.relatedTarget && (e.relatedTarget as HTMLElement).classList.contains('clear-search-button')) {
             return;
         }
-        // 그 외의 경우에는 무조건 포커스 상태 해제 (돋보기 아이콘이 다시 나타나게 함)
         setIsInputFocused(false);
     }, []);
 
     const handleClearSearch = useCallback(() => {
-        setSearchTerm(''); // 검색어 지우기
-        setSearchResults([]); // 검색 결과 지우기
-        setSearchedQuery(''); // 검색 쿼리 지우기
-        setSearchError(null); // 에러 메시지 지우기
+        setSearchTerm('');
+        setSearchResults([]);
+        setSearchedQuery('');
+        setSearchError(null);
         setCurrentPage(1);
         setHasMore(false);
-        inputRef.current?.focus(); // 입력 필드에 다시 포커스
-        setIsInputFocused(true); // 입력 필드가 비어있어도 잠시 포커스된 상태로 시작하도록
+        inputRef.current?.focus();
+        setIsInputFocused(true);
     }, []);
 
-    // fetchData 함수의 반환 타입을 BookSearchResponseResult로 명시
     const fetchData = useCallback(async (query: string, page: number, size: number): Promise<BookSearchResponseResult> => {
         setSearchError(null);
         try {
@@ -122,7 +131,6 @@ const BookSearchPage: React.FC = () => {
         }
     }, [navigate]);
 
-    // pageToFetch 매개변수 제거
     const handleSearch = useCallback(async (event: React.FormEvent | null, currentSearchTerm: string = searchTerm) => {
         event?.preventDefault();
 
@@ -150,8 +158,7 @@ const BookSearchPage: React.FC = () => {
         setSearchResults(resultData.books);
         setHasMore(resultData.page < resultData.totalPages);
 
-        inputRef.current?.focus(); // 검색 완료 후에도 포커스 유지
-        // setIsInputFocused(false); // 검색 완료 후 포커스 해제하여 검색 결과만 보이게
+        inputRef.current?.focus();
 
         if (resultData.books.length > 0) {
             setRecentSearches(prevSearches => {
@@ -162,22 +169,18 @@ const BookSearchPage: React.FC = () => {
     }, [searchTerm, pageSize, fetchData]);
 
     const loadMoreBooks = useCallback(async () => {
-        // 이미 로딩 중이거나, 검색 중이거나, 더 이상 데이터가 없거나, 검색 쿼리가 없으면 중단
         if (loadingMore || isSearching || !hasMore || !searchedQuery) return;
 
         setLoadingMore(true);
 
-        // 현재 페이지 + 1로 다음 페이지 데이터를 요청
         const resultData = await fetchData(searchedQuery, currentPage, pageSize);
 
         setLoadingMore(false);
 
         if (resultData.books.length > 0) {
             setSearchResults(prevResults => [...prevResults, ...resultData.books]);
-            // 다음 페이지가 총 페이지보다 작으면 hasMore를 true로 유지
             setHasMore(resultData.page < resultData.totalPages);
         } else {
-            // 불러온 책이 없으면 더 이상 데이터가 없다고 판단
             setHasMore(false);
         }
     }, [searchedQuery, currentPage, pageSize, loadingMore, isSearching, hasMore, fetchData]);
@@ -186,14 +189,58 @@ const BookSearchPage: React.FC = () => {
         setRecentSearches(prevSearches => prevSearches.filter(item => item !== itemToDelete));
     }, []);
 
-    const handleBookItemClick = useCallback((book: BookItem) => {
-        navigate('/book-add', { state: { bookInfo: book } });
-    }, [navigate]);
+    // MODIFIED: Navigate back to CardCustomizationPage with selected book data
+    const handleRegisterBook = useCallback(async (book: BookItem) => {
+        setIsSubmitting(true);
+        setSubmitError(null);
+        setSubmitSuccess(false);
+
+        if (!book.title?.trim() || !book.imageUrl?.trim() || !book.author?.trim() || !book.publisher?.trim() || !book.isbn?.trim()) {
+            setSubmitError('필수 책 정보가 누락되었습니다. (제목, 이미지, 저자, 출판사, ISBN)');
+            setIsSubmitting(false);
+            return;
+        }
+
+        try {
+            const payload: CreateBookRequest = {
+                title: book.title.trim(),
+                image: book.imageUrl.trim(),
+                author: book.author.trim(),
+                publisher: book.publisher.trim(),
+                isbn: book.isbn.trim(),
+            };
+
+            const response = await createBook(payload);
+
+            if (response.isSuccess && response.result?.memberBookId) {
+                setSubmitSuccess(true);
+                alert('책이 성공적으로 등록되었습니다! 독서카드에 추가됩니다.');
+
+                // Navigate back to CardCustomizationPage, passing the new book ID and title
+                // Also pass the original image and extractedText received from CardCustomizationPage
+                navigate('/customize-card', {
+                    state: {
+                        image: initialImage, // Pass the original image back
+                        extractedText: initialExtractedText, // Pass the original extractedText back
+                        selectedBookId: response.result.memberBookId, // Pass the ID of the newly created book
+                        selectedBookTitle: book.title, // Pass the title of the newly created book
+                    }
+                });
+            } else {
+                setSubmitError(response.message || '책 등록에 실패했습니다.');
+            }
+        } catch (err: any) {
+            console.error('책 등록 중 예상치 못한 오류:', err);
+            setSubmitError('책 등록 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, [navigate, initialImage, initialExtractedText]); // Add initialImage and initialExtractedText to dependency array
 
     return (
         <div className="page-container">
             <header className="search-header">
-                <div className="header-left-icon" onClick={() => navigate('/my-bookshelf')}>
+                <div className="header-left-icon" onClick={() => navigate(-1)}>
                     <MdArrowBackIosNew size={24} color="#333" />
                 </div>
                 <form onSubmit={(e) => handleSearch(e, searchTerm)} className="search-input-form">
@@ -205,7 +252,7 @@ const BookSearchPage: React.FC = () => {
                         value={searchTerm}
                         onChange={handleInputChange}
                         className={`search-input ${isInputFocused || searchTerm.length > 0 ? 'input-focused-persistent' : ''}`}
-                        disabled={isSearching}
+                        disabled={isSearching || isSubmitting}
                         onFocus={handleInputFocus}
                         onBlur={handleInputBlur}
                     />
@@ -254,6 +301,8 @@ const BookSearchPage: React.FC = () => {
             <div className="search-results-area">
                 {isSearching && !loadingMore && <p className="loading-message">책을 검색 중입니다...</p>}
                 {searchError && <p className="error-message">{searchError}</p>}
+                {submitError && <p className="error-message">{submitError}</p>}
+                {isSubmitting && <p className="loading-message">책을 등록 중입니다...</p>}
 
                 {!isSearching && !searchError && searchResults.length > 0 ? (
                     <div className="book-list">
@@ -264,7 +313,7 @@ const BookSearchPage: React.FC = () => {
                                     ref={isLastElement && hasMore ? lastBookElementRef : null}
                                     key={book.isbn}
                                     className="book-item"
-                                    onClick={() => handleBookItemClick(book)}
+                                    onClick={() => handleRegisterBook(book)}
                                 >
                                     <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
                                     <div className="book-details">
@@ -277,7 +326,7 @@ const BookSearchPage: React.FC = () => {
                         {loadingMore && <p className="loading-message">더 많은 책을 불러오는 중...</p>}
                     </div>
                 ) : (
-                    !isSearching && !searchError && (
+                    !isSearching && !searchError && !submitError && (
                         (searchedQuery === '' && searchTerm.length === 0 && !isInputFocused && recentSearches.length === 0) ? (
                             <p className="initial-message">책 제목, 저자, ISBN으로 검색해보세요.</p>
                         ) :
@@ -289,9 +338,12 @@ const BookSearchPage: React.FC = () => {
                                 ) : null
                     )
                 )}
+                {submitSuccess && (
+                    <p className="success-message">책이 성공적으로 등록되었습니다!</p>
+                )}
             </div>
         </div>
     );
 };
 
-export default BookSearchPage;
+export default CardBookSearchPage;

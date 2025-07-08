@@ -238,7 +238,7 @@ export async function searchBooksByTitle(query: string): Promise<SearchBooksResp
     return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
   }
 
-  const url = new URL(`${BASE_URL}/api/v2/bookshelf/search`); // Changed to v2
+  const url = new URL(`${BASE_URL}/api/v2/bookshelf/search`);
   url.searchParams.append('title', query);
 
   const response = await fetchWithAuth(url.toString(), { method: 'GET' });

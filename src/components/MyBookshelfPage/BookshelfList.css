@@ -17,7 +17,7 @@
 
 /* 개별 책 아이템 스타일 (full 페이지용) */
 .bookshelf-item-full {
-    height: 135px;
+    height: 140px;
     display: flex;
     background-color: #fff;
     border-radius: 12px;

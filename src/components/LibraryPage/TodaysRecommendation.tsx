@@ -2,50 +2,53 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// ✨ import 변경:
-// getTodaysRecommendation 대신 getPopularBooks를 임포트
-// TodaysRecommendationBook 대신 PopularBookItem 타입과 GetPopularBooksQueryParams를 임포트
 import { getPopularBooks, type PopularBookItem, type GetPopularBooksQueryParams } from '../../api/bookApi';
 
-// 개별 추천 책 아이템의 타입 정의
-// PopularBookItem의 필드에 맞춰 조정
+// BookAddPage에서 기대하는 BookSearchResult 타입에 맞추어 RecommendedBookType을 조정합니다.
+// BookSearchResult는 bookApi.ts에 정의되어 있습니다.
+// 여기서는 PopularBookItem의 필드를 사용하여 BookSearchResult와 유사한 형태로 만듭니다.
 interface RecommendedBookType {
-  // PopularBookItem에는 bookId가 없고 isbn이 있으므로,
-  // 여기서는 API 응답의 'isbn'을 'id'로 사용합니다.
-  // BookDetail 페이지로 이동할 때 이 'id'가 사용될 것입니다.
-  id: string; // isbn
-  coverUrl: string; // PopularBookItem의 'image' 필드와 매핑
   title: string;
+  imageUrl: string; // PopularBookItem의 'image' 필드와 매핑됩니다.
   author: string;
-  // 필요하다면 publisher, isbn 등을 추가할 수 있습니다.
-  // publisher: string;
-  // isbn: string;
+  publisher: string; // PopularBookItem에는 'publisher' 필드가 있으므로 추가
+  isbn: string; // PopularBookItem의 'isbn' 필드를 사용
 }
 
 // 개별 추천 책 아이템을 렌더링하는 내부 컴포넌트
-const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ id, coverUrl, title, author }) => {
+const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ title, imageUrl, author, publisher, isbn }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/book-detail/${id}`);
+    // BookAddPage로 이동 시 state에 BookSearchResult 타입의 객체를 전달합니다.
+    navigate('/book-add', {
+      state: {
+        bookInfo: {
+          title,
+          imageUrl,
+          author,
+          publisher,
+          isbn,
+          // BookSearchResult에 다른 필드 (e.g., description, publishedDate)가 있다면,
+          // PopularBookItem에서 해당 정보를 가져와 여기에 추가할 수 있습니다.
+          // 현재 PopularBookItem에는 이 정보들이 없으므로, 필요하다면 API 응답을 확장해야 합니다.
+        }
+      }
+    });
   };
+
   const fallbackImageUrl = 'https://placehold.co/80x120?text=No+Cover';
   return (
     <div className="recommended-book-item" onClick={handleClick}>
       <div className="book-cover-thumbnail">
         <img
-          src={coverUrl || fallbackImageUrl} // coverUrl이 없으면 대체 이미지 사용
+          src={imageUrl || fallbackImageUrl} // imageUrl이 없으면 대체 이미지 사용
           alt={title}
           onError={(e) => {
-            // 이미지 로딩 실패 시 대체 이미지로 변경
-            // 이미 fallbackImageUrl로 시도했는데 실패한 경우 무한 루프를 피하기 위해
-            // 현재 src가 fallbackImageUrl이 아닐 때만 변경하도록 할 수도 있습니다.
             if (e.currentTarget.src !== fallbackImageUrl) {
               e.currentTarget.src = fallbackImageUrl;
             } else {
-              // 이미 fallbackImageUrl로 시도했는데 실패한 경우 더 이상 할 것이 없음
-              // 콘솔에 오류 로그를 남기거나, 사용자에게 메시지 표시 등
-              console.warn(`이미지 로딩 실패: ${coverUrl}. 대체 이미지 ${fallbackImageUrl}도 실패.`);
+              console.warn(`이미지 로딩 실패: ${imageUrl}. 대체 이미지 ${fallbackImageUrl}도 실패.`);
             }
           }}
         />
@@ -68,25 +71,23 @@ const TodaysRecommendationSection: React.FC = () => {
       setError(null);
 
       try {
-        // ✨ getTodaysRecommendation 대신 getPopularBooks 호출
-        // API 쿼리 파라미터 설정 (예: 1페이지의 5개 아이템)
         const queryParams: GetPopularBooksQueryParams = {
           page: 1,
           size: 5,
         };
-        const response = await getPopularBooks(queryParams); // ✨ API 호출
+        const response = await getPopularBooks(queryParams);
 
         if (response.isSuccess && response.result && response.result.books) {
           // API 응답 데이터를 RecommendedBookType에 맞게 매핑
           const mappedBooks: RecommendedBookType[] = response.result.books.map((book: PopularBookItem) => ({
-            id: book.isbn, // PopularBookItem에는 bookId가 없으므로, ISBN을 고유 ID로 사용
-            coverUrl: book.image, // PopularBookItem의 'image' 필드를 'coverUrl'로 매핑
             title: book.title,
+            imageUrl: book.image, // PopularBookItem의 'image' 필드를 'imageUrl'로 매핑
             author: book.author,
+            publisher: book.publisher, // PopularBookItem의 'publisher' 필드 매핑
+            isbn: book.isbn, // PopularBookItem의 'isbn' 필드 매핑
           }));
           setRecommendedBooks(mappedBooks);
         } else {
-          // response.result나 response.result.books가 없을 경우도 처리
           setError(response.message || "오늘의 추천 도서를 가져오는데 실패했습니다.");
         }
       } catch (err: any) {
@@ -138,11 +139,12 @@ const TodaysRecommendationSection: React.FC = () => {
         {recommendedBooks.length > 0 ? (
           recommendedBooks.map((book) => (
             <SingleRecommendedBookItem
-              key={book.id} // key로 id (isbn) 사용
-              id={book.id}
-              coverUrl={book.coverUrl}
+              key={book.isbn} // key로 isbn 사용
               title={book.title}
+              imageUrl={book.imageUrl}
               author={book.author}
+              publisher={book.publisher}
+              isbn={book.isbn}
             />
           ))
         ) : (

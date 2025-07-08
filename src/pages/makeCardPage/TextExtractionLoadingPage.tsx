@@ -21,7 +21,7 @@ const TextExtractionLoadingPage: React.FC = () => {
     useEffect(() => {
         const performOcrAndNavigate = async () => {
             // 이미지 URL이나 bookId가 없으면 카드 생성 페이지로 돌려보냅니다.
-            if (!image || bookId === undefined) {
+            if (!image) {
                 console.error('TextExtractionLoadingPage: 필수 데이터 (이미지 URL 또는 책 ID) 누락, make-card로 리디렉션.');
                 navigate('/make-card');
                 return;
@@ -60,7 +60,7 @@ const TextExtractionLoadingPage: React.FC = () => {
         };
 
         performOcrAndNavigate();
-    }, [navigate, image, bookId]); // 의존성 배열에 image와 bookId 추가
+    }, [navigate, image]); // 의존성 배열에 image와 bookId 추가
 
     return (
         <div className="page-container">
