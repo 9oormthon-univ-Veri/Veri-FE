@@ -86,7 +86,8 @@
 }
 
 .option {
-    position: relative; /* 체크 아이콘 위치 조정 위해 필요 */
+    position: relative;
+    /* 체크 아이콘 위치 조정 위해 필요 */
     display: flex;
     width: 40px;
     height: 40px;
@@ -95,15 +96,16 @@
     align-items: center;
     border-radius: 10px;
     background: var(--Grey_2, #E7E9EF);
-  }
-  
-  .option .check-icon {
+}
+
+.option .check-icon {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    pointer-events: none; /* 클릭 이벤트 방해하지 않도록 */
-  }
+    pointer-events: none;
+    /* 클릭 이벤트 방해하지 않도록 */
+}
 
 .option-label {
     margin-top: 4px;
@@ -129,6 +131,11 @@
     line-height: normal;
 
     width: 60px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .tab {
@@ -144,13 +151,63 @@
     line-height: normal;
 
     width: 60px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.tab-icon{
+    width: 32px;
+    height: 32px;
 }
 
 .tab-icon-svg path {
-    transition: fill 0.3s;
     fill: #9BA2B1;
-  }
-  
-  .tab-icon-svg.active path {
+}
+
+.tab-icon-svg.active path {
     fill: #0CE19A;
-  }
+}
+
+.book-selection-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 5px;
+
+    color: var(--Black, #1A1A1A);
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.search-book-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 40px;
+    background-color: var(--blue-point, #0CE19A);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    cursor: pointer;
+}

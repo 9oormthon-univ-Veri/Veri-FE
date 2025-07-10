@@ -164,7 +164,7 @@ const CardCustomizationPage: React.FC = () => {
                     )}
 
                     {selectedTab === 'book' && (
-                        <div className="option-icons book-selection-area">
+                        <div className="book-selection-area">
                             {selectedBookId ? (
                                 <p className="selected-book-info">
                                     선택된 책: <strong>{selectedBookTitle}</strong>
