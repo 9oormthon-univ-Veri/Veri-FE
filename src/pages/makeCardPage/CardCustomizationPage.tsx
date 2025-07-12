@@ -9,6 +9,12 @@ import FontSizeFillIconSVG from '../../icons/font_size_fill.svg?react';
 import BookOpenIconSVG from '../../icons/book-open.svg?react';
 import CheckFillIconSVG from '../../icons/check_fill.svg?react'; 
 
+import SkyBackground from '/images/cardSample/sky.jpg'; // Adjust path as needed
+import SummerSeaBackground from '/images/cardSample/sea.jpg'; // Adjust path as needed
+import RiverBackground from '/images/cardSample/river.jpg'; // Adjust path as needed
+import ForsetBackground from '/images/cardSample/forest.jpg'; // Adjust path as needed
+import ColorBackground from '/images/cardSample/color.jpg'; // Adjust path as needed
+
 const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -29,9 +35,11 @@ const CardCustomizationPage: React.FC = () => {
     const [selectedTab, setSelectedTab] = useState<'image' | 'text' | 'book'>('image');
 
     const defaultBackgrounds: { label: string; url: string }[] = [
-        { label: '하늘', url: 'https://picsum.photos/id/1015/400/600' },
-        { label: '여름바다', url: 'https://picsum.photos/id/1011/400/600' },
-        { label: '강가', url: 'https://picsum.photos/id/1003/400/600' },
+        { label: '하늘', url: SkyBackground },
+        { label: '여름바다', url: SummerSeaBackground },
+        { label: '강가', url: RiverBackground },
+        { label: '숲속', url: ForsetBackground },
+        { label: '색깔', url: ColorBackground },
     ];
 
     const availableFonts: { label: string; value: string }[] = [

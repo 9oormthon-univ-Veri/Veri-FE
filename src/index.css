@@ -205,7 +205,7 @@ code {
 }
 
 .h3-white{
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .detail-header {
