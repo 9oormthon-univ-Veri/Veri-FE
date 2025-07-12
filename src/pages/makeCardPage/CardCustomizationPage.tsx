@@ -15,10 +15,6 @@ import RiverBackground from '/images/cardSample/river.jpg'; // Adjust path as ne
 import ForsetBackground from '/images/cardSample/forest.jpg'; // Adjust path as needed
 import ColorBackground from '/images/cardSample/color.jpg'; // Adjust path as needed
 
-// NO LONGER NEEDED: Remove direct font imports here
-// import NanumFont from'/fonts/NanumPen.tff'; 
-// import NotoSansKrFont from '/fonts/NotoSansKR.tff'; 
-
 const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
