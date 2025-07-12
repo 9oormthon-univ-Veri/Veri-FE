@@ -204,6 +204,10 @@ code {
   padding: 0px;
 }
 
+.h3-white{
+  color: #ffffff;
+}
+
 .detail-header {
   position: absolute;
   top: 0;
