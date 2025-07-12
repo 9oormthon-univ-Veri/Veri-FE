@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './CardCustomizationPage.css';
+import './CardCustomizationPage.css'; // This is crucial for @font-face to be loaded
 
 // Import SVG icons as React components
-// Ensure these paths are correct relative to your project structure
 import PicFillIconSVG from '../../icons/pic_fill.svg?react';
 import FontSizeFillIconSVG from '../../icons/font_size_fill.svg?react';
 import BookOpenIconSVG from '../../icons/book-open.svg?react';
 import CheckFillIconSVG from '../../icons/check_fill.svg?react'; 
 
+// Import your local background images
 import SkyBackground from '/images/cardSample/sky.jpg'; // Adjust path as needed
 import SummerSeaBackground from '/images/cardSample/sea.jpg'; // Adjust path as needed
 import RiverBackground from '/images/cardSample/river.jpg'; // Adjust path as needed
 import ForsetBackground from '/images/cardSample/forest.jpg'; // Adjust path as needed
 import ColorBackground from '/images/cardSample/color.jpg'; // Adjust path as needed
 
+// NO LONGER NEEDED: Remove direct font imports here
+// import NanumFont from'/fonts/NanumPen.tff'; 
+// import NotoSansKrFont from '/fonts/NotoSansKR.tff'; 
+
 const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // CardCustomizationPage로 돌아왔을 때, 선택된 책 정보를 받기 위한 state
     const [selectedBookId] = useState<number | undefined>(
         location.state?.selectedBookId as number | undefined
     );
@@ -27,8 +30,6 @@ const CardCustomizationPage: React.FC = () => {
         location.state?.selectedBookTitle as string | undefined
     );
 
-    // Ensure 'image' and 'extractedText' are correctly retrieved from location.state
-    // These should be passed from the page preceding CardCustomizationPage (e.g., MakeCardPage)
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
 
@@ -42,12 +43,13 @@ const CardCustomizationPage: React.FC = () => {
         { label: '색깔', url: ColorBackground },
     ];
 
+    // MODIFIED: Use the font-family names declared in CSS
     const availableFonts: { label: string; value: string }[] = [
         { label: '기본체', value: 'inherit' },
-        { label: '나눔고딕', value: '"Nanum Gothic", sans-serif' },
-        { label: '나눔손글씨 붓', value: '"Nanum Brush Script", cursive' },
-        { label: '나눔펜', value: '"Nanum Pen Script", cursive' },
+        { label: '나눔펜', value: '"Nanum Pen", cursive' }, // Changed to "Nanum Pen"
+        { label: '노토산스', value: '"Noto Sans KR", sans-serif' }, // Added Noto Sans KR
     ];
+    // END MODIFIED
 
     const [selectedBackground, setSelectedBackground] = useState<'uploaded' | string>('uploaded');
     const [selectedFont, setSelectedFont] = useState<string>('inherit');
@@ -59,26 +61,19 @@ const CardCustomizationPage: React.FC = () => {
     };
 
     useEffect(() => {
-        // This useEffect checks if initial 'image' or 'extractedText' are missing
-        // It might redirect if CardCustomizationPage is accessed directly without these.
         if (!image || !extractedText) {
             console.error('CardCustomizationPage: 필수 데이터 (이미지, 텍스트)가 누락되었습니다. 카드 생성 페이지로 리디렉션합니다.');
             navigate('/make-card', { replace: true });
         }
     }, [image, extractedText, navigate]);
 
-    // CardBookSearchPage에서 책 선택 후 돌아왔을 때,
-    // selectedTab을 'book'으로 유지하도록 설정 (선택 사항)
     useEffect(() => {
         if (selectedBookId !== undefined) {
             setSelectedTab('book');
         }
     }, [selectedBookId]);
 
-
     if (!image) {
-        // Render a loading state or redirect if 'image' is not yet available
-        // This can happen if the page is directly accessed or data is not fully loaded.
         return (
             <div className="page-container">
                 <p>필수 정보를 불러오는 중입니다...</p>
@@ -100,7 +95,7 @@ const CardCustomizationPage: React.FC = () => {
                                     image: getBackgroundImage(),
                                     extractedText,
                                     font: selectedFont,
-                                    bookId: selectedBookId, // 선택된 책 ID 전달
+                                    bookId: selectedBookId,
                                 },
                             })
                         }
@@ -128,6 +123,8 @@ const CardCustomizationPage: React.FC = () => {
                                 <div
                                     className={`option ${selectedBackground === 'uploaded' ? 'active' : ''}`}
                                     onClick={() => setSelectedBackground('uploaded')}
+                                    // MODIFIED: Add background image for "촬영 사진" option preview
+                                    style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
                                 >
                                     {selectedBackground === 'uploaded' && (
                                         <CheckFillIconSVG className="check-icon" />
@@ -141,6 +138,7 @@ const CardCustomizationPage: React.FC = () => {
                                     <div
                                         className={`option ${selectedBackground === bg.label ? 'active' : ''}`}
                                         onClick={() => setSelectedBackground(bg.label)}
+                                        style={{ backgroundImage: `url(${bg.url})`, backgroundSize: 'cover' }}
                                     >
                                         {selectedBackground === bg.label && (
                                             <CheckFillIconSVG className="check-icon" />
@@ -159,11 +157,13 @@ const CardCustomizationPage: React.FC = () => {
                                     <div
                                         className={`option ${selectedFont === font.value ? 'active' : ''}`}
                                         onClick={() => setSelectedFont(font.value)}
-                                        style={{ fontFamily: font.value }}
+                                        style={{ fontFamily: font.value, /* MODIFIED: Add text preview for font option */ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2em' }}
                                     >
                                         {selectedFont === font.value && (
                                             <CheckFillIconSVG className="check-icon" />
                                         )}
+                                        {/* MODIFIED: Add a small text preview for font options */}
+                                        <span style={{ color: 'black', textShadow: '0 0 2px white' }}>가나다</span>
                                     </div>
                                     <div className="option-label">{font.label}</div>
                                 </div>
@@ -184,11 +184,10 @@ const CardCustomizationPage: React.FC = () => {
                             )}
                             <button
                                 className="search-book-button"
-                                // MODIFIED: Pass image and extractedText to CardBookSearchPage
                                 onClick={() => navigate('/card-book-search', {
                                     state: {
-                                        image: image, // Pass the original image
-                                        extractedText: extractedText, // Pass the original extracted text
+                                        image: image,
+                                        extractedText: extractedText,
                                     }
                                 })}
                             >

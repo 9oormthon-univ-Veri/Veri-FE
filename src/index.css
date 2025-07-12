@@ -329,3 +329,18 @@ code {
 .tab-item-icon.icon-bookmark {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>');
 }
+
+@font-face {
+  font-family: 'Nanum Pen'; /* This is the name you'll use in CSS */
+  src: url('/fonts/NanumPen.ttf') format('truetype'); /* Adjust the path if necessary */
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Define Noto Sans KR font */
+@font-face {
+  font-family: 'Noto Sans KR'; /* This is the name you'll use in CSS */
+  src: url('/fonts/NotoSansKR.ttf') format('truetype'); /* Adjust the path if necessary */
+  font-weight: normal;
+  font-style: normal;
+}
