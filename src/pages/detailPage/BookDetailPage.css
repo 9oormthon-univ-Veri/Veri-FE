@@ -27,7 +27,6 @@
 .book-info-section {
     background-color: #fff;
     text-align: center;
-    /* 전체 섹션 중앙 정렬 */
 }
 
 .book-cover-detail-container {
@@ -37,6 +36,7 @@
     margin-right: auto;
     margin-bottom: 20px;
     background-color: #f0f0f0;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .book-cover-detail {
