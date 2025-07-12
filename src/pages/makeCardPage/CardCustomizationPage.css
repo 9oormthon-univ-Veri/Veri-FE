@@ -33,6 +33,8 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+
+    cursor: pointer;
 }
 
 .save-btn {
@@ -45,6 +47,8 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+
+    cursor: pointer;
 }
 
 .custom-card-preview {
@@ -96,6 +100,8 @@
     align-items: center;
     border-radius: 10px;
     background: var(--Grey_2, #E7E9EF);
+
+    cursor: pointer;
 }
 
 .option .check-icon {
@@ -136,6 +142,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    cursor: pointer;
 }
 
 .tab {
@@ -156,6 +164,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    
+    cursor: pointer;
 }
 
 .tab-buttons {
