@@ -98,15 +98,6 @@ const mockOcrResponse: OcrResponse = {
     result: '이것은 목업 OCR 결과 텍스트입니다. 실제 이미지에서 추출된 것처럼 보입니다.',
 };
 
-// interface DirectUploadResponse {
-//     isSuccess: boolean;
-//     code: string;
-//     message: string;
-//     result: {
-//         imageUrl: string; // 업로드된 이미지의 최종 Public URL
-//     };
-// }
-
 // ==========================================================
 //          ⬇️ API 호출 함수 ⬇️
 // ==========================================================

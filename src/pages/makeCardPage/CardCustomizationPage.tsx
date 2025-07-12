@@ -163,7 +163,7 @@ const CardCustomizationPage: React.FC = () => {
                                             <CheckFillIconSVG className="check-icon" />
                                         )}
                                         {/* MODIFIED: Add a small text preview for font options */}
-                                        <span style={{ color: 'black', textShadow: '0 0 2px white' }}>가나다</span>
+                                        <span style={{ color: 'black', textShadow: '0 0 2px white' }}>가</span>
                                     </div>
                                     <div className="option-label">{font.label}</div>
                                 </div>
