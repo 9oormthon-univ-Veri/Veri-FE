@@ -59,6 +59,8 @@ const CardCustomizationPage: React.FC = () => {
     useEffect(() => {
         if (!image || !extractedText) {
             console.error('CardCustomizationPage: 필수 데이터 (이미지, 텍스트)가 누락되었습니다. 카드 생성 페이지로 리디렉션합니다.');
+            console.warn('이미지:', image);
+            console.warn('추출된 텍스트:', extractedText);
             navigate('/make-card', { replace: true });
         }
     }, [image, extractedText, navigate]);
