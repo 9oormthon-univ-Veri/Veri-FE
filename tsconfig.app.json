@@ -22,7 +22,8 @@
     "noUncheckedIndexedAccess": true,
     "composite": true,
 
-    "incremental": true
+    "incremental": true,
+    "noEmit": true,
   },
   "include": ["src", "src/types"]
 }
