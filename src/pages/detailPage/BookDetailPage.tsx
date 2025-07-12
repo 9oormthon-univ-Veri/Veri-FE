@@ -234,6 +234,7 @@ function BookDetailPage() {
                         alt={book.title}
                         className="book-cover-detail"
                     />
+                    <div className="top-shadow-overlay" />
                 </div>
 
                 <h2 className="book-detail-title">{book.title}</h2>

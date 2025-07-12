@@ -218,6 +218,8 @@ code {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+
+  z-index: 10;
 }
 
 .detail-header .header-left-arrow {

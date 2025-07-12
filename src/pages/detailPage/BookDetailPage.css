@@ -31,20 +31,36 @@
 
 .book-cover-detail-container {
     width: 100%;
-    height: 400px;
+    height: 500px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 20px;
     background-color: #f0f0f0;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+    /* 그림자: 위쪽에 자연스러운 그림자 */
+    box-shadow: 0 -8px 15px -5px rgba(0, 0, 0, 0.3);
+    overflow: visible; /* 그림자가 잘리면 visible로 설정 */
 }
 
 .book-cover-detail {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+    display: block;
 }
+
+.top-shadow-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px; /* 원하는 그림자 높이 */
+    pointer-events: none; /* 클릭 무시 */
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.5),
+      transparent
+    );
+  }
 
 .book-detail-title {
     text-align: start;
