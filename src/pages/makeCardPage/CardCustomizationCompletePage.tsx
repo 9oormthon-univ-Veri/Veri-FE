@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './CardCompletePage.css'; // 이 페이지에 필요한 CSS 파일이 있는지 확인하세요.
+import './CardCustomizationPage.css';
 
 const CardCompletePage: React.FC = () => {
     const location = useLocation();
