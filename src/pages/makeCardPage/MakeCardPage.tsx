@@ -120,7 +120,7 @@ const MakeCardPage: React.FC = () => {
         setCurrentImageIndex(0); // 첫 번째 이미지로 설정
         console.log('갤러리 이미지 업로드 성공:', uploadedUrl);
       } catch (err: any) {
-        console.error('갤러리 이미지 업로드 실패:', err);
+        alert(`갤러리 이미지 업로드 실패: ${err.message}`);
         setUploadError(`갤러리 이미지 업로드 실패: ${err.message}`);
       } finally {
         setIsUploading(false); // 업로드 완료
@@ -227,7 +227,7 @@ const MakeCardPage: React.FC = () => {
   // 로딩 또는 에러 메시지 표시
   if (isUploading) {
     return (
-      <div className="page-container">
+      <div className="loading-page-container">
         <div className="loading-overlay">
           <p>이미지 업로드 중...</p>
           {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}

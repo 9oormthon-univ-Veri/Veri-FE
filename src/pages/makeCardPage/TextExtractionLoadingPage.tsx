@@ -1,7 +1,6 @@
 // src/pages/TextExtractionLoadingPage.tsx
-import React, { useEffect, useState } from 'react'; // useState를 추가합니다.
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// ✨ OCR API 함수를 가져옵니다.
 import { extractTextFromImage } from '../../api/imageApi';
 
 import './TextExtractionLoadingPage.css'; // 스타일 파일을 가져옵니다.
@@ -10,34 +9,40 @@ const TextExtractionLoadingPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 이전 페이지에서 넘어온 image (업로드된 이미지의 Public URL)와 bookId를 받아옵니다.
-    const image = location.state?.image as string | undefined; // 이 image는 이제 public URL입니다.
+    const image = location.state?.image as string | undefined;
     const bookId = location.state?.bookId as number | undefined;
 
-    // 로딩 및 에러 상태를 관리합니다.
     const [isLoadingText, setIsLoadingText] = useState(true);
     const [ocrError, setOcrError] = useState<string | null>(null);
 
     useEffect(() => {
         const performOcrAndNavigate = async () => {
-            // 이미지 URL이나 bookId가 없으면 카드 생성 페이지로 돌려보냅니다.
             if (!image) {
-                console.error('TextExtractionLoadingPage: 필수 데이터 (이미지 URL 또는 책 ID) 누락, make-card로 리디렉션.');
+                console.error('TextExtractionLoadingPage: 필수 데이터 (이미지 URL) 누락, make-card로 리디렉션.');
+                // Add alert for missing initial image data
+                alert('이미지 데이터를 불러올 수 없습니다. 카드 생성 페이지로 돌아갑니다.');
                 navigate('/make-card');
                 return;
             }
 
-            setIsLoadingText(true); // 텍스트 분석 시작
-            setOcrError(null);     // 이전 에러 초기화
+            setIsLoadingText(true);
+            setOcrError(null);
 
             try {
-                // ✨ OCR API 호출
                 const response = await extractTextFromImage(image);
 
                 if (response.isSuccess) {
                     const extractedText = response.result;
 
-                    // 다음 페이지로 이동할 때 image, extractedText, bookId를 함께 전달합니다.
+                    // --- MODIFICATION START ---
+                    // Check if extractedText is empty or contains only whitespace
+                    if (!extractedText || extractedText.trim().length === 0) {
+                        alert('이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.');
+                        navigate('/make-card'); // Go back to the card creation page
+                        return; // Stop further execution
+                    }
+                    // --- MODIFICATION END ---
+
                     navigate('/text-extraction-result', {
                         state: {
                             image,
@@ -46,21 +51,26 @@ const TextExtractionLoadingPage: React.FC = () => {
                         },
                     });
                 } else {
-                    // API 호출은 성공했으나 isSuccess가 false인 경우
                     setOcrError(response.message || '텍스트 추출에 실패했습니다.');
                     console.error('OCR API 실패:', response.message);
+                    // Add alert for API failure
+                    alert(`텍스트 추출에 실패했습니다: ${response.message || '알 수 없는 오류'}. 다시 시도해 주세요.`);
+                    navigate('/make-card'); // Go back on API failure
                 }
             } catch (err: any) {
-                // 네트워크 오류 또는 예상치 못한 오류 발생 시
                 console.error('OCR 처리 중 오류 발생:', err);
-                setOcrError(`텍스트 추출 중 오류가 발생했습니다: ${err.message}`);
+                const errorMessage = `텍스트 추출 중 오류가 발생했습니다: ${err.message || '알 수 없는 오류'}.`;
+                setOcrError(errorMessage);
+                // Add alert for general error
+                alert(errorMessage + ' 카드 생성 페이지로 돌아갑니다.');
+                navigate('/make-card'); // Go back on general error
             } finally {
-                setIsLoadingText(false); // 텍스트 분석 완료 (성공 또는 실패)
+                setIsLoadingText(false);
             }
         };
 
         performOcrAndNavigate();
-    }, [navigate, image]); // 의존성 배열에 image와 bookId 추가
+    }, [navigate, image, bookId]); // Added bookId to dependencies for completeness
 
     return (
         <div className="page-container">
