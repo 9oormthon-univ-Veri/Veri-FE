@@ -99,9 +99,9 @@ function BookAddPage() {
         <div className="page-container">
             <header className="detail-header">
                 <button className="header-left-arrow" onClick={() => navigate("/book-search")}>
-                    <MdArrowBackIosNew size={24} color="#333" />
+                    <MdArrowBackIosNew size={24} color="#fff" />
                 </button>
-                <h3>새 책 등록</h3> {/* 헤더 텍스트 유지 */}
+                <h3 className='h3-white'>새 책 등록</h3> {/* 헤더 텍스트 유지 */}
                 <div className="header-right-wrapper">
                     <div className="dummy-box" />
                 </div>
@@ -115,6 +115,7 @@ function BookAddPage() {
                             alt={title || '책 표지'}
                             className="book-cover-detail"
                         />
+                        <div className="top-shadow-overlay" />
                     </div>
                     <div className="book-info-detail-container">
                         <p className="book-title-display">{title}</p>
