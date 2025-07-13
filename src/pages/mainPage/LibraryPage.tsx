@@ -6,7 +6,7 @@ import TodaysRecommendationSection from '../../components/LibraryPage/TodaysReco
 
 import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
-// getPopularBooks 대신 getAllBooks를 사용하고, Book 인터페이스를 임포트합니다.
+// getAllBooks와 Book 인터페이스를 사용합니다. getPopularBooks는 더 이상 필요 없습니다.
 import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../../api/bookApi';
 
 interface UserData {
@@ -46,18 +46,20 @@ function LibraryPage() {
         }
 
         // 2. 가장 최근에 읽은 책을 가져오는 API 호출 (getAllBooks 사용)
+        // page: 1, size: 1, sort: 'newest'를 통해 가장 최근에 시작한 책 1개를 요청합니다.
         const recentBooksParams: GetAllBooksQueryParams = {
-          page: 0, // 페이지는 0부터 시작한다고 가정합니다. (API 명세에 따라 0 또는 1로 변경)
+          page: 1, // API 명세에 따라 페이지는 1부터 시작합니다.
           size: 1, // 가장 최근 책 1개만 가져옵니다.
-          sort: 'startedAt,desc', // 'startedAt' 기준으로 내림차순 정렬하여 가장 최근 책을 가져옵니다.
+          sort: 'newest', // 'newest' 정렬을 사용하여 가장 최근에 시작한 책을 가져옵니다.
         };
         const recentBooksResponse = await getAllBooks(recentBooksParams);
 
         if (recentBooksResponse.isSuccess && recentBooksResponse.result && recentBooksResponse.result.memberBooks.length > 0) {
+          // 'newest' 정렬을 통해 가져온 첫 번째 책이 가장 최근에 시작한 책입니다.
           const mostRecentBook: Book | undefined = recentBooksResponse.result.memberBooks[0];
 
           if (mostRecentBook) {
-            setBookImageUrl(mostRecentBook.imageUrl); // Book 인터페이스의 imageUrl 사용
+            setBookImageUrl(mostRecentBook.imageUrl); // Book 인터페이스의 imageUrl 필드 사용
           } else {
             console.warn('가장 최근 읽은 도서가 존재하지 않습니다. 기본 이미지를 사용합니다.');
           }
