@@ -6,7 +6,8 @@ import TodaysRecommendationSection from '../../components/LibraryPage/TodaysReco
 
 import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
-import { getPopularBooks, type GetPopularBooksQueryParams, type PopularBookItem } from '../../api/bookApi';
+// getPopularBooks 대신 getAllBooks를 사용하고, Book 인터페이스를 임포트합니다.
+import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../../api/bookApi';
 
 interface UserData {
   email: string;
@@ -44,23 +45,24 @@ function LibraryPage() {
           setError(userResponse.message || "사용자 프로필을 가져오는데 실패했습니다.");
         }
 
-        // 2. 인기 책을 가져오는 API 호출
-        const popularBooksParams: GetPopularBooksQueryParams = {
-          page: 1,
-          size: 1,
+        // 2. 가장 최근에 읽은 책을 가져오는 API 호출 (getAllBooks 사용)
+        const recentBooksParams: GetAllBooksQueryParams = {
+          page: 0, // 페이지는 0부터 시작한다고 가정합니다. (API 명세에 따라 0 또는 1로 변경)
+          size: 1, // 가장 최근 책 1개만 가져옵니다.
+          sort: 'startedAt,desc', // 'startedAt' 기준으로 내림차순 정렬하여 가장 최근 책을 가져옵니다.
         };
-        const popularResponse = await getPopularBooks(popularBooksParams);
+        const recentBooksResponse = await getAllBooks(recentBooksParams);
 
-        if (popularResponse.isSuccess && popularResponse.result && popularResponse.result.books.length > 0) {
-          const firstPopularBook: PopularBookItem | undefined = popularResponse.result.books[0];
+        if (recentBooksResponse.isSuccess && recentBooksResponse.result && recentBooksResponse.result.memberBooks.length > 0) {
+          const mostRecentBook: Book | undefined = recentBooksResponse.result.memberBooks[0];
 
-          if (firstPopularBook) {
-            setBookImageUrl(firstPopularBook.image);
+          if (mostRecentBook) {
+            setBookImageUrl(mostRecentBook.imageUrl); // Book 인터페이스의 imageUrl 사용
           } else {
-            console.warn('첫 번째 인기 도서가 존재하지 않습니다. 기본 이미지를 사용합니다.');
+            console.warn('가장 최근 읽은 도서가 존재하지 않습니다. 기본 이미지를 사용합니다.');
           }
         } else {
-          console.warn('인기 도서를 가져오지 못했거나 결과가 없습니다. 기본 이미지를 사용합니다.');
+          console.warn('사용자가 읽은 도서를 가져오지 못했거나 결과가 없습니다. 기본 이미지를 사용합니다.');
         }
 
       } catch (err: any) {
@@ -104,7 +106,7 @@ function LibraryPage() {
     <div className="page-container">
       <div className="library-hero-section">
         <img
-          src={heroBackgroundImageSrc} // ✨ 변경된 변수 사용
+          src={heroBackgroundImageSrc}
           className="hero-background"
           alt="Hero background"
         />
@@ -123,7 +125,6 @@ function LibraryPage() {
             {userData.image && userData.image.trim() !== '' && userData.image !== 'https://example.com/image.jpg' ? (
               <img src={userData.image} className="profile-image" alt="프로필 이미지" />
             ) : (
-              // profile-placeholder 배경 이미지 경로 수정
               <div className="profile-placeholder" style={{ backgroundImage: 'url(/images/sample_user.png)' }}></div>
             )}
           </button>
@@ -132,7 +133,7 @@ function LibraryPage() {
             <p>오늘도 책 잘 기록해 봐요...</p>
           </div>
           <img
-            src={heroBookSampleImageSrc} // ✨ 변경된 변수 사용
+            src={heroBookSampleImageSrc}
             className="hero-book-sample"
             alt="Hero book sample"
           />
