@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
         <div className="login-buttons-container">
           <button className="social-login-button kakao" onClick={handleRealKakaoLoginStart}>
             <img src={KAKAO_ICON_URL} alt="kakao-logo" className="kakao-social-icon" />
-            <span className="kakao-social-text">카카오 로그인</span>
+            <span className="kakao-social-text">카카오 로그인 Test</span>
           </button>
 
           <button className="social-login-button naver" onClick={handleNaverLogin}>
