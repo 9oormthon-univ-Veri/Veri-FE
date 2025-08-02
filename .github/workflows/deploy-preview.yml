@@ -39,4 +39,4 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist/*"
-          target: "/usr/share/nginx/html/very-preview"
+          target: "/usr/share/nginx/html/veri"
