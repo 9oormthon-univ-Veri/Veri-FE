@@ -1,12 +1,10 @@
-// src/pages/MakeCardPage.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
 
-import GalleryIcon from '/icons/gallery.svg';
-import CameraIcon from '/icons/camera.svg';
+import GalleryIcon from '../../assets/icons/gallery.svg';
+import CameraIcon from '../../assets/icons/camera.svg';
 
-// imageApi에서 uploadImage 함수를 임포트합니다.
 import { uploadImage } from '../../api/imageApi';
 
 import './MakeCardPage.css';
@@ -14,29 +12,24 @@ import './MakeCardPage.css';
 const MakeCardPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // selectedGalleryImage와 capturedImage는 이제 Public URL (string)을 저장합니다.
   const [selectedGalleryImage, setSelectedGalleryImage] = useState<string | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null); // 업로드 후 Public URL 저장
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  const [isUploading, setIsUploading] = useState(false); // 업로드 중 상태 추가
-  const [uploadError, setUploadError] = useState<string | null>(null); // 업로드 에러 상태 추가
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 현재 표시할 이미지 목록 (업로드된 이미지 + 갤러리 이미지 + 기본 이미지)
-  // ✨ defaultImages를 제거하여 초기 화면이 비어있도록 합니다.
   const allAvailableImages = [];
   if (capturedImage) allAvailableImages.push(capturedImage);
   if (selectedGalleryImage) allAvailableImages.push(selectedGalleryImage);
-  // allAvailableImages.push(...defaultImages); // 이 줄을 주석 처리하거나 제거합니다.
   const imagesToDisplay = allAvailableImages;
 
-  // 이미지 업로드 및 OCR 페이지로 이동을 처리하는 공통 함수
   const processAndNavigateToOcr = useCallback(async (imageToProcess: string) => {
     setIsUploading(true);
     setUploadError(null);
@@ -66,11 +59,10 @@ const MakeCardPage: React.FC = () => {
     }
   }, [navigate]);
 
-  // Attach stream to video and handle play & readiness
   useEffect(() => {
     if (videoRef.current && stream) {
       videoRef.current.srcObject = stream;
-      setIsVideoReady(false); // 리셋
+      setIsVideoReady(false);
 
       videoRef.current.onloadedmetadata = () => {
         setIsVideoReady(true);
@@ -91,39 +83,35 @@ const MakeCardPage: React.FC = () => {
     };
   }, [stream]);
 
-  // selectedGalleryImage와 capturedImage는 Public URL이므로, revokeObjectURL은 필요 없습니다.
-  // defaultImages도 외부 URL이므로 revokeObjectURL은 필요 없습니다.
-
   const handleDotClick = (index: number) => {
     setCurrentImageIndex(index);
   };
 
   const handleGalleryClick = () => {
     if (stream) {
-      stopCameraStream(); // 카메라 스트림 중지
+      stopCameraStream();
     }
     setIsCameraActive(false);
     setCameraError(null);
-    fileInputRef.current?.click(); // 파일 입력 필드 클릭
+    fileInputRef.current?.click();
   };
 
-  // 갤러리 이미지 선택 시 바로 업로드 및 Public URL 저장
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsUploading(true); // 업로드 시작
+      setIsUploading(true);
       setUploadError(null);
       try {
-        const uploadedUrl = await uploadImage(file); // 파일 업로드
-        setSelectedGalleryImage(uploadedUrl); // Public URL 저장
-        setCapturedImage(null); // 캡처된 이미지 초기화
-        setCurrentImageIndex(0); // 첫 번째 이미지로 설정
+        const uploadedUrl = await uploadImage(file);
+        setSelectedGalleryImage(uploadedUrl);
+        setCapturedImage(null);
+        setCurrentImageIndex(0);
         console.log('갤러리 이미지 업로드 성공:', uploadedUrl);
       } catch (err: any) {
         alert(`갤러리 이미지 업로드 실패: ${err.message}`);
         setUploadError(`갤러리 이미지 업로드 실패: ${err.message}`);
       } finally {
-        setIsUploading(false); // 업로드 완료
+        setIsUploading(false);
       }
     }
   };
@@ -131,7 +119,6 @@ const MakeCardPage: React.FC = () => {
   const startCameraStream = useCallback(async () => {
     setCameraError(null);
     try {
-      // 카메라 시작 전 기존 이미지 상태 초기화 (Public URL은 revoke 안함)
       setSelectedGalleryImage(null);
       setCapturedImage(null);
 
@@ -169,7 +156,6 @@ const MakeCardPage: React.FC = () => {
     }
   };
 
-  // 촬영된 사진을 Base64로 저장하는 대신, 바로 Public URL로 변환하여 저장
   const handleTakePhoto = async () => {
     if (!isVideoReady) {
       setCameraError('카메라 준비가 되지 않았습니다. 잠시 후 다시 시도해주세요.');
@@ -191,7 +177,6 @@ const MakeCardPage: React.FC = () => {
         canvas.height = video.videoHeight;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // 캡처된 이미지를 Blob으로 변환
         const imageBlob = await new Promise<Blob | null>((resolve) => {
           canvas.toBlob(resolve, 'image/png');
         });
@@ -201,30 +186,28 @@ const MakeCardPage: React.FC = () => {
           return;
         }
 
-        // Blob을 File 객체로 변환
         const photoFile = new File([imageBlob], `captured_photo_${Date.now()}.png`, { type: 'image/png' });
 
-        setIsUploading(true); // 업로드 시작
+        setIsUploading(true);
         setUploadError(null);
         try {
-          const uploadedUrl = await uploadImage(photoFile); // 이미지를 서버에 업로드
-          setCapturedImage(uploadedUrl); // Public URL 저장
-          setSelectedGalleryImage(null); // 갤러리 이미지 초기화
+          const uploadedUrl = await uploadImage(photoFile);
+          setCapturedImage(uploadedUrl);
+          setSelectedGalleryImage(null);
           setCurrentImageIndex(0);
-          stopCameraStream(); // 촬영 후 카메라 중지
+          stopCameraStream();
           setCameraError(null);
           console.log('촬영된 사진 업로드 성공:', uploadedUrl);
         } catch (err: any) {
           console.error('촬영된 사진 업로드 실패:', err);
           setUploadError(`사진 업로드 실패: ${err.message}`);
         } finally {
-          setIsUploading(false); // 업로드 완료
+          setIsUploading(false);
         }
       }
     }
   };
 
-  // 로딩 또는 에러 메시지 표시
   if (isUploading) {
     return (
       <div className="loading-page-container">
@@ -273,7 +256,6 @@ const MakeCardPage: React.FC = () => {
               }}
             />
           ) : (
-            // ✨ 이미지가 없을 때 표시될 빈 화면 메시지
             <div className="no-image-message">
               <p>표시할 이미지가 없습니다.</p>
               <p>갤러리에서 선택하거나 카메라로 촬영해주세요.</p>
@@ -283,7 +265,6 @@ const MakeCardPage: React.FC = () => {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
 
-        {/* 이미지가 있을 때만 점 인디케이터 표시 */}
         {!isCameraActive && imagesToDisplay.length > 0 && (
           <div className="image-dots-container">
             {imagesToDisplay.map((_, idx) => (
@@ -315,21 +296,19 @@ const MakeCardPage: React.FC = () => {
           )}
         </div>
 
-        {/* 촬영된 사진이 있거나 갤러리에서 선택된 사진이 있거나, 기본 이미지가 있을 때만 "사진 사용하기" 버튼 노출 */}
         {(!isCameraActive && imagesToDisplay[currentImageIndex]) && (
           <div className="use-photo-button-container" style={{ marginTop: '16px', textAlign: 'center' }}>
             <button
               className="use-photo-button"
               onClick={() => {
                 const currentDisplayedImage = imagesToDisplay[currentImageIndex];
-                if (currentDisplayedImage) { // currentDisplayedImage가 undefined가 아닌지 확인
+                if (currentDisplayedImage) {
                   processAndNavigateToOcr(currentDisplayedImage);
                 } else {
-                  // 이미지 선택이 안 된 경우 사용자에게 알리거나 버튼을 비활성화할 수 있습니다.
                   alert('사용할 이미지를 선택해주세요.');
                 }
               }}
-              disabled={isUploading || !imagesToDisplay[currentImageIndex]} // 버튼 비활성화 로직 유지
+              disabled={isUploading || !imagesToDisplay[currentImageIndex]}
             >
               {isUploading ? '업로드 중...' : '사진 사용하기'}
             </button>

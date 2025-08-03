@@ -9,8 +9,8 @@ import { MdArrowBackIosNew } from 'react-icons/md';
 import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../api/bookApi';
 import BookshelfList from '../components/MyBookshelfPage/BookshelfList';
 
-const STAR_FILL_ICON = '/icons/star_fill.svg';
-const STAR_LINE_ICON = '/icons/star_line.svg';
+const STAR_FILL_ICON = '/src/assets/icons/star_fill.svg';
+const STAR_LINE_ICON = '/src/assets/icons/star_line.svg';
 
 export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
   // 별점 계산 로직 (기존과 동일)

@@ -4,8 +4,8 @@ import React from 'react';
 //import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
-const KAKAO_ICON_URL = '/icons/kakao_icon.svg';
-const NAVER_ICON_URL = '/icons/naver_icon.svg';
+const KAKAO_ICON_URL = '/src/assets/icons/kakao_icon.svg';
+const NAVER_ICON_URL = '/src/assets/icons/naver_icon.svg';
 
 const LoginPage: React.FC = () => {
   //const navigate = useNavigate();

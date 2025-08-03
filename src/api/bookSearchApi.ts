@@ -27,7 +27,7 @@ export type ApiResponse<T> = {
 /**
  * 책을 검색하는 API 호출 함수
  * @param query 검색어 (책 제목, 저자, ISBN 등)
- * @param page 검색할 페이지 번호 (0부터 시작 또는 1부터 시작, API 명세 확인 필요. Default: 1)
+ * @param page 검색할 페이지 번호 (Default: 1)
  * @param size 페이지 당 아이템 수 (Default: 10)
  * @returns 검색 결과 책 목록과 페이징 정보 또는 오류 메시지
  */
@@ -44,12 +44,14 @@ export const searchBooks = async (query: string, page: number = 1, size: number 
             return { isSuccess: false, code: 'ENV_ERROR', message: 'API 기본 URL이 설정되지 않았습니다.' };
         }
 
-        // ✨ 핵심 수정: API 명세에 따라 정확한 경로로 변경
-        // /books/search 가 아니라 /api/v2/bookshelf/search 입니다.
-        const url = `${baseUrl}/api/v2/bookshelf/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`;
-        console.log("API 호출 URL:", url);
+        const url = new URL('/api/v2/bookshelf/search', baseUrl);
+        url.searchParams.append('query', query);
+        url.searchParams.append('page', String(page));
+        url.searchParams.append('size', String(size));
+        
+        console.log("API 호출 URL:", url.toString());
 
-        const response = await fetch(url, {
+        const response = await fetch(url.toString(), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,8 +60,14 @@ export const searchBooks = async (query: string, page: number = 1, size: number 
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            return { isSuccess: false, code: response.status.toString(), message: errorData.message || '책 검색 실패' };
+            let errorMessage = '책 검색 실패';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch {
+                // JSON 파싱 실패 시 기본 메시지 사용
+            }
+            return { isSuccess: false, code: response.status.toString(), message: errorMessage };
         }
 
         const data: ApiResponse<BookSearchResponseResult> = await response.json();

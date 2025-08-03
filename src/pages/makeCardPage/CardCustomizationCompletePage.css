@@ -31,13 +31,11 @@
 
 .spacer {
   width: 40px;
-  /* 우측 공간 비움 */
 }
 
 .completion-message {
   margin: 0px;
   margin-bottom: 30px;
-
   color: var(--Black, #1A1A1A);
   text-align: center;
   font-family: Pretendard;
@@ -57,30 +55,28 @@
 
 .share-icon-btn {
   border: none;
-
   display: flex;
   width: 40px;
   height: 40px;
   justify-content: center;
   align-items: center;
   gap: 10px;
-
   border-radius: 10px;
   background: rgba(155, 162, 177, 0.10);
+  cursor: pointer;
 }
 
 .download-icon-btn {
   border: none;
-
   display: flex;
   width: 40px;
   height: 40px;
   justify-content: center;
   align-items: center;
   gap: 10px;
-
   border-radius: 10px;
   background: rgba(155, 162, 177, 0.10);
+  cursor: pointer;
 }
 
 .card-preview-complete {
@@ -114,28 +110,25 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 160%; /* 22.4px */
-
+  line-height: 160%;
   text-align: left;
 }
 
 .card-summary-text {
   margin-top: 20px;
   padding: 16px;
-  text-align: left; /* 텍스트 왼쪽 정렬 */
-  display: block; /* 기본값이지만 명시적으로 해도 좋음 */
+  text-align: left;
+  display: block;
 }
 
 .card-summary-text strong {
   align-self: stretch;
   color: #1A1A1A;
-
   font-family: Pretendard;
   font-size: 16px;
   font-style: normal;
   font-weight: 500;
   line-height: 160%;
-
   text-align: left;
 }
 
@@ -143,12 +136,10 @@
   flex: 1 0 0;
   align-self: stretch;
   color: rgba(26, 26, 26, 0.60);
-
   font-family: Pretendard;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: 160%;
-  
   text-align: left;
 }

@@ -1,6 +1,6 @@
-/* src/pages/LibraryPage.css */
+/* LibraryPage 스타일 */
 
-/* icon-button 기본 스타일 (추가됨) */
+/* 아이콘 버튼 */
 .icon-button {
     background: none;
     border: none;
@@ -9,9 +9,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px; /* 아이콘 크기에 맞춰 조절 */
-    height: 24px; /* 아이콘 크기에 맞춰 조절 */
-    margin-left: 10px; /* 아이콘 간 간격 */
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
 }
 
 .icon-button img {
@@ -20,13 +20,7 @@
     object-fit: contain;
 }
 
-/* .book-sample-image는 사용되지 않는 것 같으니 확인 후 제거하거나 hero-book-sample에 통합 */
-/* .book-sample-image {
-    width: 200px;
-    height: 300px;
-} */
-
-/* 라이브러리 히어로 섹션 (배경 이미지와 상단 아이콘, 프로필, 책 커버) */
+/* 히어로 섹션 */
 .library-hero-section {
     position: relative;
     height: 270px;
@@ -57,11 +51,12 @@
     box-sizing: border-box;
 }
 
+/* 프로필 */
 .profile-circle {
     border: 0px;
     width: 48px;
     height: 48px;
-    background-color: #ffffff; /* 프로필 배경색을 흰색으로 변경했네요 */
+    background-color: #ffffff;
     border-radius: 50%;
     margin-right: 12px;
     overflow: hidden;
@@ -70,10 +65,10 @@
 }
 
 .profile-placeholder {
-    width: 100%; /* <--- 다시 100%로 설정 */
-    height: 100%; /* <--- 다시 100%로 설정 */
-    background-size: cover; /* <--- 이미지가 컨테이너를 꽉 채우면서 비율 유지 */
-    background-position: center; /* <--- 이미지를 컨테이너 중앙에 위치 */
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
 }
 
@@ -83,6 +78,7 @@
     object-fit: cover;
 }
 
+/* 환영 텍스트 */
 .welcome-text h2 {
     margin: 0;
     font-weight: 500;
@@ -98,13 +94,26 @@
     margin-bottom: 20px;
 }
 
+/* 메인 책 커버 */
 .main-book-cover {
     height: 100px;
     border-radius: 8px;
     margin-left: auto;
 }
 
-/* 공통 섹션 스타일 (나머지 내용 영역) */
+.hero-book-sample {
+    border: none;
+    width: 150px;
+    height: 200px;
+    background-color: #f0f0f0;
+    margin-left: 20px;
+    overflow: hidden;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    object-fit: cover;
+}
+
+/* 공통 섹션 */
 section {
     background-color: #fff;
     padding: 15px;
@@ -136,7 +145,7 @@ section {
     cursor: pointer;
 }
 
-/* 가로 스크롤 컨테이너 (독서카드, 책장, 추천 섹션에 공통 적용) */
+/* 가로 스크롤 컨테이너 */
 .horizontal-scroll-container {
     display: flex;
     overflow-x: auto;
@@ -151,7 +160,7 @@ section {
     display: none;
 }
 
-/* 독서카드, 책장, 오늘의 추천 아이템 공통 스타일 */
+/* 공통 아이템 스타일 */
 .bookshelf-item,
 .recommended-book-item {
     display: flex;
@@ -267,24 +276,7 @@ section {
     text-overflow: ellipsis;
 }
 
-.hero-book-sample {
-    border: none;
-    width: 150px;
-    height: 200px;
-    background-color: #f0f0f0;
-    margin-left: 20px;
-    overflow: hidden;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    object-fit: cover;
-}
-
-.hero-background {
-    width: 100%;
-    filter: blur(10px);
-    /* height와 position 속성이 여전히 없습니다. */
-}
-
+/* 추천 섹션 헤더 */
 .recommendation-section-header {
     height: 30px;
     display: flex;

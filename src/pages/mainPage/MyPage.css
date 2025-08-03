@@ -1,169 +1,171 @@
-/* src/pages/MyPage.css */
+/* MyPage 스타일 */
 
-/* 상단 프로필 섹션 */
+/* CSS 변수 정의 */
+:root {
+  --primary-bg: rgba(231, 233, 239, 0.30);
+  --secondary-bg: rgba(231, 233, 239, 0.50);
+  --text-dark: #1A1A1A;
+  --text-gray: rgba(26, 26, 26, 0.80);
+  --text-black: #333;
+  --border-radius: 16px;
+  --border-radius-small: 12px;
+  --spacing-sm: 5px;
+  --spacing-md: 10px;
+  --spacing-lg: 15px;
+  --spacing-xl: 20px;
+}
+
+/* 프로필 섹션 */
 .my-page-profile-section {
-    display: flex;
-    align-items: center;
-    border-radius: 16px;
-    background: rgba(231, 233, 239, 0.30);
-    margin-inline: 15px;
-    padding: 20px 20px;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--border-radius);
+  background: var(--primary-bg);
+  margin: 0 var(--spacing-lg);
+  padding: var(--spacing-xl);
 }
 
 .profile-avatar {
-    width: 60px;
-    height: 60px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    margin-right: 15px;
-    flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  margin-right: var(--spacing-lg);
+  flex-shrink: 0;
 }
 
 .avatar-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .profile-info {
-    flex-grow: 1;
-    /* 남은 공간을 차지 */
-}
-
-.avatar-placeholder{
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  flex-grow: 1;
 }
 
 .profile-name {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-    text-align: left;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-    letter-spacing: -0.64px;
+  font-size: 1.2em;
+  font-weight: 500;
+  color: var(--text-black);
+  margin: 0;
+  text-align: left;
+  line-height: normal;
+  letter-spacing: -0.64px;
 }
 
 .profile-arrow {
-    width: 20px;
-    height: 20px;
-    margin-left: 10px;
-    filter: invert(50%);
-    /* 아이콘 색상 조정 예시 */
+  width: 20px;
+  height: 20px;
+  margin-left: var(--spacing-md);
+  filter: invert(50%);
 }
 
-/* 독서 현황 카드 섹션 */
+/* 통계 카드 섹션 */
 .my-page-stats-cards {
-    padding: 0px 5px;
-    margin: 10px;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
+  padding: 0 var(--spacing-sm);
+  margin: var(--spacing-md);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
 }
 
 .stat-card {
-    flex: 1;
-    border-radius: 16px;
-    background: rgba(231, 233, 239, 0.30);
-    display: flex;
-    width: 170px;
-    padding: 10px 0px;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+  flex: 1;
+  border-radius: var(--border-radius);
+  background: var(--primary-bg);
+  display: flex;
+  width: 170px;
+  padding: var(--spacing-md) 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
 }
 
 .stat-value {
-    margin-block: 10px;
-
-    color: rgba(26, 26, 26, 0.80);
-    text-align: center;
-    font-family: Pretendard;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 500;
+  margin: var(--spacing-md) 0;
+  color: var(--text-gray);
+  text-align: center;
+  font-family: Pretendard, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
 }
 
 .stat-label {
-    margin-block: 5px;
-
-    color: rgba(26, 26, 26, 0.80);
-    font-family: Pretendard;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    letter-spacing: -0.48px;
+  margin: var(--spacing-sm) 0;
+  color: var(--text-gray);
+  font-family: Pretendard, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.48px;
 }
 
 /* 소식 섹션 */
 .my-page-news-section {
-    border-radius: 16px;
-    background: rgba(231, 233, 239, 0.50);
-    margin: 15px;
-    border-radius: 12px;
-    padding: 16px 20px 20px 20px;
-    align-items: flex-start;
-    gap: 20px;
+  border-radius: var(--border-radius-small);
+  background: var(--secondary-bg);
+  margin: var(--spacing-lg);
+  padding: 16px var(--spacing-xl) var(--spacing-xl);
+  align-items: flex-start;
+  gap: var(--spacing-xl);
 }
 
 .section-title {
-    color: var(--black, #1A1A1A);
-    font-family: Pretendard;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    letter-spacing: -0.64px;
-    margin-bottom: 20px;
-    text-align: left;
+  color: var(--text-dark);
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: -0.64px;
+  margin-bottom: var(--spacing-xl);
+  text-align: left;
 }
 
 .news-item {
-    display: flex;
-    align-items: center;
-    padding: 7px 0;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
-.news-item:first-child {
-    border-top: none;
-    /* 첫 번째 항목은 상단 구분선 없음 */
+.news-item:hover {
+  opacity: 0.8;
 }
 
 .news-icon {
-    width: 22px;
-    height: 22px;
-    margin-right: 8px;
-    border-radius: 16px;
-    background: rgba(231, 233, 239, 0.50);
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  border-radius: var(--border-radius);
+  background: var(--secondary-bg);
 }
 
 .news-label {
-    flex-grow: 1;
-    color: var(--black, #1A1A1A);
-    font-family: Pretendard;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    letter-spacing: -0.64px;
-    text-align: left;
+  flex-grow: 1;
+  color: var(--text-dark);
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.64px;
+  text-align: left;
 }
 
 .news-arrow {
-    width: 18px;
-    height: 18px;
-    margin-left: 10px;
-    filter: invert(50%);
-    /* 아이콘 색상 조정 예시 */
+  width: 18px;
+  height: 18px;
+  margin-left: var(--spacing-md);
+  filter: invert(50%);
 }

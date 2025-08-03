@@ -150,14 +150,42 @@
     line-height: normal;
 }
 
-.complete-button {
+.edit-modal-button-container {
+    
+    display: flex;
+    gap: 12px;
     width: 100%;
+}
+
+.cancel-button {
+    flex: 1;
     height: 50px;
     padding: 10px;
     justify-content: center;
     align-items: center;
     gap: 10px;
-    align-self: stretch;
+    cursor: pointer;
+
+    border: 1px solid #E7E9EF;
+    border-radius: 8px;
+    background: #FFFFFF;
+
+    color: #9BA2B1;
+
+    font-family: Pretendard;
+    font-size: 18.261px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.complete-button {
+    flex: 1;
+    height: 50px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
 
     border: none;

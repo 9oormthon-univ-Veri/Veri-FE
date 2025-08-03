@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdArrowBackIosNew } from 'react-icons/md';
 import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -13,9 +13,8 @@ import type { CreateBookRequest } from '../../api/bookApi';
 
 const CardBookSearchPage: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation(); // Use useLocation to get state passed from CardCustomizationPage
+    const location = useLocation();
 
-    // Get initial image and extractedText from location state if available
     const initialImage = location.state?.image as string | undefined;
     const initialExtractedText = location.state?.extractedText as string | undefined;
 
@@ -189,7 +188,6 @@ const CardBookSearchPage: React.FC = () => {
         setRecentSearches(prevSearches => prevSearches.filter(item => item !== itemToDelete));
     }, []);
 
-    // MODIFIED: Navigate back to CardCustomizationPage with selected book data
     const handleRegisterBook = useCallback(async (book: BookItem) => {
         setIsSubmitting(true);
         setSubmitError(null);
@@ -216,14 +214,12 @@ const CardBookSearchPage: React.FC = () => {
                 setSubmitSuccess(true);
                 alert('책이 성공적으로 등록되었습니다! 독서카드에 추가됩니다.');
 
-                // Navigate back to CardCustomizationPage, passing the new book ID and title
-                // Also pass the original image and extractedText received from CardCustomizationPage
                 navigate('/customize-card', {
                     state: {
-                        image: initialImage, // Pass the original image back
-                        extractedText: initialExtractedText, // Pass the original extractedText back
-                        selectedBookId: response.result.memberBookId, // Pass the ID of the newly created book
-                        selectedBookTitle: book.title, // Pass the title of the newly created book
+                        image: initialImage,
+                        extractedText: initialExtractedText,
+                        selectedBookId: response.result.memberBookId,
+                        selectedBookTitle: book.title,
                     }
                 });
             } else {
@@ -235,7 +231,7 @@ const CardBookSearchPage: React.FC = () => {
         } finally {
             setIsSubmitting(false);
         }
-    }, [navigate, initialImage, initialExtractedText]); // Add initialImage and initialExtractedText to dependency array
+    }, [navigate, initialImage, initialExtractedText]);
 
     return (
         <div className="page-container">
@@ -269,11 +265,6 @@ const CardBookSearchPage: React.FC = () => {
                 </form>
             </header>
 
-            {/* 최근 검색어 섹션:
-                - 입력 필드가 포커스되어 있지 않고 (즉, 돋보기 아이콘이 보이는 상태),
-                - 최근 검색어가 존재하며,
-                - 검색 결과가 없을 때 (초기 상태이거나 검색 결과가 없는 경우)
-            */}
             {!isInputFocused && recentSearches.length > 0 && searchResults.length === 0 && (
                 <div className="recent-searches-section">
                     <p className="section-title">최근 검색어</p>

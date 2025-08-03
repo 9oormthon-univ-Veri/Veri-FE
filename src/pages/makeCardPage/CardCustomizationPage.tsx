@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './CardCustomizationPage.css'; // This is crucial for @font-face to be loaded
+import './CardCustomizationPage.css';
 
-// Import SVG icons as React components
 import PicFillIconSVG from '../../icons/pic_fill.svg?react';
 import FontSizeFillIconSVG from '../../icons/font_size_fill.svg?react';
 import BookOpenIconSVG from '../../icons/book-open.svg?react';
 import CheckFillIconSVG from '../../icons/check_fill.svg?react';
 
-// Import your local background images
-import SkyBackground from '/images/cardSample/sky.jpg'; // Adjust path as needed
-import SummerSeaBackground from '/images/cardSample/sea.jpg'; // Adjust path as needed
-import RiverBackground from '/images/cardSample/river.jpg'; // Adjust path as needed
-import ForsetBackground from '/images/cardSample/forest.jpg'; // Adjust path as needed
-import ColorBackground from '/images/cardSample/color.jpg'; // Adjust path as needed
+import SkyBackground from '../../assets/images/cardSample/sky.jpg';
+import SummerSeaBackground from '../../assets/images/cardSample/sea.jpg';
+import RiverBackground from '../../assets/images/cardSample/river.jpg';
+import ForsetBackground from '../../assets/images/cardSample/forest.jpg';
+import ColorBackground from '../../assets/images/cardSample/color.jpg';
 
 const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
@@ -55,8 +53,6 @@ const CardCustomizationPage: React.FC = () => {
         return found?.url || image;
     };
 
-    // This useEffect handles cases where the page is accessed directly without required state,
-    // redirecting the user to the card creation page.
     useEffect(() => {
         if ((!image || !extractedText) && !isBlocked) {
             alert('필수 데이터 (이미지, 텍스트)가 누락되었습니다. 카드 생성 페이지로 이동합니다.');
@@ -66,7 +62,7 @@ const CardCustomizationPage: React.FC = () => {
     }, [image, extractedText, navigate, isBlocked]);
 
     if (isBlocked) {
-        return null; // Don't render anything if blocked and redirecting
+        return null;
     }
 
     useEffect(() => {
@@ -75,8 +71,6 @@ const CardCustomizationPage: React.FC = () => {
         }
     }, [selectedBookId]);
 
-    // This check ensures the component doesn't render prematurely if navigation hasn't completed
-    // due to missing initial data.
     if (!image && !isBlocked) {
         return (
             <div className="page-container">
@@ -85,18 +79,12 @@ const CardCustomizationPage: React.FC = () => {
         );
     }
 
-    /**
-     * Handles the save action.
-     * Prevents navigation if essential 'image' or 'extractedText' data is missing,
-     * showing an alert to the user. Otherwise, navigates to the card complete page.
-     */
     const handleSave = () => {
-        if (!image || !extractedText !|| !selectedFont || !selectedBookId) {
+        if (!image || !extractedText || !selectedFont || !selectedBookId) {
             alert('이미지와 텍스트, 책 정보는 필수로 포함되어야 합니다. 저장할 수 없습니다.');
             return;
         }
 
-        // If all required data is present, proceed to the card complete page
         navigate('/card-complete', {
             state: {
                 image: getBackgroundImage(),
@@ -113,10 +101,7 @@ const CardCustomizationPage: React.FC = () => {
                 <header className="customization-header">
                     <button className="customization-cancel-btn" onClick={() => navigate('/make-card')}>취소</button>
                     <span className="spacer" />
-                    <button
-                        className="save-btn"
-                        onClick={handleSave} // Calls the handleSave function
-                    >
+                    <button className="save-btn" onClick={handleSave}>
                         저장
                     </button>
                 </header>

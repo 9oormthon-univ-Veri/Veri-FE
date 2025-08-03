@@ -6,18 +6,16 @@ const TextExtractionResultPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 이전 페이지에서 넘어온 image, extractedText, bookId를 받아옵니다.
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
 
     const [editableText, setEditableText] = useState<string>(extractedText || '');
 
     const handleRetake = () => {
-        navigate('/make-card'); // 재촬영 시에는 bookId를 다시 선택해야 할 수 있으므로, 초기 페이지로 이동
+        navigate('/make-card');
     };
 
     const handleNext = () => {
-        // 다음 페이지로 이동할 때 image, editableText, 그리고 bookId도 함께 전달합니다.
         navigate('/customize-card', {
             state: {
                 image,
@@ -26,8 +24,6 @@ const TextExtractionResultPage: React.FC = () => {
         });
     };
 
-    // 이미지, 추출된 텍스트 또는 책 ID가 없을 경우 아무것도 렌더링하지 않습니다.
-    // useEffect에서 이미 리디렉션 처리를 하므로, 이 부분은 빠르게 지나갈 것입니다.
     if (!image || !extractedText) {
         return null;
     }

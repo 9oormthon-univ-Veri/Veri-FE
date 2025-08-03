@@ -1,13 +1,11 @@
-/* src/pages/makeCardPage/TextExtractionLoadingPage.css */
-
 .text-extraction-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 80px); /* 하단 여백 고려 */
+    min-height: calc(100vh - 80px);
     padding: 20px;
     box-sizing: border-box;
-  }
+}
 
 .text-extraction-loading-page {
     max-width: 400px;
@@ -17,24 +15,21 @@
     align-items: center;
     gap: 20px;
     text-align: center;
-  }
+}
 
 .loading-header{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     width: 100%;
     height: 100px;
     padding: 0 20px;
-
     background-color: var(--White, #FFFFFF);
 }
 
 .loading-header h3 {
     align-self: stretch;
-
     color: var(--Black, #1A1A1A);
     text-align: center;
     font-family: Pretendard;
@@ -42,14 +37,11 @@
     font-style: normal;
     font-weight: 600;
     line-height: 160%;
-
     margin: 0px;
-    /* 28.8px */
 }
 
 .loading-header p {
     align-self: stretch;
-
     color: rgba(26, 26, 26, 0.80);
     text-align: center;
     font-family: Pretendard;
@@ -57,14 +49,11 @@
     font-style: normal;
     font-weight: 400;
     line-height: 160%;
-
     margin: 0px;
-    /* 25.6px */
 }
 
 .loading-content {
     color: #000;
-
     text-align: center;
     font-family: Praise;
     font-size: 15px;

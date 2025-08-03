@@ -1,9 +1,8 @@
 // src/api/bookApi.ts
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 import { getAccessToken } from './auth';
-import {
-} from './mockData';
 
+// 타입 정의
 export type BookStatus = "NOT_START" | "READING" | "DONE";
 
 export interface CardSummary {
@@ -11,7 +10,6 @@ export interface CardSummary {
   cardImage: string;
 }
 
-// Book 인터페이스: getAllBooks 응답 및 상세 정보에서 사용될 필드 포함
 export interface Book {
   memberBookId: number;
   title: string;
@@ -21,7 +19,7 @@ export interface Book {
   startedAt: string;
   endedAt: string;
   status: BookStatus;
-  cardSummaries?: CardSummary[]; // 상세 조회 시 포함될 수 있도록 추가
+  cardSummaries?: CardSummary[];
 }
 
 export interface BooksResult {
@@ -32,37 +30,6 @@ export interface BooksResult {
   totalPages: number;
 }
 
-export interface GetAllBooksResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: BooksResult;
-}
-
-export interface GetAllBooksQueryParams {
-  page?: number;
-  size?: number;
-  sort?: string;
-}
-
-// GetBookByIdResponse 인터페이스: API 명세에 맞춰 score, startedAt, cardSummaries 포함
-export interface GetBookByIdResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
-    memberBookId: number;
-    title: string;
-    author: string;
-    imageUrl: string;
-    status: BookStatus;
-    score: number; // API 명세에 따라 'score'
-    startedAt: string; // Book 인터페이스와의 일관성을 위해 추가 (API 명세에는 없었으나, 필요하다고 가정)
-    endedAt: string;
-    cardSummaries: CardSummary[]; // API 명세에 따라 'cardSummaries'
-  } | null;
-}
-
 export interface BookSearchResult {
   title: string;
   author: string;
@@ -71,25 +38,11 @@ export interface BookSearchResult {
   isbn: string;
 }
 
-export interface SearchBooksResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: BookSearchResult[];
-}
-
 export interface TodaysRecommendationBook {
   bookId: number;
   title: string;
   author: string;
   imageUrl: string;
-}
-
-export interface GetTodaysRecommendationResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: TodaysRecommendationBook[];
 }
 
 export interface PopularBookItem {
@@ -108,11 +61,43 @@ export interface PopularBooksResult {
   totalPages: number;
 }
 
-export interface GetPopularBooksResponse {
+// 공통 응답 타입
+interface BaseApiResponse<T> {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: PopularBooksResult;
+  result: T;
+}
+
+// 구체적인 응답 타입들
+export type GetAllBooksResponse = BaseApiResponse<BooksResult>;
+export type GetBookByIdResponse = BaseApiResponse<{
+  memberBookId: number;
+  title: string;
+  author: string;
+  imageUrl: string;
+  status: BookStatus;
+  score: number;
+  startedAt: string;
+  endedAt: string;
+  cardSummaries: CardSummary[];
+} | null>;
+export type SearchBooksResponse = BaseApiResponse<BookSearchResult[]>;
+export type GetTodaysRecommendationResponse = BaseApiResponse<TodaysRecommendationBook[]>;
+export type GetPopularBooksResponse = BaseApiResponse<PopularBooksResult>;
+export type CreateBookResponse = BaseApiResponse<{
+  memberBookId: number;
+  createdAt: string;
+} | null>;
+export type DeleteBookResponse = BaseApiResponse<Record<string, never>>;
+export type UpdateBookStatusResponse = BaseApiResponse<Record<string, never>>;
+export type GetMyBooksCountResponse = BaseApiResponse<number>;
+
+// 쿼리 파라미터 타입들
+export interface GetAllBooksQueryParams {
+  page?: number;
+  size?: number;
+  sort?: string;
 }
 
 export interface GetPopularBooksQueryParams {
@@ -120,9 +105,37 @@ export interface GetPopularBooksQueryParams {
   size?: number;
 }
 
+export interface CreateBookRequest {
+  title: string;
+  image: string;
+  author: string;
+  publisher: string;
+  isbn: string;
+}
+
+export interface UpdateBookStatusRequest {
+  score: number;
+  startedAt: string;
+  endedAt: string;
+}
+
+export interface UpdateBookContentRequest {
+  title?: string;
+  image?: string;
+  author?: string;
+  publisher?: string;
+  isbn?: string;
+}
+
+export interface RateBookRequest {
+  score: number;
+}
+
+// 설정
 export const USE_MOCK_DATA = false;
 
-export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
+// 유틸리티 함수들
+const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
   const accessToken = getAccessToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -132,7 +145,7 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
   } else if (!USE_MOCK_DATA) {
-    console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}. This API call might fail if authentication is required.`);
+    console.warn(`[fetchWithAuth] Access token is missing for URL: ${url}`);
   }
 
   const response = await fetch(url, {
@@ -145,7 +158,7 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
     try {
       const errorData = await response.json();
       errorMessage += ` - ${errorData.message || response.statusText}`;
-    } catch (e) {
+    } catch {
       const text = await response.text();
       errorMessage += ` - ${text || response.statusText}`;
     }
@@ -154,349 +167,235 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
   return response;
 };
 
-export async function getAllBooks(
-  params: GetAllBooksQueryParams): Promise<GetAllBooksResponse> {
+const makeApiRequest = async <T>(
+  endpoint: string, 
+  options: RequestInit = {}
+): Promise<T> => {
+  const response = await fetchWithAuth(`${BASE_URL}${endpoint}`, options);
+  return response.json();
+};
+
+const createMockResponse = <T>(
+  result: T, 
+  message: string = 'Mock 성공'
+): BaseApiResponse<T> => ({
+  isSuccess: true,
+  code: '1000',
+  message,
+  result
+});
+
+const mockDelay = (ms: number = 500) => 
+  new Promise(resolve => setTimeout(resolve, ms));
+
+// API 함수들
+export const getAllBooks = async (
+  params: GetAllBooksQueryParams
+): Promise<GetAllBooksResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책장 조회 성공',
-      result: {
-        memberBooks: [
-          { memberBookId: 1, title: '목 책 1', author: '목 작가 1', imageUrl: 'https://placehold.co/100x150?text=My+Book+1', score: 5, startedAt: '2025-07-01T10:00:00.000Z', endedAt: '2025-07-01T10:00:00.000Z', status: 'READING' },
-          { memberBookId: 3, title: '목 책 3', author: '목 작가 3', imageUrl: 'https://placehold.co/100x150?text=My+Book+3', score: 3, startedAt: '2025-05-15T10:00:00.000Z', endedAt: '2025-07-01T10:00:00.000Z', status: 'DONE' },
-        ],
-        page: params.page || 1,
-        size: params.size || 10,
-        totalElements: 3,
-        totalPages: 1,
-      }
-    }), 500));
+    await mockDelay();
+    return createMockResponse({
+      memberBooks: [
+        { 
+          memberBookId: 1, 
+          title: '목 책 1', 
+          author: '목 작가 1', 
+          imageUrl: 'https://placehold.co/100x150?text=My+Book+1', 
+          score: 5, 
+          startedAt: '2025-07-01T10:00:00.000Z', 
+          endedAt: '2025-07-01T10:00:00.000Z', 
+          status: 'READING' 
+        },
+        { 
+          memberBookId: 3, 
+          title: '목 책 3', 
+          author: '목 작가 3', 
+          imageUrl: 'https://placehold.co/100x150?text=My+Book+3', 
+          score: 3, 
+          startedAt: '2025-05-15T10:00:00.000Z', 
+          endedAt: '2025-07-01T10:00:00.000Z', 
+          status: 'DONE' 
+        },
+      ],
+      page: params.page || 1,
+      size: params.size || 10,
+      totalElements: 3,
+      totalPages: 1,
+    }, '목 책장 조회 성공');
   }
 
-  const url = new URL(`${BASE_URL}/api/v2/bookshelf/my`); // Changed to v2
+  const url = new URL('/api/v2/bookshelf/my', BASE_URL);
   if (params.page !== undefined) url.searchParams.append('page', String(params.page));
   if (params.size !== undefined) url.searchParams.append('size', String(params.size));
   if (params.sort !== undefined) url.searchParams.append('sort', params.sort);
 
-  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
-  const data: GetAllBooksResponse = await response.json();
-  return data;
-}
+  return makeApiRequest<GetAllBooksResponse>(url.pathname + url.search);
+};
 
-export async function getBookById(memberBookId: number): Promise<GetBookByIdResponse> {
+export const getBookById = async (memberBookId: number): Promise<GetBookByIdResponse> => {
   if (USE_MOCK_DATA) {
-    const mockSuccessResult: GetBookByIdResponse = {
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 상세 조회 성공',
-      result: {
-        memberBookId: memberBookId,
-        title: '목 책 상세 (ID: ' + memberBookId + ')',
+    await mockDelay();
+    if (memberBookId === 1) {
+      return createMockResponse({
+        memberBookId,
+        title: `목 책 상세 (ID: ${memberBookId})`,
         author: '목 작가 상세',
         imageUrl: 'https://placehold.co/200x300?text=Mock+Book+Detail',
         status: 'DONE',
-        score: 5, // 'rating' 대신 'score' 사용
-        startedAt: '2025-07-01T10:00:00.000Z', // 'startedAt' 필드 추가
-        endedAt: '2025-07-10T10:00:00.000Z', // 'endedAt' 필드 추가
+        score: 5,
+        startedAt: '2025-07-01T10:00:00.000Z',
+        endedAt: '2025-07-10T10:00:00.000Z',
         cardSummaries: [
           { cardId: 101, cardImage: 'https://placehold.co/100x100?text=Card1' },
           { cardId: 102, cardImage: 'https://placehold.co/100x100?text=Card2' },
         ]
-      }
-    };
-
-    const mockNotFoundResult: GetBookByIdResponse = {
-      isSuccess: false,
-      code: '404',
-      message: '책을 찾을 수 없습니다.',
-      result: null
-    };
-
-    const resultToReturn = memberBookId === 1 ? mockSuccessResult : mockNotFoundResult;
-    return new Promise(resolve => setTimeout(() => resolve(resultToReturn), 500));
+      }, '목 책 상세 조회 성공');
+    }
+    return createMockResponse(null, '책을 찾을 수 없습니다.');
   }
 
-  const url = new URL(`${BASE_URL}/api/v2/bookshelf/${memberBookId}`); // Changed to v2 and used path parameter
-  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
+  return makeApiRequest<GetBookByIdResponse>(`/api/v2/bookshelf/${memberBookId}`);
+};
 
-  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
-  const data: GetBookByIdResponse = await response.json();
-  return data;
-}
-
-export async function searchBooksByTitle(query: string): Promise<SearchBooksResponse> {
+export const searchBooksByTitle = async (query: string): Promise<SearchBooksResponse> => {
   if (USE_MOCK_DATA) {
-    const mockResult: SearchBooksResponse = {
-      isSuccess: true,
-      code: '1000',
-      message: '목 검색 결과',
-      result: query.toLowerCase().includes('해리') ? [
-        { title: '해리포터와 마법사의 돌', author: 'J.K. 롤링', imageUrl: 'https://placehold.co/100x150?text=Harry+Potter', publisher: '목 출판사', isbn: '978-1234567890' }
-      ] : []
-    };
-    return new Promise(resolve => setTimeout(() => resolve(mockResult), 500));
+    await mockDelay();
+    const result = query.toLowerCase().includes('해리') ? [
+      { 
+        title: '해리포터와 마법사의 돌', 
+        author: 'J.K. 롤링', 
+        imageUrl: 'https://placehold.co/100x150?text=Harry+Potter', 
+        publisher: '목 출판사', 
+        isbn: '978-1234567890' 
+      }
+    ] : [];
+    return createMockResponse(result, '목 검색 결과');
   }
 
-  const url = new URL(`${BASE_URL}/api/v2/bookshelf/search`);
+  const url = new URL('/api/v2/bookshelf/search', BASE_URL);
   url.searchParams.append('title', query);
+  return makeApiRequest<SearchBooksResponse>(url.pathname + url.search);
+};
 
-  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
-  const data: SearchBooksResponse = await response.json();
-  return data;
-}
-
-export async function getPopularBooks(params: GetPopularBooksQueryParams): Promise<GetPopularBooksResponse> {
+export const getPopularBooks = async (
+  params: GetPopularBooksQueryParams
+): Promise<GetPopularBooksResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 인기 도서 조회 성공',
-      result: {
-        books: [
-          { image: 'https://placehold.co/100x150?text=Popular+1', title: '인기 도서 1', author: '인기 작가 1', publisher: '인기 출판사 1', isbn: '1111' },
-          { image: 'https://placehold.co/100x150?text=Popular+2', title: '인기 도서 2', author: '인기 작가 2', publisher: '인기 출판사 2', isbn: '2222' },
-          { image: 'https://placehold.co/100x150?text=Popular+3', title: '인기 도서 3', author: '인기 작가 3', publisher: '인기 출판사 3', isbn: '3333' },
-        ],
-        page: params.page || 1,
-        size: params.size || 10,
-        totalElements: 3,
-        totalPages: 1,
-      }
-    }), 500));
+    await mockDelay();
+    return createMockResponse({
+      books: [
+        { image: 'https://placehold.co/100x150?text=Popular+1', title: '인기 도서 1', author: '인기 작가 1', publisher: '인기 출판사 1', isbn: '1111' },
+        { image: 'https://placehold.co/100x150?text=Popular+2', title: '인기 도서 2', author: '인기 작가 2', publisher: '인기 출판사 2', isbn: '2222' },
+        { image: 'https://placehold.co/100x150?text=Popular+3', title: '인기 도서 3', author: '인기 작가 3', publisher: '인기 출판사 3', isbn: '3333' },
+      ],
+      page: params.page || 1,
+      size: params.size || 10,
+      totalElements: 3,
+      totalPages: 1,
+    }, '목 인기 도서 조회 성공');
   }
 
-  const url = new URL(`${BASE_URL}/api/v2/bookshelf/popular`); // Changed to v2
+  const url = new URL('/api/v2/bookshelf/popular', BASE_URL);
   if (params.page !== undefined) url.searchParams.append('page', String(params.page));
   if (params.size !== undefined) url.searchParams.append('size', String(params.size));
+  return makeApiRequest<GetPopularBooksResponse>(url.pathname + url.search);
+};
 
-  const response = await fetchWithAuth(url.toString(), { method: 'GET' });
-  const data: GetPopularBooksResponse = await response.json();
-  return data;
-}
-
-export interface CreateBookRequest {
-  title: string;
-  image: string;
-  author: string;
-  publisher: string;
-  isbn: string;
-}
-
-export interface CreateBookResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
-    memberBookId: number;
-    createdAt: string;
-  } | null;
-}
-
-export async function createBook(bookData: CreateBookRequest): Promise<CreateBookResponse> {
+export const createBook = async (bookData: CreateBookRequest): Promise<CreateBookResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 등록 성공',
-      result: {
-        memberBookId: Math.floor(Math.random() * 1000) + 1,
-        createdAt: new Date().toISOString(),
-      }
-    }), 500));
+    await mockDelay();
+    return createMockResponse({
+      memberBookId: Math.floor(Math.random() * 1000) + 1,
+      createdAt: new Date().toISOString(),
+    }, '목 책 등록 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf`; // Changed to v2
-  const response = await fetchWithAuth(url, {
+  return makeApiRequest<CreateBookResponse>('/api/v2/bookshelf', {
     method: 'POST',
     body: JSON.stringify(bookData),
   });
+};
 
-  const data: CreateBookResponse = await response.json();
-  return data;
-}
-
-export interface DeleteBookResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: Record<string, never>;
-}
-
-export async function deleteBook(memberBookId: number): Promise<DeleteBookResponse> {
+export const deleteBook = async (memberBookId: number): Promise<DeleteBookResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 삭제 성공',
-      result: {}
-    }), 500));
+    await mockDelay();
+    return createMockResponse({}, '목 책 삭제 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}`; // Changed to v2 and used path parameter
-  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
+  return makeApiRequest<DeleteBookResponse>(`/api/v2/bookshelf/${memberBookId}`, {
+    method: 'DELETE'
+  });
+};
 
-  const response = await fetchWithAuth(url.toString(), { method: 'DELETE' });
-  const data: DeleteBookResponse = await response.json();
-  return data;
-}
-
-export interface UpdateBookStatusResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: Record<string, never>;
-}
-
-export async function updateBookStatusToStart(memberBookId: number): Promise<UpdateBookStatusResponse> {
+export const updateBookStatusToStart = async (memberBookId: number): Promise<UpdateBookStatusResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 읽기 시작 성공',
-      result: {}
-    }), 500));
+    await mockDelay();
+    return createMockResponse({}, '목 책 읽기 시작 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/status/start`; // Changed to v2 and used path parameter
-  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
+  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/status/start`, {
+    method: 'PATCH'
+  });
+};
 
-  const response = await fetchWithAuth(url.toString(), { method: 'PATCH' });
-  const data: UpdateBookStatusResponse = await response.json();
-  return data;
-}
-
-export async function updateBookStatusToOver(memberBookId: number): Promise<UpdateBookStatusResponse> {
+export const updateBookStatusToOver = async (memberBookId: number): Promise<UpdateBookStatusResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 읽기 완료 성공',
-      result: {}
-    }), 500));
+    await mockDelay();
+    return createMockResponse({}, '목 책 읽기 완료 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/status/over`; // Changed to v2 and used path parameter
-  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
+  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/status/over`, {
+    method: 'PATCH'
+  });
+};
 
-  const response = await fetchWithAuth(url.toString(), { method: 'PATCH' });
-  const data: UpdateBookStatusResponse = await response.json();
-  return data;
-}
-
-export interface RateBookRequest {
-  score: number;
-}
-
-export async function rateBook(memberBookId: number, score: number): Promise<UpdateBookStatusResponse> {
+export const rateBook = async (memberBookId: number, score: number): Promise<UpdateBookStatusResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 평점 주기 성공',
-      result: {}
-    }), 500));
+    await mockDelay();
+    return createMockResponse({}, '목 책 평점 주기 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/rate`; // Changed to v2 and used path parameter
-  // No searchParams.append('memberBookId', String(memberBookId)); as it's a path param now
-
-  const response = await fetchWithAuth(url.toString(), {
+  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/rate`, {
     method: 'PATCH',
     body: JSON.stringify({ score }),
   });
+};
 
-  const data: UpdateBookStatusResponse = await response.json();
-  return data;
-}
-
-// New interface for UpdateBookContentRequest based on PATCH /api/v2/bookshelf/{memberBookId}/modify
-export interface UpdateBookContentRequest {
-  title?: string;
-  image?: string;
-  author?: string;
-  publisher?: string;
-  isbn?: string;
-  // Add other fields if 'modify' allows them to be updated
-}
-
-export async function updateBookContent(memberBookId: number, bookData: UpdateBookContentRequest): Promise<UpdateBookStatusResponse> {
+export const updateBookContent = async (
+  memberBookId: number, 
+  bookData: UpdateBookContentRequest
+): Promise<UpdateBookStatusResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 책 내용 수정 성공',
-      result: {}
-    }), 500));
+    await mockDelay();
+    return createMockResponse({}, '목 책 내용 수정 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/modify`; // Changed to v2 and used path parameter
-  const response = await fetchWithAuth(url.toString(), {
+  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/modify`, {
     method: 'PATCH',
     body: JSON.stringify(bookData),
   });
+};
 
-  const data: UpdateBookStatusResponse = await response.json();
-  return data;
-}
-
-
-export interface GetMyBooksCountResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: number;
-}
-
-export async function getMyBooksCount(): Promise<GetMyBooksCountResponse> {
+export const getMyBooksCount = async (): Promise<GetMyBooksCountResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 내 책 개수 조회 성공',
-      result: 5
-    }), 500));
+    await mockDelay();
+    return createMockResponse(5, '목 내 책 개수 조회 성공');
   }
 
-  const url = `${BASE_URL}/api/v2/bookshelf/my/count`; // Changed to v2
-  const response = await fetchWithAuth(url, { method: 'GET' });
-  const data: GetMyBooksCountResponse = await response.json();
-  return data;
-}
+  return makeApiRequest<GetMyBooksCountResponse>('/api/v2/bookshelf/my/count');
+};
 
-export interface UpdateBookStatusRequest {
-  score: number;
-  startedAt: string; // ISO 8601 format
-  endedAt: string;   // ISO 8601 format
-}
-
-export interface UpdateBookStatusResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: Record<string, never>;
-}
-
-export async function updateBookStatus(
-  memberBookId: number, // This is correctly defined as a parameter here
+export const updateBookStatus = async (
+  memberBookId: number,
   data: UpdateBookStatusRequest
-): Promise<UpdateBookStatusResponse> {
+): Promise<UpdateBookStatusResponse> => {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: 'Mock 책 상태 수정 성공',
-      result: {}
-    }), 500));
+    await mockDelay();
+    return createMockResponse({}, 'Mock 책 상태 수정 성공');
   }
 
-  // Corrected: memberBookId is now part of the URL
-  const url = `${BASE_URL}/api/v2/bookshelf/${memberBookId}/modify`;
-  const response = await fetchWithAuth(url, {
+  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/modify`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
-
-  const result: UpdateBookStatusResponse = await response.json();
-  return result;
-}
+};

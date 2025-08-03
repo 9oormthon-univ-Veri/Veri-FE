@@ -1,9 +1,8 @@
-// src/pages/TextExtractionLoadingPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { extractTextFromImage } from '../../api/imageApi';
 
-import './TextExtractionLoadingPage.css'; // 스타일 파일을 가져옵니다.
+import './TextExtractionLoadingPage.css';
 
 const TextExtractionLoadingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -19,7 +18,6 @@ const TextExtractionLoadingPage: React.FC = () => {
         const performOcrAndNavigate = async () => {
             if (!image) {
                 console.error('TextExtractionLoadingPage: 필수 데이터 (이미지 URL) 누락, make-card로 리디렉션.');
-                // Add alert for missing initial image data
                 alert('이미지 데이터를 불러올 수 없습니다. 카드 생성 페이지로 돌아갑니다.');
                 navigate('/make-card');
                 return;
@@ -34,14 +32,11 @@ const TextExtractionLoadingPage: React.FC = () => {
                 if (response.isSuccess) {
                     const extractedText = response.result;
 
-                    // --- MODIFICATION START ---
-                    // Check if extractedText is empty or contains only whitespace
                     if (!extractedText || extractedText.trim().length === 0) {
                         alert('이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.');
-                        navigate('/make-card'); // Go back to the card creation page
-                        return; // Stop further execution
+                        navigate('/make-card');
+                        return;
                     }
-                    // --- MODIFICATION END ---
 
                     navigate('/text-extraction-result', {
                         state: {
@@ -53,24 +48,22 @@ const TextExtractionLoadingPage: React.FC = () => {
                 } else {
                     setOcrError(response.message || '텍스트 추출에 실패했습니다.');
                     console.error('OCR API 실패:', response.message);
-                    // Add alert for API failure
                     alert(`텍스트 추출에 실패했습니다: ${response.message || '알 수 없는 오류'}. 다시 시도해 주세요.`);
-                    navigate('/make-card'); // Go back on API failure
+                    navigate('/make-card');
                 }
             } catch (err: any) {
                 console.error('OCR 처리 중 오류 발생:', err);
                 const errorMessage = `텍스트 추출 중 오류가 발생했습니다: ${err.message || '알 수 없는 오류'}.`;
                 setOcrError(errorMessage);
-                // Add alert for general error
                 alert(errorMessage + ' 카드 생성 페이지로 돌아갑니다.');
-                navigate('/make-card'); // Go back on general error
+                navigate('/make-card');
             } finally {
                 setIsLoadingText(false);
             }
         };
 
         performOcrAndNavigate();
-    }, [navigate, image, bookId]); // Added bookId to dependencies for completeness
+    }, [navigate, image, bookId]);
 
     return (
         <div className="page-container">
@@ -85,7 +78,7 @@ const TextExtractionLoadingPage: React.FC = () => {
                         ) : ocrError ? (
                             <h3 style={{ color: 'red' }}>오류 발생!</h3>
                         ) : (
-                            <h3>분석 완료!</h3> // 분석이 완료되었으나 navigate가 아직 되지 않은 짧은 순간
+                            <h3>분석 완료!</h3>
                         )}
                     </header>
 
@@ -100,7 +93,7 @@ const TextExtractionLoadingPage: React.FC = () => {
                         {ocrError ? (
                             <p style={{ color: 'red', textAlign: 'center' }}>{ocrError}</p>
                         ) : (
-                            <p>앱 사용에 대한 간단한 설명</p> // 로딩 중 표시될 설명
+                            <p>앱 사용에 대한 간단한 설명</p>
                         )}
                     </div>
                 </div>

@@ -1,13 +1,10 @@
-// src/api/cardApi.ts
-
 import { getAccessToken } from './auth';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
-export const USE_MOCK_DATA = false; // Set to true for mock data
+export const USE_MOCK_DATA = false;
 
-// Helper for authenticated fetch
 export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
-  const accessToken = getAccessToken(); // getAccessToken now throws if expired
+  const accessToken = getAccessToken();
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -39,32 +36,26 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}): Pro
   return response;
 };
 
-// --- Interfaces for Card API ---
-
-// GET /api/v1/cards/{cardId} 응답의 book 상세 정보
 export interface CardBookDetail {
   id: number;
   title: string;
-  coverImageUrl: string; // API 명세에 'coverImageUrl'로 되어있음
+  coverImageUrl: string;
   author: string;
 }
 
-// GET /api/v1/cards/my 응답의 카드 아이템
 export interface MyCardItem {
   cardId: number | undefined;
   content: string;
-  image: string; // 'image' 필드 사용
+  image: string;
   created: string;
 }
 
-// 독서카드 상세 정보 (GET /api/v1/cards/{cardId} 응답에 맞춰)
-// 이 Card 인터페이스가 ReadingCardDetailPage에서 사용될 주된 타입입니다.
 export interface Card {
-  cardId: number; // API 응답에서 'id'로 오지만, 클라이언트에서 'cardId'로 사용할 예정
+  cardId: number;
   content: string;
-  imageUrl: string; // API 응답에서 'imageUrl'로 옴
+  imageUrl: string;
   createdAt: string,
-  book: CardBookDetail | null; // 책 상세 정보 포함
+  book: CardBookDetail | null;
 }
 
 export interface GetMyCardsResponse {
@@ -72,7 +63,7 @@ export interface GetMyCardsResponse {
   code: string;
   message: string;
   result: {
-    cards: MyCardItem[]; // 나의 카드 목록은 MyCardItem[] 사용
+    cards: MyCardItem[];
     page: number;
     size: number;
     totalElements: number;
@@ -80,7 +71,6 @@ export interface GetMyCardsResponse {
   };
 }
 
-// GET /api/v1/cards/{cardId} 응답 인터페이스
 export interface GetCardDetailByIdResponse {
   isSuccess: boolean;
   code: string;
@@ -134,17 +124,15 @@ export interface DeleteCardResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: Record<string, never>; // Empty object
+  result: Record<string, never>;
 }
 
 export interface GetMyCardsCountResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: number; // 총 독서카드 개수
+  result: number;
 }
-
-// --- API Functions ---
 
 export async function getMyCards(params: GetMyCardsQueryParams = {}): Promise<GetMyCardsResponse> {
   if (USE_MOCK_DATA) {
@@ -191,10 +179,10 @@ export async function getCardDetailById(cardId: number): Promise<GetCardDetailBy
       code: '1000',
       message: '목 독서카드 상세 조회 성공',
       result: {
-        id: cardId, // API 명세에 'id'로 되어있음
+        id: cardId,
         content: `이것은 독서카드 ${cardId}의 내용입니다. 책의 중요한 구절이나 감상을 담고 있습니다. 
                   이 카드는 독서 경험을 시각적으로 기록하고 공유하는 데 도움이 됩니다.`,
-        imageUrl: `https://placehold.co/300x400?text=Card+${cardId}+Detail+Image`, // API 명세에 'imageUrl'로 되어있음
+        imageUrl: `https://placehold.co/300x400?text=Card+${cardId}+Detail+Image`,
         createdAt: "2025-07-03T11:47:09.032Z",
         book: {
           id: 0,
@@ -212,7 +200,7 @@ export async function getCardDetailById(cardId: number): Promise<GetCardDetailBy
       result: null,
     };
 
-    const resultToReturn = cardId === 1 ? mockSuccessResult : mockNotFoundResult; // Mock for cardId 1
+    const resultToReturn = cardId === 1 ? mockSuccessResult : mockNotFoundResult;
     return new Promise(resolve => setTimeout(() => resolve(resultToReturn), 500));
   }
 
@@ -331,14 +319,14 @@ export async function deleteCard(cardId: number): Promise<DeleteCardResponse> {
     }), 500));
   }
 
-  const url = `${BASE_URL}/api/v1/cards/${cardId}`; // Path parameter 사용
+  const url = `${BASE_URL}/api/v1/cards/${cardId}`;
 
   try {
     const response = await fetchWithAuth(url, {
       method: 'DELETE',
     });
 
-    if (response.status === 204) { // No Content
+    if (response.status === 204) {
       return { isSuccess: true, code: '204', message: '삭제 성공', result: {} };
     }
 
@@ -353,21 +341,13 @@ export async function deleteCard(cardId: number): Promise<DeleteCardResponse> {
   }
 }
 
-// GET /api/v1/cards/my/count
-export interface GetMyCardsCountResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: number; // 총 독서카드 개수
-}
-
 export async function getMyCardsCount(): Promise<GetMyCardsCountResponse> {
   if (USE_MOCK_DATA) {
     return new Promise(resolve => setTimeout(() => resolve({
       isSuccess: true,
       code: '1000',
       message: '목 내 독서카드 개수 조회 성공',
-      result: 7 // 예시 개수
+      result: 7
     }), 500));
   }
 

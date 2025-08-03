@@ -129,7 +129,7 @@
 .download-card-text-content {
     width: 100%;
     text-align: start;
-    padding: 0 0px;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -141,7 +141,7 @@
     font-style: normal;
     font-weight: 500;
     line-height: 160%;
-    margin: 0px;
+    margin: 0;
 }
 
 .no-book-info-message {
@@ -151,7 +151,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: 160%;
-    margin: 0px;
+    margin: 0;
 }
 
 .download-card-main-content {
@@ -162,7 +162,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: 160%;
-    margin: 0px;
+    margin: 0;
 }
 
 .download-action-button-wrapper {

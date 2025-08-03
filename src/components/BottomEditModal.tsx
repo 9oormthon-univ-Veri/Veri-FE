@@ -5,8 +5,8 @@ import './BottomEditModal.css';
 import { updateBookStatus } from '../api/bookApi';
 
 // ✨ SVG 아이콘 경로 사용
-const STAR_FILL_ICON = '/icons/star_fill.svg';
-const STAR_LINE_ICON = '/icons/star_line.svg';
+const STAR_FILL_ICON = '/src/assets/icons/star_fill.svg';
+const STAR_LINE_ICON = '/src/assets/icons/star_line.svg';
 
 interface BottomEditModalProps {
   isOpen: boolean;
@@ -135,9 +135,14 @@ const BottomEditModal: React.FC<BottomEditModalProps> = ({
           </div>
         </div>
 
-        <button onClick={handleSave} disabled={isSaving} className='complete-button'>
-          {isSaving ? '저장 중...' : '완료'}
-        </button>
+        <div className="edit-modal-button-container">
+          <button onClick={onClose} className='cancel-button'>
+            취소
+          </button>
+          <button onClick={handleSave} disabled={isSaving} className='complete-button'>
+            {isSaving ? '저장 중...' : '완료'}
+          </button>
+        </div>
       </div>
     </div>
   );
