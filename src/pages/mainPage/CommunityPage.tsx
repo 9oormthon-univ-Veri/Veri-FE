@@ -1,9 +1,6 @@
 // src/pages/CameraPage.tsx
 import { useNavigate } from 'react-router-dom';
-
-const ICON_PATHS = {
-  SEARCH: '/src/assets/icons/TopBar/search_fill.svg'
-} as const;
+import searchFillIcon from '../../assets/icons/TopBar/search_fill.svg';
 
 function CommunityPage() {
   const navigate = useNavigate();
@@ -23,7 +20,7 @@ function CommunityPage() {
           className="search-button"
           aria-label="검색"
         >
-          <img src={ICON_PATHS.SEARCH} alt="" aria-hidden="true" />
+          <img src={searchFillIcon} alt="" aria-hidden="true" />
         </button>
       </div>
     </header>

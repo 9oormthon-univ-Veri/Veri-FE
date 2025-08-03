@@ -5,6 +5,7 @@ import './ReadingCardPage.css';
 import ReadingCardItem from '../../components/ReadingCardPage/ReadingCardItem';
 import ReadingCardGridItem from '../../components/ReadingCardPage/ReadingCardGridItem';
 import { getMyCards, getCardDetailById, type MyCardItem, type GetMyCardsQueryParams } from '../../api/cardApi';
+import searchFillIcon from '../../assets/icons/TopBar/search_fill.svg';
 
 // 독서 카드 아이템 타입 정의
 export interface ReadingCardItemType {
@@ -14,11 +15,6 @@ export interface ReadingCardItemType {
     date: string;
     thumbnailUrl: string;
 }
-
-// 이미지 경로 상수
-const ICON_PATHS = {
-    SEARCH: '/src/assets/icons/TopBar/search_fill.svg'
-} as const;
 
 function ReadingCardPage() {
     const navigate = useNavigate();
@@ -154,7 +150,7 @@ function ReadingCardPage() {
                             aria-label="검색" 
                             onClick={handleSearchClick}
                         >
-                            <img src={ICON_PATHS.SEARCH} alt="" aria-hidden="true" />
+                            <img src={searchFillIcon} alt="" aria-hidden="true" />
                         </button>
                     </div>
                 </header>

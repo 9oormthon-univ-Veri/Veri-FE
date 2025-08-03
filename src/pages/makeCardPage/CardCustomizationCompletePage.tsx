@@ -4,9 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
 import { createCard } from '../../api/cardApi';
 import { getBookById, type GetBookByIdResponse } from '../../api/bookApi';
-
-const DOWN_ICON = '/src/assets/icons/down.svg';
-const INSTAR_ICON = '/src/assets/icons/instar.svg';
+import downIcon from '../../assets/icons/down.svg';
+import instarIcon from '../../assets/icons/instar.svg';
 
 const CardCustomizationCompletePage: React.FC = () => {
     const location = useLocation();
@@ -177,11 +176,11 @@ const CardCustomizationCompletePage: React.FC = () => {
 
                 <div className="action-icons">
                     <button className="share-icon-btn" onClick={handleShare} aria-label="사진 공유">
-                        <img width={20} height={20} src={INSTAR_ICON} alt="공유" />
+                        <img width={20} height={20} src={instarIcon} alt="공유" />
                     </button>
 
                     <button className="download-icon-btn" onClick={handleGoToDownloadPage} aria-label="다운로드">
-                        <img width={20} height={20} src={DOWN_ICON} alt="다운로드" />
+                        <img width={20} height={20} src={downIcon} alt="다운로드" />
                     </button>
                 </div>
 

@@ -3,10 +3,8 @@
 import React, { useState } from 'react';
 import './BottomEditModal.css';
 import { updateBookStatus } from '../api/bookApi';
-
-// ✨ SVG 아이콘 경로 사용
-const STAR_FILL_ICON = '/src/assets/icons/star_fill.svg';
-const STAR_LINE_ICON = '/src/assets/icons/star_line.svg';
+import starFillIcon from '../assets/icons/star_fill.svg';
+import starLineIcon from '../assets/icons/star_line.svg';
 
 interface BottomEditModalProps {
   isOpen: boolean;
@@ -49,9 +47,9 @@ const StarRatingInput: React.FC<StarRatingInputProps> = ({ initialRating, onRati
             onMouseLeave={() => setHoverRating(0)}
           >
             <img
-              src={isFilled ? STAR_FILL_ICON : STAR_LINE_ICON}
+              src={isFilled ? starFillIcon : starLineIcon}
               alt={isFilled ? "채워진 별" : "빈 별"}
-              className="star-icon" // CSS 스타일링을 위한 클래스 추가
+              className="star-icon"
             />
           </button>
         );

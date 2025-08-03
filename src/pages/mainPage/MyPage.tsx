@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
 import { getMemberProfile, type GetMemberProfileResponse, type MemberProfile } from '../../api/memberApi';
 
-// 이미지 경로 상수
-const IMAGES = {
-  SEARCH_FILL: '/src/assets/icons/TopBar/search_fill.svg',
-  SAMPLE_USER: '/src/assets/images/profileSample/sample_user.png',
-  RIGHT_LINE: '/src/assets/icons/right_line.svg',
-  SCHEDULE_FILL: '/src/assets/icons/schedule_fill.svg',
-  SALE_FILL: '/src/assets/icons/sale_fill.svg'
-} as const;
+// 아이콘 import
+import searchFillIcon from '../../assets/icons/TopBar/search_fill.svg';
+import rightLineIcon from '../../assets/icons/right_line.svg';
+import scheduleFillIcon from '../../assets/icons/schedule_fill.svg';
+import saleFillIcon from '../../assets/icons/sale_fill.svg';
+
+// 이미지 import
+import sampleUser from '../../assets/images/profileSample/sample_user.png';
 
 interface UserData {
   email: string;
@@ -108,7 +108,7 @@ const MyPage: React.FC = () => {
             aria-label="검색" 
             onClick={handleSearchClick}
           >
-            <img src={IMAGES.SEARCH_FILL} alt="" aria-hidden="true" />
+            <img src={searchFillIcon} alt="" aria-hidden="true" />
           </button>
         </div>
       </header>
@@ -122,14 +122,14 @@ const MyPage: React.FC = () => {
           ) : (
             <div
               className="avatar-placeholder"
-              style={{ backgroundImage: `url(${IMAGES.SAMPLE_USER})` }}
+              style={{ backgroundImage: `url(${sampleUser})` }}
             />
           )}
         </div>
         <div className="profile-info">
           <p className="profile-name">{userData.nickname}</p>
         </div>
-        <img src={IMAGES.RIGHT_LINE} alt="더 보기" className="profile-arrow" />
+        <img src={rightLineIcon} alt="더 보기" className="profile-arrow" />
       </div>
 
       <div className="my-page-stats-cards">
@@ -146,14 +146,14 @@ const MyPage: React.FC = () => {
       <div className="my-page-news-section">
         <h3 className="section-title">소식</h3>
         <div className="news-item" onClick={handleNoticeClick}>
-          <img src={IMAGES.SCHEDULE_FILL} className="news-icon" alt="공지사항 아이콘" />
+          <img src={scheduleFillIcon} className="news-icon" alt="공지사항 아이콘" />
           <span className="news-label">공지사항</span>
-          <img src={IMAGES.RIGHT_LINE} className="news-arrow" alt="이동" />
+          <img src={rightLineIcon} className="news-arrow" alt="이동" />
         </div>
         <div className="news-item" onClick={handleEventClick}>
-          <img src={IMAGES.SALE_FILL} className="news-icon" alt="이벤트 아이콘" />
+          <img src={saleFillIcon} className="news-icon" alt="이벤트 아이콘" />
           <span className="news-label">이벤트</span>
-          <img src={IMAGES.RIGHT_LINE} className="news-arrow" alt="이동" />
+          <img src={rightLineIcon} className="news-arrow" alt="이동" />
         </div>
       </div>
     </div>

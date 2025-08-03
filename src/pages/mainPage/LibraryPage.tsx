@@ -7,15 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
 import { getAllBooks, type GetAllBooksQueryParams } from '../../api/bookApi';
 
-// 이미지 경로
-const IMAGES = {
-  APP_LOGO: '/src/assets/icons/TopBar/union.svg',
-  NOTIFICATION: '/src/assets/icons/TopBar/notificationl.svg',
-  SEARCH: '/src/assets/icons/TopBar/search.svg',
-  SAMPLE_BOOK_BACKGROUND: '/src/assets/images/profileSample/sample_book_background.png',
-  SAMPLE_BOOK: '/src/assets/images/profileSample/sample_book.png',
-  SAMPLE_USER: '/src/assets/images/profileSample/sample_user.png'
-} as const;
+// 아이콘 import
+import appLogoIcon from '../../assets/icons/TopBar/union.svg';
+import notificationIcon from '../../assets/icons/TopBar/notificationl.svg';
+import searchIcon from '../../assets/icons/TopBar/search.svg';
+
+// 이미지 import
+import sampleBookBackground from '../../assets/images/profileSample/sample_book_background.png';
+import sampleBook from '../../assets/images/profileSample/sample_book.png';
+import sampleUser from '../../assets/images/profileSample/sample_user.png';
 
 interface UserData {
   email: string;
@@ -99,8 +99,8 @@ function LibraryPage() {
   }
 
   // 이미지 경로 설정
-  const heroBackgroundImageSrc = bookImageUrl || IMAGES.SAMPLE_BOOK_BACKGROUND;
-  const heroBookSampleImageSrc = bookImageUrl || IMAGES.SAMPLE_BOOK;
+  const heroBackgroundImageSrc = bookImageUrl || sampleBookBackground;
+  const heroBookSampleImageSrc = bookImageUrl || sampleBook;
   const hasValidProfileImage = userData.image && 
                               userData.image.trim() !== '' && 
                               userData.image !== 'https://example.com/image.jpg';
@@ -114,16 +114,16 @@ function LibraryPage() {
           alt="Hero background"
         />
         <header className="hero-header">
-          <img src={IMAGES.APP_LOGO} className="icon" alt="앱 로고" />
+          <img src={appLogoIcon} className="icon" alt="앱 로고" />
           <div className="header-icons">
-            <img src={IMAGES.NOTIFICATION} alt="알림" />
+            <img src={notificationIcon} alt="알림" />
             <button 
               type="button" 
               className="search-button" 
               aria-label="검색" 
               onClick={handleSearchClick}
             >
-              <img src={IMAGES.SEARCH} alt="" aria-hidden="true" />
+              <img src={searchIcon} alt="" aria-hidden="true" />
             </button>
           </div>
         </header>
@@ -139,7 +139,7 @@ function LibraryPage() {
             ) : (
               <div 
                 className="profile-placeholder" 
-                style={{ backgroundImage: `url(${IMAGES.SAMPLE_USER})` }}
+                style={{ backgroundImage: `url(${sampleUser})` }}
               />
             )}
           </button>

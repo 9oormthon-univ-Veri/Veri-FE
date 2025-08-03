@@ -1,16 +1,13 @@
 // src/pages/MyBookshelfPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // useLocation 임포트 추가
+import { useNavigate, useLocation } from 'react-router-dom';
 import './MyBookshelfPage.css';
 import { MdArrowBackIosNew } from 'react-icons/md';
+import starFillIcon from '../assets/icons/star_fill.svg';
+import starLineIcon from '../assets/icons/star_line.svg';
 
-// Book 인터페이스 import 시 타입명 일치 확인
-// bookApi.ts에서 정의된 Book 타입에 score와 startedAt이 포함되어야 합니다.
 import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../api/bookApi';
 import BookshelfList from '../components/MyBookshelfPage/BookshelfList';
-
-const STAR_FILL_ICON = '/src/assets/icons/star_fill.svg';
-const STAR_LINE_ICON = '/src/assets/icons/star_line.svg';
 
 export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
   // 별점 계산 로직 (기존과 동일)
@@ -24,7 +21,7 @@ export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => 
     starElements.push(
       <img
         key={`full-${i}`}
-        src={STAR_FILL_ICON}
+        src={starFillIcon}
         alt="filled star"
         className="star full"
       />
@@ -35,10 +32,10 @@ export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => 
     starElements.push(
       <img
         key="half"
-        src={STAR_FILL_ICON} // 채워진 별 아이콘을 사용
+        src={starFillIcon}
         alt="half star"
         className="star half"
-        style={{ clipPath: 'inset(0 50% 0 0)' }} // 반쪽 별을 위한 스타일 (예시)
+        style={{ clipPath: 'inset(0 50% 0 0)' }}
       />
     );
   }
@@ -47,7 +44,7 @@ export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => 
     starElements.push(
       <img
         key={`empty-${i}`}
-        src={STAR_LINE_ICON}
+        src={starLineIcon}
         alt="empty star"
         className="star empty"
       />

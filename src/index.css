@@ -289,8 +289,8 @@ code {
   width: 30px;
   height: 30px;
   background-color: #391BE2;
-  mask: url('../../../src/assets/icons/TopBar/union.svg') no-repeat center;
-  -webkit-mask: url('../../../src/assets/icons/TopBar/union.svg') no-repeat center;
+  mask: url('/src/assets/icons/TopBar/union.svg') no-repeat center;
+  -webkit-mask: url('/src/assets/icons/TopBar/union.svg') no-repeat center;
   mask-size: contain;
   -webkit-mask-size: contain;
   cursor: pointer;
@@ -300,8 +300,8 @@ code {
   width: 24px;
   height: 24px;
   background-color: #391BE233;
-  mask: url('assets/icons/TopBar/notificationl.svg') no-repeat center;
-  -webkit-mask: url('assets/icons/TopBar/notificationl.svg') no-repeat center;
+  mask: url('/src/assets/icons/TopBar/notificationl.svg') no-repeat center;
+  -webkit-mask: url('/src/assets/icons/TopBar/notificationl.svg') no-repeat center;
   mask-size: contain;
   -webkit-mask-size: contain;
   margin-left: 10px;
