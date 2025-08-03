@@ -5,9 +5,9 @@ import MyBookshelfSection from '../../components/LibraryPage/MyBookshelf';
 import TodaysRecommendationSection from '../../components/LibraryPage/TodaysRecommendation';
 import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
-import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../../api/bookApi';
+import { getAllBooks, type GetAllBooksQueryParams } from '../../api/bookApi';
 
-// 이미지 경로 상수
+// 이미지 경로
 const IMAGES = {
   APP_LOGO: '/src/assets/icons/TopBar/union.svg',
   NOTIFICATION: '/src/assets/icons/TopBar/notificationl.svg',
