@@ -23,8 +23,14 @@ const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = ({ cards, book
     const navigate = useNavigate();
 
     const handleSeeAllCards = useCallback(() => {
-        navigate(`/reading-card`);
+        // Correctly use bookId to navigate to a page showing all cards for this specific book
+        navigate(`/reading-card/book/${bookId}`);
     }, [navigate, bookId]);
+
+    // This function should accept cardId as an argument
+    const handleClick = useCallback((cardId: number) => {
+        navigate(`/reading-card-detail/${cardId}`);
+    }, [navigate]);
 
     return (
         <div className="my-reading-card-section">
@@ -38,7 +44,13 @@ const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = ({ cards, book
             {cards.length > 0 ? (
                 <div className="card-list">
                     {cards.map((card, index) => (
-                        <div key={card.cardId || index} className="card-item-container">
+                        <div
+                            key={card.cardId || index}
+                            className="card-item-container"
+                            onClick={() => handleClick(card.cardId)}
+                            role="button"
+                            tabIndex={0}
+                        >
                             <img src={card.cardImage} alt={`Reading Card ${index + 1}`} className="reading-card-image" />
                         </div>
                     ))}
