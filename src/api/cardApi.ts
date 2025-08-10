@@ -1,7 +1,7 @@
 import { getAccessToken } from './auth';
+import { USE_MOCK_DATA, mockDelay, createMockResponse, mockCards } from './mock';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
-export const USE_MOCK_DATA = false;
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
   const accessToken = getAccessToken();
@@ -136,22 +136,14 @@ export interface GetMyCardsCountResponse {
 
 export async function getMyCards(params: GetMyCardsQueryParams = {}): Promise<GetMyCardsResponse> {
   if (USE_MOCK_DATA) {
-    const mockCards: MyCardItem[] = [
-      { cardId: 1, content: '첫 번째 독서카드 내용', created: "2025-07-03T11:41:16.019Z", image: 'https://placehold.co/150x200?text=Card1' },
-      { cardId: 2, content: '두 번째 독서카드 내용', created: "2025-07-03T11:41:16.019Z", image: 'https://placehold.co/150x200?text=Card2' },
-    ];
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 내 독서카드 조회 성공',
-      result: {
-        cards: mockCards,
-        page: params.page || 1,
-        size: params.size || 10,
-        totalElements: mockCards.length,
-        totalPages: 1,
-      }
-    }), 500));
+    await mockDelay();
+    return createMockResponse({
+      cards: mockCards,
+      page: params.page || 1,
+      size: params.size || 10,
+      totalElements: mockCards.length,
+      totalPages: Math.ceil(mockCards.length / (params.size || 10)),
+    }, '목 내 독서카드 조회 성공');
   }
 
   const url = new URL(`${BASE_URL}/api/v1/cards/my`);
@@ -174,34 +166,23 @@ export async function getMyCards(params: GetMyCardsQueryParams = {}): Promise<Ge
 
 export async function getCardDetailById(cardId: number): Promise<GetCardDetailByIdResponse> {
   if (USE_MOCK_DATA) {
-    const mockSuccessResult: GetCardDetailByIdResponse = {
-      isSuccess: true,
-      code: '1000',
-      message: '목 독서카드 상세 조회 성공',
-      result: {
-        id: cardId,
-        content: `이것은 독서카드 ${cardId}의 내용입니다. 책의 중요한 구절이나 감상을 담고 있습니다. 
-                  이 카드는 독서 경험을 시각적으로 기록하고 공유하는 데 도움이 됩니다.`,
-        imageUrl: `https://placehold.co/300x400?text=Card+${cardId}+Detail+Image`,
-        createdAt: "2025-07-03T11:47:09.032Z",
+    await mockDelay();
+    const card = mockCards.find(c => c.cardId === cardId);
+    if (card) {
+      return createMockResponse({
+        id: card.cardId,
+        content: card.content,
+        imageUrl: card.image,
+        createdAt: card.created,
         book: {
-          id: 0,
-          title: '목 책 제목',
+          id: 1,
+          title: '해리포터와 마법사의 돌',
           coverImageUrl: 'https://placehold.co/100x150?text=BookCover',
-          author: '목 작가',
+          author: 'J.K. 롤링',
         },
-      },
-    };
-
-    const mockNotFoundResult: GetCardDetailByIdResponse = {
-      isSuccess: false,
-      code: 'CARD404',
-      message: '독서 카드를 찾을 수 없습니다.',
-      result: null,
-    };
-
-    const resultToReturn = cardId === 1 ? mockSuccessResult : mockNotFoundResult;
-    return new Promise(resolve => setTimeout(() => resolve(resultToReturn), 500));
+      }, '목 독서카드 상세 조회 성공');
+    }
+    return createMockResponse(null, '독서 카드를 찾을 수 없습니다.', 'CARD404');
   }
 
   const url = `${BASE_URL}/api/v1/cards/${cardId}`;
@@ -220,6 +201,13 @@ export async function getCardDetailById(cardId: number): Promise<GetCardDetailBy
 }
 
 export async function createCard(body: CreateCardRequest): Promise<CreateCardResponse> {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return createMockResponse({
+      cardId: Math.floor(Math.random() * 1000) + 1 // 랜덤 카드 ID 생성
+    }, '목 독서카드 생성 성공');
+  }
+
   const url = `${BASE_URL}/api/v1/cards`;
 
   try {
@@ -343,12 +331,8 @@ export async function deleteCard(cardId: number): Promise<DeleteCardResponse> {
 
 export async function getMyCardsCount(): Promise<GetMyCardsCountResponse> {
   if (USE_MOCK_DATA) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      isSuccess: true,
-      code: '1000',
-      message: '목 내 독서카드 개수 조회 성공',
-      result: 7
-    }), 500));
+    await mockDelay();
+    return createMockResponse(mockCards.length, '목 내 독서카드 개수 조회 성공');
   }
 
   const url = `${BASE_URL}/api/v1/cards/my/count`;

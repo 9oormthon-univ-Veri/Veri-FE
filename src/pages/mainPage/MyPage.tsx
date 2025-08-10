@@ -144,7 +144,7 @@ const MyPage: React.FC = () => {
       </div>
 
       <div className="my-page-news-section">
-        <h3 className="section-title">소식</h3>
+        <h3 className="my-page-section-title">소식</h3>
         <div className="news-item" onClick={handleNoticeClick}>
           <img src={scheduleFillIcon} className="news-icon" alt="공지사항 아이콘" />
           <span className="news-label">공지사항</span>

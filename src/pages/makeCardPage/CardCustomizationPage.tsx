@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationPage.css';
+import Toast from '../../components/Toast';
 
 import PicFillIconSVG from '../../icons/pic_fill.svg?react';
 import FontSizeFillIconSVG from '../../icons/font_size_fill.svg?react';
@@ -29,6 +30,23 @@ const CardCustomizationPage: React.FC = () => {
 
     const [selectedTab, setSelectedTab] = useState<'image' | 'text' | 'book'>('image');
     const [isBlocked, setIsBlocked] = useState(false);
+    const [toast, setToast] = useState<{
+        message: string;
+        type: 'success' | 'error' | 'warning' | 'info';
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+        setToast({ message, type, isVisible: true });
+    };
+
+    const hideToast = () => {
+        setToast(prev => ({ ...prev, isVisible: false }));
+    };
 
     const defaultBackgrounds: { label: string; url: string }[] = [
         { label: '하늘', url: SkyBackground },
@@ -46,6 +64,11 @@ const CardCustomizationPage: React.FC = () => {
 
     const [selectedBackground, setSelectedBackground] = useState<'uploaded' | string>('uploaded');
     const [selectedFont, setSelectedFont] = useState<string>('inherit');
+    
+    // 텍스트 드래그 관련 상태
+    const [textPosition, setTextPosition] = useState({ x: 16, y: 100 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
     const getBackgroundImage = () => {
         if (selectedBackground === 'uploaded') return image;
@@ -55,7 +78,7 @@ const CardCustomizationPage: React.FC = () => {
 
     useEffect(() => {
         if ((!image || !extractedText) && !isBlocked) {
-            alert('필수 데이터 (이미지, 텍스트)가 누락되었습니다. 카드 생성 페이지로 이동합니다.');
+            showToast('필수 데이터 (이미지, 텍스트)가 누락되었습니다. 카드 생성 페이지로 이동합니다.', 'error');
             setIsBlocked(true);
             navigate('/make-card', { replace: true });
         }
@@ -79,10 +102,52 @@ const CardCustomizationPage: React.FC = () => {
         );
     }
 
+    // 텍스트 드래그 이벤트 핸들러들
+    const handleMouseDown = (e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setDragOffset({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+        setIsDragging(true);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+        
+        const container = e.currentTarget.getBoundingClientRect();
+        const newX = e.clientX - container.left - dragOffset.x;
+        const newY = e.clientY - container.top - dragOffset.y;
+        
+        // 카드 영역 내에서만 이동 가능하도록 제한
+        const maxX = container.width - 200; // 텍스트 너비 고려
+        const maxY = container.height - 100; // 텍스트 높이 고려
+        
+        setTextPosition({
+            x: Math.max(0, Math.min(newX, maxX)),
+            y: Math.max(0, Math.min(newY, maxY))
+        });
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
     const handleSave = () => {
-        if (!image || !extractedText || !selectedFont || !selectedBookId) {
-            alert('이미지와 텍스트, 책 정보는 필수로 포함되어야 합니다. 저장할 수 없습니다.');
+        if (!image || !extractedText || !selectedFont) {
+            showToast('이미지와 텍스트, 폰트는 필수로 포함되어야 합니다. 저장할 수 없습니다.', 'error');
             return;
+        }
+
+        // 목업 모드에서는 책 선택이 없어도 기본 책 ID 사용
+        const bookIdToUse = selectedBookId || 1; // 목업 모드에서 기본값으로 1번 책 사용
+        
+        // 책을 선택하지 않은 경우 사용자에게 알림
+        if (!selectedBookId) {
+            const shouldContinue = confirm('책을 선택하지 않으셨습니다. 목업 모드에서는 기본 책으로 저장됩니다. 계속하시겠습니까?');
+            if (!shouldContinue) {
+                return;
+            }
         }
 
         navigate('/card-complete', {
@@ -90,7 +155,8 @@ const CardCustomizationPage: React.FC = () => {
                 image: getBackgroundImage(),
                 extractedText,
                 font: selectedFont,
-                bookId: selectedBookId,
+                bookId: bookIdToUse,
+                textPosition: textPosition, // 텍스트 위치 정보 추가
             },
         });
     };
@@ -109,10 +175,19 @@ const CardCustomizationPage: React.FC = () => {
                 <div
                     className="custom-card-preview"
                     style={{ backgroundImage: `url(${getBackgroundImage()})` }}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
                 >
                     <div
-                        className="overlay-text"
-                        style={{ fontFamily: selectedFont }}
+                        className={`overlay-text ${isDragging ? 'dragging' : ''}`}
+                        style={{ 
+                            fontFamily: selectedFont,
+                            left: `${textPosition.x}px`,
+                            top: `${textPosition.y}px`,
+                            cursor: isDragging ? 'grabbing' : 'grab'
+                        }}
+                        onMouseDown={handleMouseDown}
                     >
                         {extractedText}
                     </div>
@@ -227,6 +302,12 @@ const CardCustomizationPage: React.FC = () => {
                     </button>
                 </div>
             </div>
+            <Toast 
+                message={toast.message} 
+                type={toast.type} 
+                isVisible={toast.isVisible} 
+                onClose={hideToast} 
+            />
         </div>
     );
 };

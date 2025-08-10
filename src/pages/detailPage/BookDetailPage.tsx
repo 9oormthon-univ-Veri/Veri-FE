@@ -206,7 +206,7 @@ function BookDetailPage() {
     return (
         <div className="page-container">
             <header className="detail-header">
-                <button className="header-left-arrow" onClick={() => navigate("/my-bookshelf")}>
+                <button className="header-left-arrow" onClick={() => navigate(-1)}>
                     <MdArrowBackIosNew size={24} color="#fff" />
                 </button>
                 <h3 className='h3-white'>내가 읽은 책</h3>

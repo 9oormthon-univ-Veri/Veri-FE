@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { handleSocialLoginCallback, setAccessToken } from '../api/auth';
+import { USE_MOCK_DATA } from '../api/mock';
 
 const OAuthCallbackPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +15,13 @@ const OAuthCallbackPage: React.FC = () => {
     hasRun.current = true;
 
     const processKakaoCallback = async () => {
+      if (USE_MOCK_DATA) {
+        // 목업 모드에서는 콜백 페이지를 거치지 않으므로 바로 홈으로 이동
+        console.log('목업 모드: 콜백 페이지에서 홈으로 이동');
+        navigate('/');
+        return;
+      }
+
       const params = new URLSearchParams(location.search);
       const code = params.get('code');
 

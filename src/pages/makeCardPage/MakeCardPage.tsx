@@ -6,6 +6,7 @@ import GalleryIcon from '../../assets/icons/gallery.svg';
 import CameraIcon from '../../assets/icons/camera.svg';
 
 import { uploadImage } from '../../api/imageApi';
+import Toast from '../../components/Toast';
 
 import './MakeCardPage.css';
 
@@ -20,6 +21,23 @@ const MakeCardPage: React.FC = () => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+    isVisible: boolean;
+  }>({
+    message: '',
+    type: 'info',
+    isVisible: false
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    setToast({ message, type, isVisible: true });
+  };
+
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, isVisible: false }));
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -108,7 +126,7 @@ const MakeCardPage: React.FC = () => {
         setCurrentImageIndex(0);
         console.log('갤러리 이미지 업로드 성공:', uploadedUrl);
       } catch (err: any) {
-        alert(`갤러리 이미지 업로드 실패: ${err.message}`);
+        showToast(`갤러리 이미지 업로드 실패: ${err.message}`, 'error');
         setUploadError(`갤러리 이미지 업로드 실패: ${err.message}`);
       } finally {
         setIsUploading(false);
@@ -305,7 +323,7 @@ const MakeCardPage: React.FC = () => {
                 if (currentDisplayedImage) {
                   processAndNavigateToOcr(currentDisplayedImage);
                 } else {
-                  alert('사용할 이미지를 선택해주세요.');
+                  showToast('사용할 이미지를 선택해주세요.', 'warning');
                 }
               }}
               disabled={isUploading || !imagesToDisplay[currentImageIndex]}
@@ -323,6 +341,12 @@ const MakeCardPage: React.FC = () => {
           onChange={handleFileChange}
         />
       </div>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </div>
   );
 };

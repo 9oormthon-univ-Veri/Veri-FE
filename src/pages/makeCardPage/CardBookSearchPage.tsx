@@ -10,6 +10,7 @@ import { searchBooks } from '../../api/bookSearchApi';
 import { removeAccessToken } from '../../api/auth';
 import { createBook } from '../../api/bookApi';
 import type { CreateBookRequest } from '../../api/bookApi';
+import Toast from '../../components/Toast';
 
 const CardBookSearchPage: React.FC = () => {
     const navigate = useNavigate();
@@ -47,6 +48,23 @@ const CardBookSearchPage: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [toast, setToast] = useState<{
+        message: string;
+        type: 'success' | 'error' | 'warning' | 'info';
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+        setToast({ message, type, isVisible: true });
+    };
+
+    const hideToast = () => {
+        setToast(prev => ({ ...prev, isVisible: false }));
+    };
 
     const lastBookElementRef = useCallback((node: HTMLDivElement | null) => {
         if (loadingMore || isSearching) return;
@@ -120,7 +138,7 @@ const CardBookSearchPage: React.FC = () => {
         } catch (error: any) {
             console.error('책 검색 중 예상치 못한 오류:', error);
             if (error.message === 'TOKEN_EXPIRED') {
-                alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                showToast('세션이 만료되었습니다. 다시 로그인해주세요.', 'error');
                 removeAccessToken();
                 navigate('/login');
             } else {
@@ -212,7 +230,7 @@ const CardBookSearchPage: React.FC = () => {
 
             if (response.isSuccess && response.result?.memberBookId) {
                 setSubmitSuccess(true);
-                alert('책이 성공적으로 등록되었습니다! 독서카드에 추가됩니다.');
+                showToast('책이 성공적으로 등록되었습니다! 독서카드에 추가됩니다.', 'success');
 
                 navigate('/customize-card', {
                     state: {
@@ -333,6 +351,12 @@ const CardBookSearchPage: React.FC = () => {
                     <p className="success-message">책이 성공적으로 등록되었습니다!</p>
                 )}
             </div>
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={hideToast}
+            />
         </div>
     );
 };

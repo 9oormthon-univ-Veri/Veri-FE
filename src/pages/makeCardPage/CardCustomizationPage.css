@@ -55,15 +55,26 @@
 
 .overlay-text {
     position: absolute;
-    bottom: 100px;
-    left: 16px;
-    right: 16px;
     color: #FFF;
     font-family: Pretendard;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
     line-height: 160%;
+    user-select: none;
+    max-width: calc(100% - 32px);
+    padding: 8px;
+    border-radius: 4px;
+    transition: box-shadow 0.2s ease;
+}
+
+.overlay-text:hover {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.overlay-text.dragging {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    z-index: 10;
 }
 
 .option-panel {

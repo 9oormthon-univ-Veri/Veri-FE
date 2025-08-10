@@ -114,14 +114,14 @@
 /* 소식 섹션 */
 .my-page-news-section {
   border-radius: var(--border-radius-small);
-  background: var(--secondary-bg);
+  background: var(--primary-bg);
   margin: var(--spacing-lg);
   padding: 16px var(--spacing-xl) var(--spacing-xl);
   align-items: flex-start;
   gap: var(--spacing-xl);
 }
 
-.section-title {
+.my-page-section-title {
   color: var(--text-dark);
   font-family: Pretendard, sans-serif;
   font-size: 16px;

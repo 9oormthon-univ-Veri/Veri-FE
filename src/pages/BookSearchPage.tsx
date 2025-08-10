@@ -193,7 +193,7 @@ const BookSearchPage: React.FC = () => {
     return (
         <div className="page-container">
             <header className="search-header">
-                <div className="header-left-icon" onClick={() => navigate('/my-bookshelf')}>
+                <div className="header-left-icon" onClick={() => navigate(-1)}>
                     <MdArrowBackIosNew size={24} color="#333" />
                 </div>
                 <form onSubmit={(e) => handleSearch(e, searchTerm)} className="search-input-form">

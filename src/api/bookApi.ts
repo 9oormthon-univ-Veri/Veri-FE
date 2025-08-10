@@ -1,6 +1,16 @@
 // src/api/bookApi.ts
-const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 import { getAccessToken } from './auth';
+import { 
+  USE_MOCK_DATA, 
+  mockDelay, 
+  createMockResponse, 
+  mockBooks, 
+  mockSearchResults, 
+  mockPopularBooks, 
+  mockTodaysRecommendation 
+} from './mock';
+
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // 타입 정의
 export type BookStatus = "NOT_START" | "READING" | "DONE";
@@ -131,9 +141,6 @@ export interface RateBookRequest {
   score: number;
 }
 
-// 설정
-export const USE_MOCK_DATA = false;
-
 // 유틸리티 함수들
 const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
   const accessToken = getAccessToken();
@@ -175,19 +182,6 @@ const makeApiRequest = async <T>(
   return response.json();
 };
 
-const createMockResponse = <T>(
-  result: T, 
-  message: string = 'Mock 성공'
-): BaseApiResponse<T> => ({
-  isSuccess: true,
-  code: '1000',
-  message,
-  result
-});
-
-const mockDelay = (ms: number = 500) => 
-  new Promise(resolve => setTimeout(resolve, ms));
-
 // API 함수들
 export const getAllBooks = async (
   params: GetAllBooksQueryParams
@@ -195,32 +189,11 @@ export const getAllBooks = async (
   if (USE_MOCK_DATA) {
     await mockDelay();
     return createMockResponse({
-      memberBooks: [
-        { 
-          memberBookId: 1, 
-          title: '목 책 1', 
-          author: '목 작가 1', 
-          imageUrl: 'https://placehold.co/100x150?text=My+Book+1', 
-          score: 5, 
-          startedAt: '2025-07-01T10:00:00.000Z', 
-          endedAt: '2025-07-01T10:00:00.000Z', 
-          status: 'READING' 
-        },
-        { 
-          memberBookId: 3, 
-          title: '목 책 3', 
-          author: '목 작가 3', 
-          imageUrl: 'https://placehold.co/100x150?text=My+Book+3', 
-          score: 3, 
-          startedAt: '2025-05-15T10:00:00.000Z', 
-          endedAt: '2025-07-01T10:00:00.000Z', 
-          status: 'DONE' 
-        },
-      ],
+      memberBooks: mockBooks,
       page: params.page || 1,
       size: params.size || 10,
-      totalElements: 3,
-      totalPages: 1,
+      totalElements: mockBooks.length,
+      totalPages: Math.ceil(mockBooks.length / (params.size || 10)),
     }, '목 책장 조회 성공');
   }
 
@@ -235,20 +208,18 @@ export const getAllBooks = async (
 export const getBookById = async (memberBookId: number): Promise<GetBookByIdResponse> => {
   if (USE_MOCK_DATA) {
     await mockDelay();
-    if (memberBookId === 1) {
+    const book = mockBooks.find(b => b.memberBookId === memberBookId);
+    if (book) {
       return createMockResponse({
-        memberBookId,
-        title: `목 책 상세 (ID: ${memberBookId})`,
-        author: '목 작가 상세',
-        imageUrl: 'https://placehold.co/200x300?text=Mock+Book+Detail',
-        status: 'DONE',
-        score: 5,
-        startedAt: '2025-07-01T10:00:00.000Z',
-        endedAt: '2025-07-10T10:00:00.000Z',
-        cardSummaries: [
-          { cardId: 101, cardImage: 'https://placehold.co/100x100?text=Card1' },
-          { cardId: 102, cardImage: 'https://placehold.co/100x100?text=Card2' },
-        ]
+        memberBookId: book.memberBookId,
+        title: book.title,
+        author: book.author,
+        imageUrl: book.imageUrl,
+        status: book.status,
+        score: book.score,
+        startedAt: book.startedAt,
+        endedAt: book.endedAt,
+        cardSummaries: book.cardSummaries || []
       }, '목 책 상세 조회 성공');
     }
     return createMockResponse(null, '책을 찾을 수 없습니다.');
@@ -260,15 +231,10 @@ export const getBookById = async (memberBookId: number): Promise<GetBookByIdResp
 export const searchBooksByTitle = async (query: string): Promise<SearchBooksResponse> => {
   if (USE_MOCK_DATA) {
     await mockDelay();
-    const result = query.toLowerCase().includes('해리') ? [
-      { 
-        title: '해리포터와 마법사의 돌', 
-        author: 'J.K. 롤링', 
-        imageUrl: 'https://placehold.co/100x150?text=Harry+Potter', 
-        publisher: '목 출판사', 
-        isbn: '978-1234567890' 
-      }
-    ] : [];
+    const result = mockSearchResults.filter(book => 
+      book.title.toLowerCase().includes(query.toLowerCase()) ||
+      book.author.toLowerCase().includes(query.toLowerCase())
+    );
     return createMockResponse(result, '목 검색 결과');
   }
 
@@ -283,15 +249,11 @@ export const getPopularBooks = async (
   if (USE_MOCK_DATA) {
     await mockDelay();
     return createMockResponse({
-      books: [
-        { image: 'https://placehold.co/100x150?text=Popular+1', title: '인기 도서 1', author: '인기 작가 1', publisher: '인기 출판사 1', isbn: '1111' },
-        { image: 'https://placehold.co/100x150?text=Popular+2', title: '인기 도서 2', author: '인기 작가 2', publisher: '인기 출판사 2', isbn: '2222' },
-        { image: 'https://placehold.co/100x150?text=Popular+3', title: '인기 도서 3', author: '인기 작가 3', publisher: '인기 출판사 3', isbn: '3333' },
-      ],
+      books: mockPopularBooks,
       page: params.page || 1,
       size: params.size || 10,
-      totalElements: 3,
-      totalPages: 1,
+      totalElements: mockPopularBooks.length,
+      totalPages: Math.ceil(mockPopularBooks.length / (params.size || 10)),
     }, '목 인기 도서 조회 성공');
   }
 
@@ -301,11 +263,21 @@ export const getPopularBooks = async (
   return makeApiRequest<GetPopularBooksResponse>(url.pathname + url.search);
 };
 
+export const getTodaysRecommendation = async (): Promise<GetTodaysRecommendationResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return createMockResponse(mockTodaysRecommendation, '목 오늘의 추천 도서 조회 성공');
+  }
+
+  return makeApiRequest<GetTodaysRecommendationResponse>('/api/v2/bookshelf/recommendation/today');
+};
+
 export const createBook = async (bookData: CreateBookRequest): Promise<CreateBookResponse> => {
   if (USE_MOCK_DATA) {
     await mockDelay();
+    const newBookId = Math.max(...mockBooks.map(b => b.memberBookId)) + 1;
     return createMockResponse({
-      memberBookId: Math.floor(Math.random() * 1000) + 1,
+      memberBookId: newBookId,
       createdAt: new Date().toISOString(),
     }, '목 책 등록 성공');
   }
@@ -379,7 +351,7 @@ export const updateBookContent = async (
 export const getMyBooksCount = async (): Promise<GetMyBooksCountResponse> => {
   if (USE_MOCK_DATA) {
     await mockDelay();
-    return createMockResponse(5, '목 내 책 개수 조회 성공');
+    return createMockResponse(mockBooks.length, '목 내 책 개수 조회 성공');
   }
 
   return makeApiRequest<GetMyBooksCountResponse>('/api/v2/bookshelf/my/count');

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
 import { createCard } from '../../api/cardApi';
 import { getBookById, type GetBookByIdResponse } from '../../api/bookApi';
+import Toast from '../../components/Toast';
 import downIcon from '../../assets/icons/down.svg';
 import instarIcon from '../../assets/icons/instar.svg';
 
@@ -15,6 +16,7 @@ const CardCustomizationCompletePage: React.FC = () => {
     const extractedText = location.state?.extractedText as string | undefined;
     const memberBookId = location.state?.bookId as number | undefined;
     const selectedFont = location.state?.font as string | undefined;
+    const textPosition = location.state?.textPosition as { x: number; y: number } | undefined;
 
     const cardRef = useRef<HTMLDivElement>(null);
     const hasSaved = useRef(false);
@@ -23,6 +25,23 @@ const CardCustomizationCompletePage: React.FC = () => {
     const [saveError, setSaveError] = useState<string | null>(null);
     const [bookTitle, setBookTitle] = useState<string>('책 제목 불러오는 중...');
     const [bookDetail, setBookDetail] = useState<GetBookByIdResponse['result'] | null>(null);
+    const [toast, setToast] = useState<{
+        message: string;
+        type: 'success' | 'error' | 'warning' | 'info';
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+        setToast({ message, type, isVisible: true });
+    };
+
+    const hideToast = () => {
+        setToast(prev => ({ ...prev, isVisible: false }));
+    };
 
     useEffect(() => {
         const fetchBookDetails = async () => {
@@ -63,13 +82,14 @@ const CardCustomizationCompletePage: React.FC = () => {
                     title: bookDetail.title,
                     author: bookDetail.author,
                 },
+                textPosition: textPosition, // 텍스트 위치 정보 추가
             };
             navigate('/download-card', { state: { cardDetail: cardDataForDownloadPage, action: 'download' } });
         } else {
             alert('다운로드 페이지로 이동할 정보를 준비하는 데 실패했습니다. (이미지, 텍스트, 책 정보 확인)');
             console.error('다운로드 페이지 이동 실패: 필수 데이터 누락', { image, extractedText, memberBookId, bookDetail });
         }
-    }, [image, extractedText, memberBookId, bookDetail, navigate]);
+    }, [image, extractedText, memberBookId, bookDetail, navigate, textPosition]);
 
     const handleShare = useCallback(() => {
         if (image && extractedText && memberBookId !== undefined && bookDetail) {
@@ -83,13 +103,14 @@ const CardCustomizationCompletePage: React.FC = () => {
                     title: bookDetail.title,
                     author: bookDetail.author,
                 },
+                textPosition: textPosition, // 텍스트 위치 정보 추가
             };
             navigate('/download-card', { state: { cardDetail: cardDataForDownloadPage, action: 'share' } });
         } else {
             alert('공유 페이지로 이동할 정보를 준비하는 데 실패했습니다. (이미지, 텍스트, 책 정보 확인)');
             console.error('공유 페이지 이동 실패: 필수 데이터 누락', { image, extractedText, memberBookId, bookDetail });
         }
-    }, [image, extractedText, memberBookId, bookDetail, navigate]);
+    }, [image, extractedText, memberBookId, bookDetail, navigate, textPosition]);
 
     const handleSave = useCallback(async () => {
         if (hasSaved.current || isSaving || !extractedText || memberBookId === undefined) {
@@ -118,7 +139,7 @@ const CardCustomizationCompletePage: React.FC = () => {
             });
 
             console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
-            alert('독서카드가 성공적으로 생성 및 저장되었습니다!');
+            showToast('독서카드가 성공적으로 생성 및 저장되었습니다!', 'success');
 
         } catch (saveError: any) {
             console.error('카드 메타데이터 저장 중 오류:', saveError);
@@ -126,7 +147,7 @@ const CardCustomizationCompletePage: React.FC = () => {
         } finally {
             setIsSaving(false);
         }
-    }, [isSaving, extractedText, memberBookId, image]);
+    }, [isSaving, extractedText, memberBookId, image, showToast]);
 
     useEffect(() => {
         if (image && extractedText && memberBookId !== undefined && !hasSaved.current) {
@@ -138,7 +159,7 @@ const CardCustomizationCompletePage: React.FC = () => {
     }, [image, extractedText, memberBookId, navigate, handleSave]);
 
     if (!image || !extractedText || memberBookId === undefined || !bookDetail) {
-        return <div className="page-container">카드 정보를 불러오는 중...</div>;
+        return <div className="loading-page-container">카드 정보를 불러오는 중...</div>;
     }
 
     if (isSaving) {
@@ -196,7 +217,14 @@ const CardCustomizationCompletePage: React.FC = () => {
                                 console.error('Failed to load image for display:', image);
                             }}
                         />
-                        <div className="card-overlay-text" style={{ fontFamily: selectedFont }}>
+                        <div 
+                            className="card-overlay-text" 
+                            style={{ 
+                                fontFamily: selectedFont,
+                                left: textPosition ? `${textPosition.x}px` : '16px',
+                                top: textPosition ? `${textPosition.y}px` : '100px'
+                            }}
+                        >
                             {extractedText}
                         </div>
                     </div>
@@ -209,6 +237,12 @@ const CardCustomizationCompletePage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={hideToast}
+            />
         </div>
     );
 };

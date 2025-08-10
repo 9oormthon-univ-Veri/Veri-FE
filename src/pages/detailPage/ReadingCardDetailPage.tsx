@@ -123,14 +123,29 @@ function ReadingCardDetailPage() {
     }
   };
 
-  const formatDateTime = (isoDate: string) => {
-    const date = new Date(isoDate);
-    const year = date.getFullYear();
-    const month = (`0${date.getMonth() + 1}`).slice(-2);
-    const day = (`0${date.getDate()}`).slice(-2);
-    const hour = (`0${date.getHours()}`).slice(-2);
-    const minute = (`0${date.getMinutes()}`).slice(-2);
-    return `${year}년 ${month}월 ${day}일 ${hour}:${minute}`;
+  const formatDateTime = (isoDate: string | null | undefined) => {
+    if (!isoDate) {
+      return null;
+    }
+    
+    try {
+      const date = new Date(isoDate);
+      
+      // 유효하지 않은 날짜인지 확인
+      if (isNaN(date.getTime())) {
+        return null;
+      }
+      
+      const year = date.getFullYear();
+      const month = (`0${date.getMonth() + 1}`).slice(-2);
+      const day = (`0${date.getDate()}`).slice(-2);
+      const hour = (`0${date.getHours()}`).slice(-2);
+      const minute = (`0${date.getMinutes()}`).slice(-2);
+      return `${year}년 ${month}월 ${day}일 ${hour}:${minute}`;
+    } catch (error) {
+      console.error('날짜 파싱 오류:', error);
+      return null;
+    }
   };
 
   // 기존 handleGoToDownloadPage 유지
@@ -169,7 +184,7 @@ function ReadingCardDetailPage() {
   return (
     <div className="page-container">
       <header className="detail-header">
-        <button className="header-left-arrow" onClick={() => navigate("/reading-card")}>
+        <button className="header-left-arrow" onClick={() => navigate(-1)}>
           <MdArrowBackIosNew size={24} color="#333" />
         </button>
         <h3>나의 독서카드</h3>
@@ -222,7 +237,12 @@ function ReadingCardDetailPage() {
           </button>
 
           <p className="card-content-text">{cardDetail.content}</p>
-          <p className="card-upload-date">{cardDetail.createdAt ? formatDateTime(cardDetail.createdAt) : '업로드일 정보 없음'}</p>
+          <p className="card-upload-date">
+            {(() => {
+              const formattedDate = formatDateTime(cardDetail.createdAt);
+              return formattedDate || '일자가 없습니다';
+            })()}
+          </p>
         </div>
       </div>
 

@@ -1,5 +1,7 @@
 // src/api/auth.ts
 
+import { USE_MOCK_DATA, mockDelay, createMockResponse, mockTokens } from './mock';
+
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // 타입 정의
@@ -34,12 +36,27 @@ const decodeJwt = (token: string): JwtPayload | null => {
     
     const base64Url = parts[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
+    
+    // 더 안전한 디코딩 방법
+    let jsonPayload: string;
+    try {
+      const decoded = atob(base64);
+      jsonPayload = decodeURIComponent(
+        decoded
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+    } catch (decodeError) {
+      // 디코딩 실패 시 더 간단한 방법 시도
+      try {
+        jsonPayload = atob(base64);
+      } catch (simpleError) {
+        console.error("JWT 페이로드 디코딩 실패:", simpleError);
+        return null;
+      }
+    }
+    
     return JSON.parse(jsonPayload);
   } catch (error) {
     console.error("JWT 디코딩 실패:", error);
@@ -48,6 +65,11 @@ const decodeJwt = (token: string): JwtPayload | null => {
 };
 
 const isTokenExpired = (token: string): boolean => {
+  // 목업 모드에서는 토큰 만료 검사 건너뛰기
+  if (USE_MOCK_DATA) {
+    return false;
+  }
+  
   const payload = decodeJwt(token);
   if (!payload?.exp || typeof payload.exp !== 'number') {
     return true; // exp가 없으면 만료된 것으로 간주
@@ -96,15 +118,34 @@ const makeApiRequest = async (endpoint: string, options: RequestInit = {}): Prom
 
 // 공개 API 함수들
 export const handleSocialLoginCallback = async (provider: string, code: string): Promise<string> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return mockTokens.accessToken;
+  }
   return makeApiRequest(`/api/v1/oauth2/${provider}?code=${code}`);
 };
 
 export const fetchTestToken = async (): Promise<string> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return mockTokens.accessToken;
+  }
   return makeApiRequest('/api/v1/oauth2/test-token');
 };
 
 export const getAccessToken = (): string | null => {
   if (typeof window === 'undefined') return null;
+  
+  // 목업 모드에서는 기본 토큰 반환
+  if (USE_MOCK_DATA) {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      // 목업 토큰이 없으면 기본 목업 토큰 설정
+      setAccessToken(mockTokens.accessToken);
+      return mockTokens.accessToken;
+    }
+    return token;
+  }
   
   try {
     const token = localStorage.getItem('accessToken');
@@ -119,6 +160,7 @@ export const getAccessToken = (): string | null => {
     return token;
   } catch (error) {
     console.error('토큰 검증 중 오류:', error);
+    removeAccessToken();
     return null;
   }
 };

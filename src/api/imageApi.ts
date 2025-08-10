@@ -1,4 +1,5 @@
-import { fetchWithAuth, USE_MOCK_DATA } from './cardApi';
+import { fetchWithAuth } from './cardApi';
+import { USE_MOCK_DATA, mockDelay, createMockResponse, mockImageUrl, mockOcrResult } from './mock';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
@@ -41,12 +42,13 @@ const mockOcrResponse: OcrResponse = {
     isSuccess: true,
     code: '1000',
     message: 'Mock OCR successful.',
-    result: '이것은 목업 OCR 결과 텍스트입니다. 실제 이미지에서 추출된 것처럼 보입니다.',
+    result: mockOcrResult,
 };
 
 export async function uploadImage(file: File): Promise<string> {
     if (USE_MOCK_DATA) {
-        return new Promise(resolve => setTimeout(() => resolve("https://mock-direct-upload.example.com/mock-image.jpg"), 500));
+        await mockDelay();
+        return mockImageUrl;
     }
 
     try {
@@ -98,7 +100,8 @@ export async function uploadImage(file: File): Promise<string> {
 
 export async function extractTextFromImage(imageUrl: string): Promise<OcrResponse> {
     if (USE_MOCK_DATA) {
-        return new Promise(resolve => setTimeout(() => resolve(mockOcrResponse), 500));
+        await mockDelay();
+        return mockOcrResponse;
     }
 
     const url = new URL(`${BASE_URL}/api/v0/images/ocr`);

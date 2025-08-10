@@ -1,4 +1,5 @@
 import { fetchWithAuth } from './cardApi';
+import { USE_MOCK_DATA, mockDelay, createMockResponse, mockUser } from './mock';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
@@ -25,6 +26,11 @@ export interface GetMemberProfileResponse {
 }
 
 export async function getMemberProfile(): Promise<GetMemberProfileResponse> {
+    if (USE_MOCK_DATA) {
+        await mockDelay();
+        return createMockResponse(mockUser, '목 사용자 프로필 조회 성공');
+    }
+
     const url = `${BASE_URL}/api/v1/members/me`;
 
     try {

@@ -31,6 +31,7 @@ function DownloadCardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isShareAction, setIsShareAction] = useState(false); // 공유 액션 여부 추가
 
     const getImageUrl = useCallback(() => 
         cardDetail?.imageUrl || DEFAULT_IMAGE_URL, [cardDetail?.imageUrl]
@@ -158,9 +159,15 @@ function DownloadCardPage() {
                 setCardDetail(state.cardDetail);
                 setIsLoading(false);
                 
+                // 공유 액션 감지
                 if (state.action === 'share') {
-                    setTimeout(() => handleShare(), 100);
+                    setIsShareAction(true);
                 }
+                
+                // setTimeout 제거 - 사용자가 직접 공유 버튼을 클릭하도록 함
+                // if (state.action === 'share') {
+                //     setTimeout(() => handleShare(), 100);
+                // }
             } else if (state?.cardId) {
                 await handleCardDataLoad(state.cardId, state.action);
             } else {
@@ -170,7 +177,7 @@ function DownloadCardPage() {
         };
 
         loadCardData();
-    }, [location.state, handleCardDataLoad, handleShare]);
+    }, [location.state, handleCardDataLoad]);
 
     if (isLoading || isProcessing) {
         return (
@@ -256,10 +263,17 @@ function DownloadCardPage() {
                     <span>다운로드</span>
                 </button>
                 <button
-                    className="download-button"
+                    className={`download-button ${isShareAction ? 'share-highlight' : ''}`}
                     onClick={handleShare}
                     disabled={isProcessing || isLoading}
-                    style={{ marginLeft: '10px' }}
+                    style={{ 
+                        marginLeft: '10px',
+                        ...(isShareAction && {
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            animation: 'pulse 2s infinite'
+                        })
+                    }}
                 >
                     <FiShare2 size={24} />
                     <span>공유하기</span>

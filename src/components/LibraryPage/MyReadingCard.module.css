@@ -80,12 +80,12 @@
     word-wrap: break-word;
     white-space: normal;
     display: -webkit-box;             /* ✅ 이거 꼭 있어야 줄 제한이 작동해요 */
-    -webkit-line-clamp: 2;            /* ✅ 3줄까지만 보여줌 */
+    -webkit-line-clamp: 2;            /* ✅ 2줄까지만 보여줌 */
     -webkit-box-orient: vertical;     /* ✅ 수직 방향으로 박스 설정 */
     overflow: hidden;                 /* ✅ 넘치는 텍스트 숨김 */
     text-overflow: ellipsis;          /* ✅ 생략 부호 (...) */
     
-    height: 3.2em;
+    height: 2.8em;                    /* ✅ 2줄에 맞는 높이로 조정 */
     margin: 0;
     font-weight: normal;
   }
