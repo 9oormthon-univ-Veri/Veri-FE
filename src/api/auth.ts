@@ -1,6 +1,6 @@
 // src/api/auth.ts
 
-import { USE_MOCK_DATA, mockDelay, createMockResponse, mockTokens } from './mock';
+import { USE_MOCK_DATA, mockDelay, mockTokens } from './mock';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 

@@ -1,5 +1,5 @@
 import { fetchWithAuth } from './cardApi';
-import { USE_MOCK_DATA, mockDelay, createMockResponse, mockImageUrl, mockOcrResult } from './mock';
+import { USE_MOCK_DATA, mockDelay, mockImageUrl, mockOcrResult } from './mock';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
