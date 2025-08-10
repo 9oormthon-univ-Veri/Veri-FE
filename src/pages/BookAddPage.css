@@ -8,7 +8,6 @@
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
-    /* 하단 여백 (버튼 등을 고려) */
     position: relative;
     /* 자식 요소의 absolute 위치를 위해 */
 }
