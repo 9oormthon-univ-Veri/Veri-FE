@@ -99,6 +99,25 @@ export interface CreateCardResponse {
   };
 }
 
+export interface UpdateCardRequest {
+  content: string;
+  imageUrl: string;
+}
+
+export interface UpdateCardResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    id: number;
+    content: string;
+    imageUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    book: CardBookDetail | null;
+  };
+}
+
 export interface GetPresignedUrlRequest {
   contentType: string;
   contentLength: number;
@@ -345,6 +364,44 @@ export async function getMyCardsCount(): Promise<GetMyCardsCountResponse> {
     return data;
   } catch (error) {
     console.error('내 독서카드 개수 조회 중 오류:', error);
+    throw error;
+  }
+}
+
+export async function updateCard(cardId: number, body: UpdateCardRequest): Promise<UpdateCardResponse> {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return createMockResponse({
+      id: cardId,
+      content: body.content,
+      imageUrl: body.imageUrl,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      book: {
+        id: 1,
+        title: '해리포터와 마법사의 돌',
+        coverImageUrl: 'https://placehold.co/100x150?text=BookCover',
+        author: 'J.K. 롤링',
+      },
+    }, '목 독서카드 수정 성공');
+  }
+
+  const url = `${BASE_URL}/api/v1/cards/${cardId}`;
+
+  try {
+    const response = await fetchWithAuth(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const data: UpdateCardResponse = await response.json();
+    if (!data.isSuccess) {
+      throw new Error(data.message || '카드 수정에 실패했습니다.');
+    }
+    return data;
+  } catch (error) {
+    console.error('카드 수정 중 오류:', error);
     throw error;
   }
 }

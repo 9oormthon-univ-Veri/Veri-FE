@@ -1,7 +1,7 @@
 // src/api/mock.ts
 
 // 목업 데이터 설정
-export const USE_MOCK_DATA = false; // 개발 시 true로 설정
+export const USE_MOCK_DATA = true; // 개발 시 true로 설정
 
 // 공통 응답 타입
 export interface MockApiResponse<T> {

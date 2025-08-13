@@ -8,6 +8,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 import { getCardDetailById, deleteCard, type Card } from '../../api/cardApi';
+import ReadingCardEditModal from '../../components/ReadingCardEditModal';
 import './ReadingCardDetailPage.css';
 
 function ReadingCardDetailPage() {
@@ -20,6 +21,7 @@ function ReadingCardDetailPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -112,8 +114,37 @@ function ReadingCardDetailPage() {
   const handleEditCard = useCallback(() => {
     if (!cardDetail) return;
     setMenuOpen(false);
-    alert('독서 카드 수정 기능은 아직 구현되지 않았습니다.');
+    setEditModalOpen(true);
   }, [cardDetail]);
+
+  const handleUpdateSuccess = useCallback(() => {
+    // 카드 수정 성공 후 상세 정보를 다시 불러옴
+    if (id) {
+      const fetchCardDetail = async (cardId: number) => {
+        try {
+          const response = await getCardDetailById(cardId);
+          if (response.isSuccess && response.result) {
+            const bookData = response.result.book;
+            setCardDetail({
+              cardId: response.result.id,
+              content: response.result.content,
+              imageUrl: response.result.imageUrl,
+              createdAt: response.result.createdAt,
+              book: bookData ? {
+                id: bookData.id,
+                title: bookData.title,
+                coverImageUrl: bookData.coverImageUrl,
+                author: bookData.author,
+              } : null,
+            });
+          }
+        } catch (err) {
+          console.error('카드 정보 업데이트 후 재로드 중 오류:', err);
+        }
+      };
+      fetchCardDetail(Number(id));
+    }
+  }, [id]);
 
   const handleBookTitleClick = () => {
     if (cardDetail && cardDetail.book && cardDetail.book.id) {
@@ -257,6 +288,20 @@ function ReadingCardDetailPage() {
           <span>공유하기</span>
         </button>
       </div>
+
+      {/* 독서 카드 수정 모달 */}
+      {cardDetail && (
+        <ReadingCardEditModal
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          cardId={cardDetail.cardId}
+          defaultContent={cardDetail.content}
+          defaultImageUrl={cardDetail.imageUrl}
+          bookTitle={cardDetail.book?.title || '책 정보 없음'}
+          bookAuthor={cardDetail.book?.author || '저자 정보 없음'}
+          onUpdateSuccess={handleUpdateSuccess}
+        />
+      )}
     </div>
   );
 }
