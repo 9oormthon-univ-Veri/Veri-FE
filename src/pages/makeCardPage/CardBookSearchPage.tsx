@@ -8,7 +8,7 @@ import './CardBookSearchPage.css';
 import type { BookItem, BookSearchResponseResult } from '../../api/bookSearchApi';
 import { searchBooks } from '../../api/bookSearchApi';
 import { removeAccessToken } from '../../api/auth';
-import { createBook } from '../../api/bookApi';
+import { createBook, searchMyBook } from '../../api/bookApi';
 import type { CreateBookRequest } from '../../api/bookApi';
 import Toast from '../../components/Toast';
 
@@ -218,31 +218,50 @@ const CardBookSearchPage: React.FC = () => {
         }
 
         try {
-            const payload: CreateBookRequest = {
+            // 먼저 내 책장에서 동일한 제목과 저자의 책이 있는지 검색
+            const searchResponse = await searchMyBook({
                 title: book.title.trim(),
-                image: book.imageUrl.trim(),
                 author: book.author.trim(),
-                publisher: book.publisher.trim(),
-                isbn: book.isbn.trim(),
-            };
+            });
 
-            const response = await createBook(payload);
+            let memberBookId: number;
 
-            if (response.isSuccess && response.result?.memberBookId) {
-                setSubmitSuccess(true);
-                showToast('책이 성공적으로 등록되었습니다! 독서카드에 추가됩니다.', 'success');
-
-                navigate('/customize-card', {
-                    state: {
-                        image: initialImage,
-                        extractedText: initialExtractedText,
-                        selectedBookId: response.result.memberBookId,
-                        selectedBookTitle: book.title,
-                    }
-                });
+            if (searchResponse.isSuccess && searchResponse.result > 0) {
+                // 기존 책이 있으면 해당 책 ID 사용
+                memberBookId = searchResponse.result;
+                showToast('기존 책에 독서카드가 추가됩니다.', 'info');
             } else {
-                setSubmitError(response.message || '책 등록에 실패했습니다.');
+                // 기존 책이 없으면 새로 생성
+                const payload: CreateBookRequest = {
+                    title: book.title.trim(),
+                    image: book.imageUrl.trim(),
+                    author: book.author.trim(),
+                    publisher: book.publisher.trim(),
+                    isbn: book.isbn.trim(),
+                };
+
+                const createResponse = await createBook(payload);
+
+                if (!createResponse.isSuccess || !createResponse.result?.memberBookId) {
+                    setSubmitError(createResponse.message || '책 등록에 실패했습니다.');
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                memberBookId = createResponse.result.memberBookId;
+                showToast('새로운 책이 등록되었습니다! 독서카드에 추가됩니다.', 'success');
             }
+
+            setSubmitSuccess(true);
+
+            navigate('/customize-card', {
+                state: {
+                    image: initialImage,
+                    extractedText: initialExtractedText,
+                    selectedBookId: memberBookId,
+                    selectedBookTitle: book.title,
+                }
+            });
         } catch (err: any) {
             console.error('책 등록 중 예상치 못한 오류:', err);
             setSubmitError('책 등록 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));

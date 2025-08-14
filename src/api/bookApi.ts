@@ -102,6 +102,7 @@ export type CreateBookResponse = BaseApiResponse<{
 export type DeleteBookResponse = BaseApiResponse<Record<string, never>>;
 export type UpdateBookStatusResponse = BaseApiResponse<Record<string, never>>;
 export type GetMyBooksCountResponse = BaseApiResponse<number>;
+export type SearchMyBookResponse = BaseApiResponse<number>;
 
 // 쿼리 파라미터 타입들
 export interface GetAllBooksQueryParams {
@@ -113,6 +114,11 @@ export interface GetAllBooksQueryParams {
 export interface GetPopularBooksQueryParams {
   page?: number;
   size?: number;
+}
+
+export interface SearchMyBookQueryParams {
+  title: string;
+  author: string;
 }
 
 export interface CreateBookRequest {
@@ -370,4 +376,28 @@ export const updateBookStatus = async (
     method: 'PATCH',
     body: JSON.stringify(data),
   });
+};
+
+export const searchMyBook = async (
+  params: SearchMyBookQueryParams
+): Promise<SearchMyBookResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    // Mock 데이터에서 제목과 저자로 검색
+    const foundBook = mockBooks.find(book => 
+      book.title.toLowerCase().includes(params.title.toLowerCase()) &&
+      book.author.toLowerCase().includes(params.author.toLowerCase())
+    );
+    
+    if (foundBook) {
+      return createMockResponse(foundBook.memberBookId, '목 내 책장 검색 성공');
+    }
+    return createMockResponse(0, '검색 결과가 없습니다.', 'BOOK404');
+  }
+
+  const url = new URL('/api/v2/bookshelf/my/search', BASE_URL);
+  url.searchParams.append('title', params.title);
+  url.searchParams.append('author', params.author);
+  
+  return makeApiRequest<SearchMyBookResponse>(url.pathname + url.search);
 };
