@@ -3,7 +3,7 @@ name: Deploy Frontend Preview
 on:
   push:
     branches:
-      - "prod"
+      - "**"
 
 jobs:
   deploy:
@@ -12,7 +12,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Check if commit message contains '#prod'
+        id: check_commit
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"#prod"* ]]; then
+            echo "Commit message contains '#prod'"
+            echo "deploy=true" >> $GITHUB_ENV
+          else
+            echo "Commit message does not contain '#preview'"
+            echo "deploy=false" >> $GITHUB_ENV
+          fi
+
       - name: Build React App
+        if: env.deploy == 'true'
         # env:
         run: |
           cd ${{ github.workspace }}
