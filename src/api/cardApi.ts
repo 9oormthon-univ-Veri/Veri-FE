@@ -390,7 +390,7 @@ export async function updateCard(cardId: number, body: UpdateCardRequest): Promi
 
   try {
     const response = await fetchWithAuth(url, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
