@@ -3,7 +3,7 @@ import { MdClose } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
 import { createCard } from '../../api/cardApi';
-import { getBookById, searchMyBook, type GetBookByIdResponse } from '../../api/bookApi';
+import { getBookById, type GetBookByIdResponse } from '../../api/bookApi';
 import Toast from '../../components/Toast';
 import downIcon from '../../assets/icons/down.svg';
 import instarIcon from '../../assets/icons/instar.svg';

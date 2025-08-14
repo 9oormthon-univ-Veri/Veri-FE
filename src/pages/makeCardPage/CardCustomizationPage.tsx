@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationPage.css';
 import Toast from '../../components/Toast';
-import { searchMyBook } from '../../api/bookApi';
 
 import PicFillIconSVG from '../../assets/icons/customize-page/pic_fill.svg?react';
 import FontSizeFillIconSVG from '../../assets/icons/customize-page/font_size_fill.svg?react';
