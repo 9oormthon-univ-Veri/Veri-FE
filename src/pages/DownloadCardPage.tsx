@@ -20,6 +20,11 @@ const HTML2CANVAS_OPTIONS = {
     scale: 2,
     logging: true,
     imageTimeout: 15000,
+    allowTaint: true,
+    backgroundColor: null,
+    width: 350,
+    height: 500,
+    foreignObjectRendering: false,
 };
 
 function DownloadCardPage() {
@@ -83,8 +88,36 @@ function DownloadCardPage() {
         
         setIsProcessing(true);
         try {
-            const canvas = await html2canvas(cardContentRef.current, HTML2CANVAS_OPTIONS);
-            const dataUrl = canvas.toDataURL('image/png');
+            // 카드 미리보기 컨테이너만 캡처 (블러 배경 제외)
+            const cardPreviewElement = cardContentRef.current.querySelector('.download-card-preview-container');
+            if (!cardPreviewElement) {
+                throw new Error('카드 미리보기 요소를 찾을 수 없습니다.');
+            }
+
+            // 블러 배경을 임시로 숨김
+            const blurBackground = cardContentRef.current.querySelector('.download-card-blurred-background') as HTMLElement;
+            const originalDisplay = blurBackground?.style.display;
+            if (blurBackground) {
+                blurBackground.style.display = 'none';
+            }
+
+            const canvas = await html2canvas(cardPreviewElement as HTMLElement, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                foreignObjectRendering: false,
+                imageTimeout: 15000,
+                logging: false,
+                removeContainer: true,
+            });
+
+            // 블러 배경을 다시 표시
+            if (blurBackground) {
+                (blurBackground as HTMLElement).style.display = originalDisplay || '';
+            }
+            
+            const dataUrl = canvas.toDataURL('image/png', 1.0);
 
             const link = document.createElement('a');
             link.href = dataUrl;
@@ -110,7 +143,34 @@ function DownloadCardPage() {
         
         setIsProcessing(true);
         try {
-            const canvas = await html2canvas(cardContentRef.current, { useCORS: true });
+            // 카드 미리보기 컨테이너만 캡처 (블러 배경 제외)
+            const cardPreviewElement = cardContentRef.current.querySelector('.download-card-preview-container');
+            if (!cardPreviewElement) {
+                throw new Error('카드 미리보기 요소를 찾을 수 없습니다.');
+            }
+
+            // 블러 배경을 임시로 숨김
+            const blurBackground = cardContentRef.current.querySelector('.download-card-blurred-background') as HTMLElement;
+            const originalDisplay = blurBackground?.style.display;
+            if (blurBackground) {
+                blurBackground.style.display = 'none';
+            }
+
+            const canvas = await html2canvas(cardPreviewElement as HTMLElement, { 
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                foreignObjectRendering: false,
+                imageTimeout: 15000,
+                logging: false,
+                removeContainer: true,
+            });
+
+            // 블러 배경을 다시 표시
+            if (blurBackground) {
+                blurBackground.style.display = originalDisplay || '';
+            }
             
             canvas.toBlob(async (blob) => {
                 if (!blob) {
@@ -210,7 +270,7 @@ function DownloadCardPage() {
                 <button className="header-left-arrow" onClick={() => navigate("/reading-card")}>
                     <MdArrowBackIosNew size={24} color="#333" />
                 </button>
-                <h3>다운로드</h3>
+                <h3>독서카드 다운로드</h3>
                 <div className="header-right-placeholder"></div>
             </header>
 
@@ -253,27 +313,19 @@ function DownloadCardPage() {
                 </div>
             </div>
 
-            <div className="download-action-button-wrapper">
-                <button
-                    className="download-button"
-                    onClick={handleDownload}
+            <div className="action-buttons-container-revised">
+                <button 
+                    className="action-button-revised download-button-revised" 
+                    onClick={handleDownload} 
                     disabled={isProcessing || isLoading}
                 >
                     <FiDownload size={24} />
                     <span>다운로드</span>
                 </button>
-                <button
-                    className={`download-button ${isShareAction ? 'share-highlight' : ''}`}
-                    onClick={handleShare}
+                <button 
+                    className="action-button-revised share-button-revised" 
+                    onClick={handleShare} 
                     disabled={isProcessing || isLoading}
-                    style={{ 
-                        marginLeft: '10px',
-                        ...(isShareAction && {
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            animation: 'pulse 2s infinite'
-                        })
-                    }}
                 >
                     <FiShare2 size={24} />
                     <span>공유하기</span>

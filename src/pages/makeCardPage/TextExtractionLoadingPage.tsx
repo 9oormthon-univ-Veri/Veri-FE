@@ -81,9 +81,14 @@ const TextExtractionLoadingPage: React.FC = () => {
                     const extractedText = response.result;
 
                     if (!extractedText || extractedText.trim().length === 0) {
-                        showToast('이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.', 'warning');
                         sessionStorage.removeItem(processingKey);
-                        navigate('/make-card', { replace: true });
+                        navigate('/make-card', { 
+                            replace: true,
+                            state: { 
+                                errorMessage: '이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.',
+                                errorType: 'warning'
+                            }
+                        });
                         return;
                     }
 

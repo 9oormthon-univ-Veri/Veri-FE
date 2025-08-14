@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
 
 import GalleryIcon from '../../assets/icons/gallery.svg';
@@ -12,6 +12,7 @@ import './MakeCardPage.css';
 
 const MakeCardPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedGalleryImage, setSelectedGalleryImage] = useState<string | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -42,6 +43,18 @@ const MakeCardPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // 전달받은 에러 메시지 처리
+  useEffect(() => {
+    const errorMessage = location.state?.errorMessage as string | undefined;
+    const errorType = location.state?.errorType as 'success' | 'error' | 'warning' | 'info' | undefined;
+    
+    if (errorMessage) {
+      showToast(errorMessage, errorType || 'warning');
+      // 에러 메시지를 표시한 후 state를 정리
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate]);
 
   const allAvailableImages = [];
   if (capturedImage) allAvailableImages.push(capturedImage);

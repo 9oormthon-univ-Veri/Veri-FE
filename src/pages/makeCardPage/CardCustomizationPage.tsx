@@ -69,11 +69,43 @@ const CardCustomizationPage: React.FC = () => {
     const [textPosition, setTextPosition] = useState({ x: 16, y: 100 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+    const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
     const getBackgroundImage = () => {
         if (selectedBackground === 'uploaded') return image;
         const found = defaultBackgrounds.find((bg) => bg.label === selectedBackground);
         return found?.url || image;
+    };
+
+    // 이미지 크기 계산 함수
+    const calculateImageDimensions = (imageUrl: string) => {
+        const img = new Image();
+        img.onload = () => {
+            const container = document.querySelector('.custom-card-preview') as HTMLElement;
+            if (container) {
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                
+                // 이미지 비율 계산
+                const imageRatio = img.width / img.height;
+                const containerRatio = containerWidth / containerHeight;
+                
+                let displayWidth, displayHeight;
+                
+                if (imageRatio > containerRatio) {
+                    // 이미지가 더 넓은 경우
+                    displayWidth = containerWidth;
+                    displayHeight = containerWidth / imageRatio;
+                } else {
+                    // 이미지가 더 높은 경우
+                    displayHeight = containerHeight;
+                    displayWidth = containerHeight * imageRatio;
+                }
+                
+                setImageDimensions({ width: displayWidth, height: displayHeight });
+            }
+        };
+        img.src = imageUrl;
     };
 
     useEffect(() => {
@@ -83,6 +115,14 @@ const CardCustomizationPage: React.FC = () => {
             navigate('/make-card', { replace: true });
         }
     }, [image, extractedText, navigate, isBlocked]);
+
+    // 배경 이미지가 변경될 때마다 이미지 크기 계산
+    useEffect(() => {
+        const currentImage = getBackgroundImage();
+        if (currentImage) {
+            calculateImageDimensions(currentImage);
+        }
+    }, [selectedBackground, image]);
 
     if (isBlocked) {
         return null;
@@ -119,13 +159,21 @@ const CardCustomizationPage: React.FC = () => {
         const newX = e.clientX - container.left - dragOffset.x;
         const newY = e.clientY - container.top - dragOffset.y;
         
-        // 카드 영역 내에서만 이동 가능하도록 제한
-        const maxX = container.width - 200; // 텍스트 너비 고려
-        const maxY = container.height - 100; // 텍스트 높이 고려
+        // 이미지 크기에 맞춰서 드래그 범위 제한
+        const textElement = document.querySelector('.overlay-text') as HTMLElement;
+        const textWidth = textElement ? textElement.offsetWidth : 200;
+        const textHeight = textElement ? textElement.offsetHeight : 100;
+        
+        // 이미지가 표시되는 실제 영역 계산
+        const imageLeft = (container.width - imageDimensions.width) / 2;
+        const imageTop = (container.height - imageDimensions.height) / 2;
+        
+        const maxX = imageLeft + imageDimensions.width - textWidth;
+        const maxY = imageTop + imageDimensions.height - textHeight;
         
         setTextPosition({
-            x: Math.max(0, Math.min(newX, maxX)),
-            y: Math.max(0, Math.min(newY, maxY))
+            x: Math.max(imageLeft, Math.min(newX, maxX)),
+            y: Math.max(imageTop, Math.min(newY, maxY))
         });
     };
 
@@ -144,7 +192,7 @@ const CardCustomizationPage: React.FC = () => {
         
         // 책을 선택하지 않은 경우 사용자에게 알림
         if (!selectedBookId) {
-            const shouldContinue = confirm('책을 선택하지 않으셨습니다. 목업 모드에서는 기본 책으로 저장됩니다. 계속하시겠습니까?');
+            const shouldContinue = confirm('책을 선택하지 않으셨습니다.');
             if (!shouldContinue) {
                 return;
             }
