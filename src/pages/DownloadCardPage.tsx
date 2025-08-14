@@ -15,17 +15,6 @@ interface LocationState {
 }
 
 const DEFAULT_IMAGE_URL = 'https://placehold.co/300x400?text=No+Card+Image';
-const HTML2CANVAS_OPTIONS = {
-    useCORS: true,
-    scale: 2,
-    logging: true,
-    imageTimeout: 15000,
-    allowTaint: true,
-    backgroundColor: null,
-    width: 350,
-    height: 500,
-    foreignObjectRendering: false,
-};
 
 function DownloadCardPage() {
     const navigate = useNavigate();
@@ -36,7 +25,7 @@ function DownloadCardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [isShareAction, setIsShareAction] = useState(false); // 공유 액션 여부 추가
+
 
     const getImageUrl = useCallback(() => 
         cardDetail?.imageUrl || DEFAULT_IMAGE_URL, [cardDetail?.imageUrl]
@@ -70,10 +59,6 @@ function DownloadCardPage() {
                 };
                 
                 setCardDetail(newCardDetail);
-                
-                if (action === 'share') {
-                    setTimeout(() => handleShare(), 100);
-                }
             } else {
                 setError(response.message || "독서 카드 상세 정보를 가져오는데 실패했습니다.");
             }
@@ -218,16 +203,6 @@ function DownloadCardPage() {
             if (state?.cardDetail) {
                 setCardDetail(state.cardDetail);
                 setIsLoading(false);
-                
-                // 공유 액션 감지
-                if (state.action === 'share') {
-                    setIsShareAction(true);
-                }
-                
-                // setTimeout 제거 - 사용자가 직접 공유 버튼을 클릭하도록 함
-                // if (state.action === 'share') {
-                //     setTimeout(() => handleShare(), 100);
-                // }
             } else if (state?.cardId) {
                 await handleCardDataLoad(state.cardId, state.action);
             } else {
