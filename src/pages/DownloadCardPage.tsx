@@ -40,7 +40,7 @@ function DownloadCardPage() {
         [getBookTitle, cardDetail?.cardId]
     );
 
-    const handleCardDataLoad = useCallback(async (cardId: number, action?: string) => {
+    const handleCardDataLoad = useCallback(async (cardId: number) => {
         try {
             const response = await getCardDetailById(cardId);
             
@@ -204,7 +204,7 @@ function DownloadCardPage() {
                 setCardDetail(state.cardDetail);
                 setIsLoading(false);
             } else if (state?.cardId) {
-                await handleCardDataLoad(state.cardId, state.action);
+                await handleCardDataLoad(state.cardId);
             } else {
                 setError("다운로드할 독서 카드 정보가 제공되지 않았습니다. 이전 페이지에서 다시 시도해주세요.");
             }
