@@ -192,7 +192,7 @@ function ReadingCardDetailPage() {
   if (isLoading || isProcessing) {
     return (
       <div className="loading-page-container">
-        <p>{isProcessing ? '처리 중...' : '독서 카드 상세 정보를 불러오는 중...'}</p>
+        <p>{isProcessing ? '처리 중..' : '독서 카드 상세 정보를 불러오는 중..'}</p>
       </div>
     );
   }
