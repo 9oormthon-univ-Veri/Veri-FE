@@ -6,7 +6,6 @@ import BottomEditModal from '../../components/BottomEditModal'; // ✨ 경로 �
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import backIcon from '../../assets/icons/back.svg';
 import {
     getBookById,
     deleteBook,

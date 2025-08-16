@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './MyBookshelfPage.css';
-import { MdArrowBackIosNew } from 'react-icons/md';
 import starFillIcon from '../assets/icons/star_fill.svg';
 import starLineIcon from '../assets/icons/star_line.svg';
 

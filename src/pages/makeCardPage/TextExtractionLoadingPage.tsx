@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { MdArrowBackIosNew } from 'react-icons/md';
 import { extractTextFromImage } from '../../api/ocrApi';
 import Toast from '../../components/Toast';
 

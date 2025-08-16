@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MdClose } from 'react-icons/md';
 
 import GalleryIcon from '../../assets/icons/gallery.svg';
 import CameraIcon from '../../assets/icons/camera.svg';

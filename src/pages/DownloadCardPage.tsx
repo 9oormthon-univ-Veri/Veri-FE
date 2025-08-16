@@ -2,7 +2,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import html2canvas from 'html2canvas';
-import { MdArrowBackIosNew } from 'react-icons/md';
 import { FiDownload, FiShare2 } from 'react-icons/fi';
 
 import { getCardDetailById, type Card } from '../api/cardApi';

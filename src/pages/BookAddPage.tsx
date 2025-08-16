@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useCallback } from 'react'; // useState는 isSubmitting, submitError, submitSuccess 때문에 남겨둡니다.
 import { useLocation, useNavigate } from 'react-router-dom';
 import './BookAddPage.css'; // CSS 파일 임포트 유지
-import { MdArrowBackIosNew } from 'react-icons/md';
 
 // 새로운 책 등록을 위한 API 함수와 타입을 bookApi.ts에서 임포트
 import {
