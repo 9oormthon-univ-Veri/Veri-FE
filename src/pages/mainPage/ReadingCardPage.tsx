@@ -176,9 +176,9 @@ function ReadingCardPage() {
                     <span 
                         className="sort-button" 
                         onClick={handleSortClick}
-                        data-arrow={sortOrder === 'newest' ? '∨' : '∧'}
                     >
                         {sortOrder === 'newest' ? '최신순' : '오래된순'}
+                        <span className={sortOrder === 'newest' ? 'mgc_down_fill' : 'mgc_up_fill'}></span>
                     </span>
                 </div>
 

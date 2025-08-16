@@ -29,19 +29,6 @@
     text-align: center;
 }
 
-.download-header .header-left-arrow {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    z-index: 1;
-}
-
 .download-header .header-right-placeholder {
     width: 40px;
     height: 40px;

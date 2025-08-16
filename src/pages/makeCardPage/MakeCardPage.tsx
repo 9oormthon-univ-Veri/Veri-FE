@@ -255,7 +255,9 @@ const MakeCardPage: React.FC = () => {
       <div className="make-card-page">
         <header className="detail-header">
           <button className="header-left-arrow" onClick={() => navigate("/reading-card")}>
-            <MdClose size={24} color="#333" />
+          <span
+                        className="mgc_left_fill"
+                    ></span>
           </button>
           <h3>독서카드 만들기</h3>
           <div className="dummy-box" />

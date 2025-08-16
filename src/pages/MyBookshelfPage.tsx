@@ -135,7 +135,9 @@ function MyBookshelfPage() {
     <div className="page-container">
       <header className="detail-header">
         <button className="header-left-arrow" onClick={() => navigate("/")}>
-          <MdArrowBackIosNew size={24} color="#333" />
+          <span
+            className="mgc_left_fill"
+          ></span>
         </button>
         <h3>나의책장</h3>
         <div className="dummy-box"></div>
@@ -144,12 +146,12 @@ function MyBookshelfPage() {
       <div className="header-margin"></div>
 
       <div className="sort-options">
-        <span 
-          className="sort-button" 
+        <span
+          className="sort-button"
           onClick={handleSortClick}
-          data-arrow={sortOrder === 'newest' ? '∨' : '∧'}
         >
           {sortOrder === 'newest' ? '최신순' : '오래된순'}
+          <span className={sortOrder === 'newest' ? 'mgc_down_fill' : 'mgc_up_fill'}></span>
         </span>
       </div>
 

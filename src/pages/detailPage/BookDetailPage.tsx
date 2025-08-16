@@ -207,8 +207,10 @@ function BookDetailPage() {
     return (
         <div className="page-container">
             <header className="detail-header">
-                <button className="header-left-arrow" onClick={() => navigate(-1)}>
-                    <img src={backIcon} alt="Back" className="back-icon" />
+                <button className="white-header-left-arrow" onClick={() => navigate(-1)}>
+                    <span
+                        className="mgc_left_fill"
+                    ></span>
                 </button>
                 <h3 className='h3-white'>내가 읽은 책</h3>
                 <div className="header-right-wrapper">

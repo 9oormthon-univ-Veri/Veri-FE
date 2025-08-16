@@ -73,13 +73,20 @@
 }
 
 .card-book-title {
-    font-size: 1.0em;
+    font-size: 15px;
     text-align: left;
     margin-top: 0px;
     margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
 }
 
 .card-date {
+    width: 100%;
     font-size: 0.8em;
     color: #999;
 }

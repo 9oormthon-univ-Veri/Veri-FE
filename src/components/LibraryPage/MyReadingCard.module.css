@@ -34,15 +34,16 @@
 .horizontalScrollContainer { /* MyReadingCard.module.css 내에서 고유한 이름으로 */
     display: flex;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
     -ms-overflow-style: none;
+    scrollbar-width: none;
     min-height: 150px; /* 컨테이너 최소 높이 추가 */
-    align-items: center; /* 세로 중앙 정렬 */
+    align-items: flex-start; /* 상단 정렬로 변경 */
+    padding: 0 4px; /* 좌우 패딩 추가 */
+    gap: 10px;
 }
 
 .horizontalScrollContainer::-webkit-scrollbar {
-    
+    width: 100%;
     display: none;
 }
 
@@ -50,7 +51,7 @@
 /* --- 개별 독서카드 아이템 (LibraryPage.css와 동일한 스타일) --- */
 .readingCardItem { /* MyReadingCard.module.css 내에서 고유한 이름으로 */
     flex-shrink: 0;
-    width: 160px;
+    width: 125px; /* 고정 너비로 변경 */
     text-align: start;
     display: flex;             /* 이미지-텍스트 세로 정렬을 위한 Flexbox */
     flex-direction: column;    /* 세로 방향 정렬 */
@@ -89,6 +90,7 @@
     overflow: hidden;                 /* ✅ 넘치는 텍스트 숨김 */
     text-overflow: ellipsis;          /* ✅ 생략 부호 (...) */
     
+    width: 125px;
     height: 2.8em;                    /* ✅ 2줄에 맞는 높이로 조정 */
     margin: 0;
     font-weight: normal;

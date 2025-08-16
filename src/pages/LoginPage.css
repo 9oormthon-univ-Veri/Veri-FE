@@ -1,26 +1,14 @@
 /* LoginPage 스타일 */
 
-.login-page-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    min-height: 100vh;
-    width: 100%;
-    max-width: 450px;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #fff;
-}
-
 .login-content-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    min-height: 100vh;
     width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .login-buttons-container {
@@ -34,6 +22,7 @@
     flex-direction: column;
     gap: 12px;
     padding-bottom: 50px;
+    margin-bottom: 20px;
 }
 
 /* 소셜 로그인 버튼 공통 스타일 */

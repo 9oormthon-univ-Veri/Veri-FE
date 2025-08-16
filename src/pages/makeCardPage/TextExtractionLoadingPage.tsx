@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MdArrowBackIosNew } from 'react-icons/md';
-import { extractTextFromImage } from '../../api/imageApi';
+import { extractTextFromImage } from '../../api/ocrApi';
 import Toast from '../../components/Toast';
 
 import './TextExtractionLoadingPage.css';
@@ -45,7 +45,7 @@ const TextExtractionLoadingPage: React.FC = () => {
             // 중복 처리 방지를 위한 세션스토리지 체크
             const processingKey = `ocr_processing_${image}`;
             const isProcessing = sessionStorage.getItem(processingKey);
-            
+
             if (isProcessing) {
                 // 이미 처리 중이거나 완료된 경우
                 const result = sessionStorage.getItem(`ocr_result_${image}`);
@@ -75,62 +75,45 @@ const TextExtractionLoadingPage: React.FC = () => {
             setOcrError(null);
 
             try {
-                const response = await extractTextFromImage(image);
+                const extractedText = await extractTextFromImage(image);
 
-                if (response.isSuccess) {
-                    const extractedText = response.result;
-
-                    if (!extractedText || extractedText.trim().length === 0) {
-                        sessionStorage.removeItem(processingKey);
-                        navigate('/make-card', { 
-                            replace: true,
-                            state: { 
-                                errorMessage: '이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.',
-                                errorType: 'warning'
-                            }
-                        });
-                        return;
-                    }
-
-                    // 결과를 세션스토리지에 저장
-                    sessionStorage.setItem(`ocr_result_${image}`, JSON.stringify({
-                        success: true,
-                        text: extractedText
-                    }));
-
-                    navigate('/text-extraction-result', {
+                if (!extractedText || extractedText.trim().length === 0) {
+                    sessionStorage.removeItem(processingKey);
+                    navigate('/make-card', {
+                        replace: true,
                         state: {
-                            image,
-                            extractedText,
-                            bookId,
-                        },
-                        replace: true // 히스토리에서 현재 페이지를 교체
+                            errorMessage: '이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.',
+                            errorType: 'warning'
+                        }
                     });
-                } else {
-                    const errorMessage = response.message || '텍스트 추출에 실패했습니다.';
-                    setOcrError(errorMessage);
-                    console.error('OCR API 실패:', response.message);
-                    
-                    // 에러 결과를 세션스토리지에 저장
-                    sessionStorage.setItem(`ocr_result_${image}`, JSON.stringify({
-                        success: false,
-                        error: errorMessage
-                    }));
-                    
-                    // alert 제거 - UI에서 에러 메시지 표시
-                    // navigate('/make-card', { replace: true }); // 자동 리디렉션 제거
+                    return;
                 }
+
+                // 결과를 세션스토리지에 저장
+                sessionStorage.setItem(`ocr_result_${image}`, JSON.stringify({
+                    success: true,
+                    text: extractedText
+                }));
+
+                navigate('/text-extraction-result', {
+                    state: {
+                        image,
+                        extractedText,
+                        bookId,
+                    },
+                    replace: true // 히스토리에서 현재 페이지를 교체
+                });
             } catch (err: any) {
                 console.error('OCR 처리 중 오류 발생:', err);
                 const errorMessage = `텍스트 추출 중 오류가 발생했습니다: ${err.message || '알 수 없는 오류'}.`;
                 setOcrError(errorMessage);
-                
+
                 // 에러 결과를 세션스토리지에 저장
                 sessionStorage.setItem(`ocr_result_${image}`, JSON.stringify({
                     success: false,
                     error: errorMessage
                 }));
-                
+
                 // alert 제거 - UI에서 에러 메시지 표시
                 // navigate('/make-card', { replace: true }); // 자동 리디렉션 제거
             } finally {
@@ -157,7 +140,9 @@ const TextExtractionLoadingPage: React.FC = () => {
         <div className="page-container">
             <header className="detail-header">
                 <button className="header-left-arrow" onClick={() => navigate('/make-card')}>
-                    <MdArrowBackIosNew size={24} color="#333" />
+                    <span
+                        className="mgc_left_fill"
+                    ></span>
                 </button>
                 <h3>텍스트 분석</h3>
                 <div className="dummy-box"></div>
@@ -192,7 +177,7 @@ const TextExtractionLoadingPage: React.FC = () => {
                             <div style={{ textAlign: 'center' }}>
                                 <p style={{ color: 'red', marginBottom: '20px' }}>{ocrError}</p>
                                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                                    <button 
+                                    <button
                                         onClick={() => navigate('/make-card')}
                                         style={{
                                             padding: '10px 20px',
@@ -204,7 +189,7 @@ const TextExtractionLoadingPage: React.FC = () => {
                                     >
                                         홈으로 돌아가기
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => window.location.reload()}
                                         style={{
                                             padding: '10px 20px',
@@ -225,11 +210,11 @@ const TextExtractionLoadingPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Toast 
-                message={toast.message} 
-                type={toast.type} 
-                isVisible={toast.isVisible} 
-                onClose={hideToast} 
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={hideToast}
             />
         </div>
     );

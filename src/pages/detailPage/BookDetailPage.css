@@ -18,6 +18,26 @@
     height: 18px;
 }
 
+
+.white-header-left-arrow {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+}
+
+/* 밍큐트 아이콘 스타일링 */
+.white-header-left-arrow .mgc_left_fill {
+    font-size: 30px;
+    color: #fff !important;
+}
+
+/* 더 구체적인 선택자로 색상 강제 적용 */
+.white-header-left-arrow .mgc_left_fill::before {
+    color: #fff !important;
+}
+
 .book-detail-page-container.loading-state,
 .book-detail-page-container.error-state,
 .book-detail-page-container.no-data-state {

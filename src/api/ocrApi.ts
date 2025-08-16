@@ -6,17 +6,15 @@ export interface OCRResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: {
-    extractedString: string;
-  } | null;
+  result: string | null;
 }
 
 export const extractTextFromImage = async (imageUrl: string): Promise<string> => {
-  const url = new URL(`${BASE_URL}/api/v1/cards/image/ocr`);
+  const url = new URL(`${BASE_URL}/api/v1/images/ocr`);
   url.searchParams.append('imageUrl', imageUrl);
 
   const response = await fetchWithAuth(url.toString(), {
-    method: 'GET',
+    method: 'POST',
   });
 
   const data: OCRResponse = await response.json();
@@ -25,5 +23,5 @@ export const extractTextFromImage = async (imageUrl: string): Promise<string> =>
     throw new Error(data.message || '텍스트 추출에 실패했습니다.');
   }
 
-  return data.result.extractedString;
+  return data.result;
 };

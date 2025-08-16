@@ -243,7 +243,9 @@ function DownloadCardPage() {
         <div className="page-container">
             <header className="download-header">
                 <button className="header-left-arrow" onClick={() => navigate("/reading-card")}>
-                    <MdArrowBackIosNew size={24} color="#333" />
+                <span
+                        className="mgc_left_fill"
+                    ></span>
                 </button>
                 <h3>독서카드 다운로드</h3>
                 <div className="header-right-placeholder"></div>

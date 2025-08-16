@@ -57,32 +57,6 @@
   margin: 10px;
 }
 
-.sort-options .sort-button {
-  display: flex;
-  padding: 6px 10px;
-  align-items: center;
-  gap: 4px;
-  border-radius: 15px;
-  border: 0.5px solid var(--border-light);
-  background: none;
-  color: var(--text-dark);
-  font-family: Pretendard, sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.sort-options .sort-button::after {
-  content: attr(data-arrow);
-  font-size: 10px;
-}
-
-.sort-options .sort-button:hover {
-  background-color: var(--hover-gray);
-}
-
 /* 뷰 모드 */
 .reading-card-grid-view {
   display: grid;

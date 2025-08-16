@@ -185,7 +185,9 @@ const CardCustomizationCompletePage: React.FC = () => {
         <div className="page-container">
             <header className="detail-header">
                 <button className="header-left-arrow" onClick={() => navigate('/reading-card')}>
-                    <MdClose size={24} color="#333" />
+                <span
+                        className="mgc_left_fill"
+                    ></span>
                 </button>
                 <h3>나의 독서카드</h3>
                 <div className="dummy-box" />

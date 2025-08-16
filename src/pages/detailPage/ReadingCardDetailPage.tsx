@@ -158,15 +158,15 @@ function ReadingCardDetailPage() {
     if (!isoDate) {
       return null;
     }
-    
+
     try {
       const date = new Date(isoDate);
-      
+
       // 유효하지 않은 날짜인지 확인
       if (isNaN(date.getTime())) {
         return null;
       }
-      
+
       const year = date.getFullYear();
       const month = (`0${date.getMonth() + 1}`).slice(-2);
       const day = (`0${date.getDate()}`).slice(-2);
@@ -216,7 +216,9 @@ function ReadingCardDetailPage() {
     <div className="page-container">
       <header className="detail-header">
         <button className="header-left-arrow" onClick={() => navigate(-1)}>
-          <MdArrowBackIosNew size={24} color="#333" />
+          <span
+            className="mgc_left_fill"
+          ></span>
         </button>
         <h3>나의 독서카드</h3>
         <div className="header-right-wrapper">

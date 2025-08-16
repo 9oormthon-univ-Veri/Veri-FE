@@ -1,4 +1,5 @@
 /* src/index.css */
+@import 'mingcute_icon/font/Mingcute.css';
 
 /* 테마 색상 변수 정의 */
 :root {
@@ -170,8 +171,6 @@ code {
   max-width: 100%;
   width: 100%;
   height: auto;
-
-  padding: 0 0px 80px;
   background-color: #ffffff;
   min-height: 100vh;
   box-sizing: border-box;
@@ -257,15 +256,38 @@ code {
   z-index: 10;
 }
 
-.detail-header .header-left-arrow {
-  width: auto;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.header-left-arrow {
+    background: none;
+    background-size: 16px 16px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    z-index: 1;
+}
+
+.header-left-arrow .mgc_left_fill {
+  font-size: 30px;
+  color: #333 !important;
+}
+
+.header-left-arrow .mgc_left_fill::before {
+  color: #333 !important;
+}
+
+/* 밍큐트 아이콘 스타일링 */
+.white-header-left-arrow .mgc_left_fill {
+  font-size: 30px;
+  color: #fff !important;
+}
+
+/* 더 구체적인 선택자로 색상 강제 적용 */
+.white-header-left-arrow .mgc_left_fill::before {
+  color: #fff !important;
 }
 
 .detail-header .header-menu-button {
@@ -342,7 +364,42 @@ code {
   margin-left: 10px;
 }
 
+.sort-options .sort-button {
+  display: flex;
+  padding: 6px 10px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 15px;
+  border: 0.5px solid var(--border-light);
+  background: none;
+  color: var(--text-dark);
+  font-family: Pretendard, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
+.sort-options .sort-button:hover {
+  background-color: #eee;
+}
+
+.sort-options .sort-button::after {
+  content: attr(data-arrow);
+  font-size: 10px;
+}
+
+.sort-button .mgc_down_fill,
+.sort-button .mgc_up_fill {
+    font-size: 15px;
+}
+
+.sort-button .mgc_down_fill::before,
+.sort-button .mgc_up_fill::before {
+    font-size: 15px;
+    color: #9BA2B1 !important;
+}
 
 @font-face {
   font-family: 'Nanum Pen'; /* This is the name you'll use in CSS */
