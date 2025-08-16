@@ -39,7 +39,7 @@
 
 .card-main-image {
     width: 100%;
-    height: 600px;
+    height: 100%;
     object-fit: cover;
     display: block;
 }
@@ -71,8 +71,8 @@
     text-align: left;
     justify-content: left;
 
-    font-size: 1.1em;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 500;
     color: #555;
     margin-bottom: 8px;
 
@@ -83,24 +83,22 @@
 }
 
 .card-content-text {
-    font-size: 1.05em;
-    color: #333;
-    line-height: 1.6;
+    font-size: 16px;
+    color: black;
+    font-weight: 500;
+    line-height: 1.5;
     margin-bottom: 15px;
     white-space: pre-wrap;
     /* 줄바꿈 유지 */
 }
 
 .card-upload-date {
-    font-size: 0.9em;
+    font-size: 14px;
     color: #888;
-    text-align: right;
-    /* 날짜 오른쪽 정렬 */
+    text-align: left;
+    font-weight: 400;
     margin-top: 20px;
     padding-right: 0;
-    /* 이미 패딩이 있으므로 0으로 설정 */
-    font-style: italic;
-    /* 날짜가 없을 때 이탤릭체로 표시 */
 }
 
 /* 날짜가 없을 때의 스타일 */

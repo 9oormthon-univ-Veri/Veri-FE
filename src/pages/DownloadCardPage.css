@@ -277,9 +277,9 @@
     align-items: center;
     justify-content: center;
     height: 50px;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 1.1em;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.2s ease, opacity 0.2s ease;
     flex-grow: 1;

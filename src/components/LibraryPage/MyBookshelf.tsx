@@ -104,11 +104,11 @@ const MyBookshelfSection: React.FC = () => {
     return (
       <section className="my-bookshelf">
         <div className="section-header">
-          <h3>나의 책장</h3>
+          <p>나의 책장</p>
           <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
         </div>
         <div className="bookshelf-list horizontal-scroll-container">
-          <p>책장 데이터를 불러오는 중...</p>
+          <p className="loading-message">책장 데이터를 불러오는 중...</p>
         </div>
       </section>
     );
@@ -118,11 +118,11 @@ const MyBookshelfSection: React.FC = () => {
     return (
       <section className="my-bookshelf">
         <div className="section-header">
-          <h3>나의 책장</h3>
+          <p>나의 책장</p>
           <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
         </div>
         <div className="bookshelf-list horizontal-scroll-container">
-          <p style={{ color: 'red' }}>{error}</p>
+          <p className="error-message">{error}</p>
         </div>
       </section>
     );
@@ -131,7 +131,7 @@ const MyBookshelfSection: React.FC = () => {
   return (
     <section className="my-bookshelf">
       <div className="section-header">
-        <h3>나의 책장</h3>
+        <p>나의 책장</p>
         <span className="more-link" onClick={handleGoToBookshelf}>책장으로 가기 &gt;</span>
       </div>
       <div className="bookshelf-list horizontal-scroll-container">

@@ -1,12 +1,37 @@
 /* src/index.css */
+
+/* 테마 색상 변수 정의 */
+:root {
+  --primary-green: #0CE19A;
+  --primary-purple: #391BE2;
+  --dark-purple: #311CA8;
+  --light-purple: #9B90E9;
+  --very-light-purple: #D6D1F6;
+  
+  /* 기본 테마 (보라색 계열) */
+  --main-color: var(--primary-purple);
+  --secondary-color: var(--light-purple);
+  --accent-color: var(--primary-green);
+  --background-light: var(--very-light-purple);
+  --text-dark: #333;
+  --text-light: #666;
+  --border-color: #eee;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Webkit 브라우저(Chrome, Safari)용 스크롤바 숨기기 */
+body::-webkit-scrollbar {
+  display: none;
 }
 
 code {
@@ -17,18 +42,6 @@ code {
 .dummy-box {
   width: 30px;
   height: 20px;
-}
-
-.create-button-container{
-  position: fixed;
-  align-items: center;
-  bottom: 0px;
-
-  display: flex;
-  justify-content: center;
-  
-  width: 450px;
-  height: 100px;
 }
 
 
@@ -47,7 +60,7 @@ code {
 
   border: none;
   border-radius: 100px;
-  background: var(--gr, linear-gradient(163deg, #0CE189 11.43%, #0EB36F 95.34%));
+  background: var(--primary-purple);
   color: white;
   color: #FFF;
 
@@ -60,19 +73,47 @@ code {
   letter-spacing: -0.408px;
   cursor: pointer;
 
-  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 0px 4px 0px rgba(57, 27, 226, 0.3);
+}
+
+.create-button:hover {
+  background: var(--primary-purple);
+  transform: translateY(-2px);
+  box-shadow: 0px 2px 8px 0px rgba(57, 27, 226, 0.4);
 }
 
 
 @media (max-width: 400px) {
   .create-button {
-    right: 70px; /* 너무 작을 땐 최소 거리 보장 */
+    right: 10px; /* 작은 화면에서는 더 가까이 배치 */
+    font-size: 14px; /* 작은 화면에서는 폰트 크기 줄임 */
+    padding: 6px 12px; /* 패딩도 줄임 */
   }
 }
 
-@media (min-width: 1200px) {
+@media (max-width: 350px) {
   .create-button {
-    right: 20px; /* 너무 클 땐 최대 거리 제한 */
+    right: 5px; /* 매우 작은 화면에서는 최소 거리 */
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+}
+
+@media (min-width: 401px) and (max-width: 600px) {
+  .create-button {
+    right: 15px; /* 중간 크기 화면 */
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1200px) {
+  .create-button {
+    right: 20px; /* 큰 화면 */
+  }
+}
+
+@media (min-width: 1201px) {
+  .create-button {
+    right: 20px; /* 매우 큰 화면 */
   }
 }
 
@@ -133,16 +174,15 @@ code {
   padding: 0 0px 80px;
   background-color: #ffffff;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .loading-page-container {
   max-width: 100%;
   width: 100%;
-  height: auto;
-
-  padding: 0 0px 80px;
+  height: 100vh;
+  padding: 0;
   background-color: #ffffff;
-  min-height: 100vh;
 
   display: flex;
   justify-content: center;
@@ -165,22 +205,17 @@ code {
   left: 0;
   width: 100%;
   height: 75px;
-  padding: 6px 20px;
+  padding: 16px 20px;
   justify-content: space-between;
   align-items: center;
   display: flex;
-  /* Flexbox 활성화 */
-  padding: 16px;
   z-index: 2;
   box-sizing: border-box;
 }
 
-/* 첫 번째 아이콘 (로고 역할) 에 대한 스타일 */
 .hero-header>.icon:first-child {
   width: 40px;
-  /* 예시 크기 */
   height: 40px;
-  /* 예시 크기 */
 }
 
 .header-icons {
@@ -217,7 +252,7 @@ code {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 10px 20px;
 
   z-index: 10;
 }
@@ -307,31 +342,7 @@ code {
   margin-left: 10px;
 }
 
-/* SVG 아이콘 대신 사용할 임시 배경 이미지 (실제 앱에서는 SVG 또는 폰트 아이콘 사용) */
-.tab-item-icon.icon-book {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H6V4h12v16zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>');
-}
 
-.tab-item-icon.icon-card {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10z"/></svg>');
-}
-
-.tab-item-icon.icon-camera {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-11h2v3h3v2h-3v3h-2v-3H8v-2h3V9z"/></svg>');
-}
-
-.tab-item-icon.icon-community {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22 2H2v16h16l4 4V2zm-4 12H6V4h12v10z"/></svg>');
-}
-
-.tab-item-icon.icon-profile {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>');
-}
-
-/* 이미지에 맞게 폰트 아이콘에 다른 이미지를 적용 */
-.tab-item-icon.icon-bookmark {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>');
-}
 
 @font-face {
   font-family: 'Nanum Pen'; /* This is the name you'll use in CSS */

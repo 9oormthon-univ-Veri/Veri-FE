@@ -100,12 +100,12 @@ const MyReadingCardSection: React.FC = () => {
     return (
       <section className={styles.myReadingCards}>
         <div className={styles.sectionHeader}>
-          <h3>나의 독서카드</h3>
+          <p>나의 독서카드</p>
           <span className={styles.moreLink} onClick={() => navigate('/reading-card')}> {/* 책갈피 페이지 대신 독서카드 메인 페이지로 이동 */}
             독서카드 보러가기 &gt;
           </span>
         </div>
-        <div className={`${styles.horizontalScrollContainer}`}>
+        <div className={styles.horizontalScrollContainer}>
           <p className={styles.loadingMessage}>독서 카드를 불러오는 중...</p>
         </div>
       </section>
@@ -116,12 +116,12 @@ const MyReadingCardSection: React.FC = () => {
     return (
       <section className={styles.myReadingCards}>
         <div className={styles.sectionHeader}>
-          <h2>나의 독서카드</h2>
+          <p>나의 독서카드</p>
           <span className={styles.moreLink} onClick={() => navigate('/reading-card')}> {/* 책갈피 페이지 대신 독서카드 메인 페이지로 이동 */}
             독서카드 보러가기 &gt;
           </span>
         </div>
-        <div className={`${styles.horizontalScrollContainer}`}>
+        <div className={styles.horizontalScrollContainer}>
           <p className={styles.errorMessage}>{error}</p>
         </div>
       </section>
@@ -131,7 +131,7 @@ const MyReadingCardSection: React.FC = () => {
   return (
     <section className={styles.myReadingCards}>
       <div className={styles.sectionHeader}>
-        <h3>나의 독서카드</h3>
+        <p>나의 독서카드</p>
         <span className={styles.moreLink} onClick={() => navigate('/reading-card')}> {/* 책갈피 페이지 대신 독서카드 메인 페이지로 이동 */}
           독서카드 보러가기 &gt;
         </span>

@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './BookDetailPage.css';
 import DeleteConfirmationModal from '../../components/BookDetailPage/DeleteConfirmationModal';
 import BottomEditModal from '../../components/BottomEditModal'; // ✨ 경로 확인
-import { MdArrowBackIosNew, MdKeyboardArrowRight } from 'react-icons/md';
+import { MdKeyboardArrowRight } from 'react-icons/md';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import backIcon from '../../assets/icons/back.svg';
 import {
     getBookById,
     deleteBook,
@@ -207,7 +208,7 @@ function BookDetailPage() {
         <div className="page-container">
             <header className="detail-header">
                 <button className="header-left-arrow" onClick={() => navigate(-1)}>
-                    <MdArrowBackIosNew size={24} color="#fff" />
+                    <img src={backIcon} alt="Back" className="back-icon" />
                 </button>
                 <h3 className='h3-white'>내가 읽은 책</h3>
                 <div className="header-right-wrapper">

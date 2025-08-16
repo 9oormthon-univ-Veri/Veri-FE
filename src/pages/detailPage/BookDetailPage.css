@@ -13,6 +13,11 @@
     /* 자식 요소의 absolute 위치를 위해 */
 }
 
+.back-icon {
+    width: 18px;
+    height: 18px;
+}
+
 .book-detail-page-container.loading-state,
 .book-detail-page-container.error-state,
 .book-detail-page-container.no-data-state {
@@ -143,9 +148,11 @@
 }
 
 .star-rating-full-page .star {
-    font-size: 18px;
+    font-size: 20px;
     /* 상세 페이지에서는 별을 더 크게 */
     margin-right: 2px;
+    height: 20px;
+    width: 20px;
 }
 
 

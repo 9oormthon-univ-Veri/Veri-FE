@@ -173,8 +173,12 @@ function ReadingCardPage() {
                 </nav>
 
                 <div className="sort-options">
-                    <span className="sort-button" onClick={handleSortClick}>
-                        {sortOrder === 'newest' ? '최신순' : '오래된순'} &gt;
+                    <span 
+                        className="sort-button" 
+                        onClick={handleSortClick}
+                        data-arrow={sortOrder === 'newest' ? '∨' : '∧'}
+                    >
+                        {sortOrder === 'newest' ? '최신순' : '오래된순'}
                     </span>
                 </div>
 

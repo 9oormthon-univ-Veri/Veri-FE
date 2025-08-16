@@ -48,7 +48,7 @@ const OAuthCallbackPage: React.FC = () => {
   }, [location, navigate]);
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div className='loading-page-container'>
       <p>로그인 정보를 처리 중입니다. 잠시만 기다려 주세요...</p>
     </div>
   );

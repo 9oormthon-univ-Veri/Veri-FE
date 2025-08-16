@@ -98,7 +98,7 @@ function BookAddPage() {
     return (
         <div className="page-container">
             <header className="detail-header">
-                <button className="header-left-arrow" onClick={() => navigate("/book-search")}>
+                <button className="header-left-arrow" onClick={() => navigate(-1)}>
                     <MdArrowBackIosNew size={24} color="#fff" />
                 </button>
                 <h3 className='h3-white'>새 책 등록</h3> {/* 헤더 텍스트 유지 */}

@@ -74,6 +74,11 @@
   transition: background-color 0.2s ease;
 }
 
+.sort-options .sort-button::after {
+  content: attr(data-arrow);
+  font-size: 10px;
+}
+
 .sort-options .sort-button:hover {
   background-color: var(--hover-gray);
 }
@@ -82,7 +87,7 @@
 .reading-card-grid-view {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 8px;
+  gap: 4px;
   padding: 10px 0;
 }
 
@@ -148,6 +153,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
   height: 100px;
+}
+
+/* ReadingCardPage 버튼 크기 조정 */
+.reading-create-button-container .create-button {
+  height: 44px;
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
+/* 작은 화면에서 버튼 위치 조정 */
+@media (max-width: 400px) {
+  .reading-create-button-container .create-button {
+    right: 10px;
+    font-size: 16px;
+    padding: 8px 16px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 350px) {
+  .reading-create-button-container .create-button {
+    right: 5px;
+    font-size: 14px;
+    padding: 6px 12px;
+    height: 36px;
+  }
+}
+
+@media (min-width: 401px) and (max-width: 600px) {
+  .reading-create-button-container .create-button {
+    right: 15px;
+  }
 }

@@ -105,7 +105,7 @@ const TodaysRecommendationSection: React.FC = () => {
     return (
       <section className="todays-recommendation">
         <div className="recommendation-section-header">
-          <h3>오늘의 추천</h3>
+          <p>오늘의 추천</p>
           <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
         </div>
         <div className="recommendation-list horizontal-scroll-container">
@@ -119,11 +119,11 @@ const TodaysRecommendationSection: React.FC = () => {
     return (
       <section className="todays-recommendation">
         <div className="recommendation-section-header">
-          <h3>오늘의 추천</h3>
+          <p>오늘의 추천</p>
           <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
         </div>
         <div className="recommendation-list horizontal-scroll-container">
-          <p className="error-message" style={{ color: 'red' }}>{error}</p>
+          <p className="error-message">{error}</p>
         </div>
       </section>
     );
@@ -132,7 +132,7 @@ const TodaysRecommendationSection: React.FC = () => {
   return (
     <section className="todays-recommendation">
       <div className="recommendation-section-header">
-        <h3>오늘의 추천</h3>
+        <p>오늘의 추천</p>
         <span className="more-text">오늘 가장 많이 읽은 책이에요</span>
       </div>
       <div className="recommendation-list horizontal-scroll-container">

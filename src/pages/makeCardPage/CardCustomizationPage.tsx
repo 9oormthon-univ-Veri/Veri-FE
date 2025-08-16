@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationPage.css';
 import Toast from '../../components/Toast';
 
-import PicFillIconSVG from '../../assets/icons/customize-page/pic_fill.svg?react';
-import FontSizeFillIconSVG from '../../assets/icons/customize-page/font_size_fill.svg?react';
-import BookOpenIconSVG from '../../assets/icons/customize-page/book-open.svg?react';
-import CheckFillIconSVG from '../../assets/icons/customize-page/check_fill.svg?react';
+import PicFillIconSVG from '../../assets/icons/CustomizePage/pic_fill.svg?react';
+import FontSizeFillIconSVG from '../../assets/icons/CustomizePage/font_size_fill.svg?react';
+import BookOpenIconSVG from '../../assets/icons/CustomizePage/book-open.svg?react';
+import CheckFillIconSVG from '../../assets/icons/CustomizePage/check_fill.svg?react';
 
 import SkyBackground from '../../assets/images/cardSample/sky.jpg';
 import SummerSeaBackground from '../../assets/images/cardSample/sea.jpg';

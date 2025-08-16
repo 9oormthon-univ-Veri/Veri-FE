@@ -28,11 +28,11 @@
 }
 
 .hero-background {
-    width: 100%;
-    height: 100%;
+    width: 120%;
+    height: 120%;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -10%;
+    left: -10%;
     filter: blur(10px);
     object-fit: cover;
     z-index: 0;
@@ -63,8 +63,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    padding-inline: 20px;
-    z-index: 2;
+    padding-inline: 15px;
     box-sizing: border-box;
 }
 
@@ -101,14 +100,16 @@
     font-size: 16px;
     color: #ffffff;
     text-align: left;
+    justify-content: left;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .welcome-text p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 14px;
     color: #ffffff;
     margin-bottom: 20px;
+    text-align: left;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     opacity: 0.9;
 }
@@ -136,6 +137,67 @@
 section {
     background-color: #fff;
     padding: 15px;
+    min-height: 200px; /* 섹션 최소 높이 추가 */
+}
+
+/* 나의 독서카드 섹션 */
+.myReadingCards {
+    background-color: #fff;
+    padding: 15px;
+    margin-top: 15px;
+    min-height: 200px; /* 섹션 최소 높이 추가 */
+}
+
+/* 나의 책장 섹션 */
+.my-bookshelf {
+    background-color: #fff;
+    padding: 15px;
+    margin-top: 15px;
+    min-height: 200px; /* 섹션 최소 높이 추가 */
+}
+
+/* 오늘의 추천 섹션 */
+.todays-recommendation {
+    background-color: #fff;
+    padding: 15px;
+    margin-top: 15px;
+    min-height: 200px; /* 섹션 최소 높이 추가 */
+}
+
+/* 가로 스크롤 컨테이너 */
+.horizontal-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    padding-bottom: 8px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    min-height: 150px; /* 컨테이너 최소 높이 추가 */
+    align-items: center; /* 세로 중앙 정렬 */
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* 메시지 스타일 개선 */
+.loading-message,
+.error-message,
+.no-cards-message {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    margin: 20px 0;
+    font-size: 14px;
+    min-height: 100px; /* 메시지 영역 최소 높이 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-message {
+    color: #dc3545;
 }
 
 .section-header {
@@ -144,7 +206,7 @@ section {
     align-items: center;
 }
 
-.section-header h3 {
+.section-header p {
     font-size: 20px;
     font-weight: 500;
     color: #000000;
@@ -162,21 +224,6 @@ section {
     font-size: 14px;
     color: #a0a0a0;
     cursor: pointer;
-}
-
-/* 가로 스크롤 컨테이너 */
-.horizontal-scroll-container {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-    padding-bottom: 8px;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.horizontal-scroll-container::-webkit-scrollbar {
-    display: none;
 }
 
 /* 공통 아이템 스타일 */
@@ -213,9 +260,10 @@ section {
     width: 100%;
     position: relative;
     background-color: #f0f0f0;
-    border-radius: 4px;
+    border-radius: 10px;
     margin-bottom: 8px;
     overflow: hidden;
+    border: 1px solid #e0e0e0;
 }
 
 .my-bookshelf .book-cover-thumbnail img {
@@ -253,7 +301,7 @@ section {
     height: 200px;
     width: 110px;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 5px;
     text-align: center;
 }
@@ -262,9 +310,10 @@ section {
     width: 100%;
     position: relative;
     background-color: #f0f0f0;
-    border-radius: 4px;
+    border-radius: 10px;
     margin-bottom: 8px;
     overflow: hidden;
+    border: 1px solid #e0e0e0;
 }
 
 .todays-recommendation .recommended-book-item .book-cover-thumbnail img {
@@ -300,4 +349,11 @@ section {
     height: 30px;
     display: flex;
     align-items: center;
+}
+
+.recommendation-section-header p {
+    font-size: 20px; /* LibraryPage.css와 동일 */
+    font-weight: 500;
+    color: #000000;
+    margin: 0;
 }
