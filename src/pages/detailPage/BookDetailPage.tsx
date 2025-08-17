@@ -101,8 +101,8 @@ function BookDetailPage() {
                     imageUrl: response.result.imageUrl,
                     score: response.result.score,
                     status: response.result.status,
-                    startedAt: response.result.startedAt || new Date().toISOString(),
-                    endedAt: response.result.endedAt || new Date().toISOString(),
+                    startedAt: response.result.startedAt || null,
+                    endedAt: response.result.endedAt || null,
                 };
                 setBook({
                     ...fetchedBook,
@@ -272,7 +272,7 @@ function BookDetailPage() {
                         <div className="end-date">
                             <span className="section-label">종료일</span>
                             <span className="start-date-value">
-                                {book.startedAt ? new Date(book.endedAt).toLocaleDateString('ko-KR') : '미정'}
+                                {book.endedAt ? new Date(book.endedAt).toLocaleDateString('ko-KR') : '미정'}
                             </span>
                         </div>
                     </div>
@@ -298,7 +298,7 @@ function BookDetailPage() {
                 memberBookId={book.memberBookId}
                 defaultScore={book.score}
                 defaultStartedAt={book.startedAt}
-                defaultEndedAt={new Date().toISOString()} // 종료일은 예시로 현재시간
+                defaultEndedAt={book.endedAt}
                 bookTitle={book.title} // ✨ 책 제목 전달
                 bookAuthor={book.author} // ✨ 책 작가 전달
             />

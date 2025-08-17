@@ -11,8 +11,8 @@ interface BottomEditModalProps {
   onClose: () => void;
   memberBookId: number;
   defaultScore: number;
-  defaultStartedAt: string;
-  defaultEndedAt: string;
+  defaultStartedAt: string | null;
+  defaultEndedAt: string | null;
   bookTitle: string;
   bookAuthor: string;
 }
@@ -69,8 +69,8 @@ const BottomEditModal: React.FC<BottomEditModalProps> = ({
   bookAuthor,
 }) => {
   const [score, setScore] = useState(defaultScore);
-  const [startedAt, setStartedAt] = useState(defaultStartedAt);
-  const [endedAt, setEndedAt] = useState(defaultEndedAt);
+  const [startedAt, setStartedAt] = useState(defaultStartedAt || new Date().toISOString());
+  const [endedAt, setEndedAt] = useState(defaultEndedAt || new Date().toISOString());
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -117,7 +117,7 @@ const BottomEditModal: React.FC<BottomEditModalProps> = ({
               <input
                 className='date-input'
                 type="date"
-                value={startedAt.split('T')[0]}
+                value={startedAt ? startedAt.split('T')[0] : ''}
                 onChange={(e) => setStartedAt(new Date(e.target.value).toISOString())}
               />
             </div>
@@ -126,7 +126,7 @@ const BottomEditModal: React.FC<BottomEditModalProps> = ({
               <input
                 className='date-input'
                 type="date"
-                value={endedAt.split('T')[0]}
+                value={endedAt ? endedAt.split('T')[0] : ''}
                 onChange={(e) => setEndedAt(new Date(e.target.value).toISOString())}
               />
             </div>

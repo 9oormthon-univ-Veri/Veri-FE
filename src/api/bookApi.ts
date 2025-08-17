@@ -26,8 +26,8 @@ export interface Book {
   author: string;
   imageUrl: string;
   score: number;
-  startedAt: string;
-  endedAt: string;
+  startedAt: string | null;
+  endedAt: string | null;
   status: BookStatus;
   cardSummaries?: CardSummary[];
 }
@@ -88,8 +88,8 @@ export type GetBookByIdResponse = BaseApiResponse<{
   imageUrl: string;
   status: BookStatus;
   score: number;
-  startedAt: string;
-  endedAt: string;
+  startedAt: string | null;
+  endedAt: string | null;
   cardSummaries: CardSummary[];
 } | null>;
 export type SearchBooksResponse = BaseApiResponse<BookSearchResult[]>;
