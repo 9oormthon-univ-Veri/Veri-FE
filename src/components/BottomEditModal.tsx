@@ -90,7 +90,11 @@ const BottomEditModal: React.FC<BottomEditModalProps> = ({
     const startDate = new Date(startDateStr);
     const endDate = new Date(endDateStr);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정하여 날짜만 비교
+    
+    // 모든 날짜의 시간을 00:00:00으로 설정하여 날짜만 비교
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
     
     // 종료일이 현재 날짜보다 미래인지 검사
     if (endDate > today) {

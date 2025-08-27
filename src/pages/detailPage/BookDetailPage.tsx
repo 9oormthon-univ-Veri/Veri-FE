@@ -24,7 +24,7 @@ const MyReadingCardSection: React.FC<MyReadingCardSectionProps> = ({ cards, book
 
     const handleSeeAllCards = useCallback(() => {
         // Correctly use bookId to navigate to a page showing all cards for this specific book
-        navigate(`/reading-card/book/${bookId}`);
+        navigate(`/reading-card`);
     }, [navigate, bookId]);
 
     // This function should accept cardId as an argument
