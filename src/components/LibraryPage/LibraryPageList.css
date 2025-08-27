@@ -21,7 +21,6 @@
     display: flex;
     background-color: #fff;
     border-radius: 12px;
-    padding-inline: 15px;
     align-items: flex-start; /* 세로 정렬 */
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;

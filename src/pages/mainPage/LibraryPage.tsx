@@ -1,163 +1,229 @@
-import { useState, useEffect } from 'react';
+// src/pages/mainPage/LibraryPage.tsx
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './LibraryPage.css';
-import MyReadingCardSection from '../../components/LibraryPage/MyReadingCard';
-import MyBookshelfSection from '../../components/LibraryPage/MyBookshelf';
-import TodaysRecommendationSection from '../../components/LibraryPage/TodaysRecommendation';
-import { useNavigate } from 'react-router-dom';
-import { getMemberProfile } from '../../api/memberApi';
-import { getAllBooks, type GetAllBooksQueryParams } from '../../api/bookApi';
+import starFillIcon from '../../assets/icons/star_fill.svg';
+import starLineIcon from '../../assets/icons/star_line.svg';
 
-// 아이콘 import
-import appLogoIcon from '../../assets/icons/TopBar/union.svg';
-import notificationIcon from '../../assets/icons/TopBar/notificationl.svg';
-import searchIcon from '../../assets/icons/TopBar/search.svg';
+import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../../api/bookApi';
+import BookshelfList from '../../components/LibraryPage/LibraryPageList';
+import LibraryPageGrid from '../../components/LibraryPage/LibraryPageGrid';
+import TopBar from '../../components/TopBar';
 
-// 이미지 import
-import sampleBookBackground from '../../assets/images/profileSample/sample_book_background.png';
-import sampleBook from '../../assets/images/profileSample/sample_book.png';
-import sampleUser from '../../assets/images/profileSample/sample_user.png';
 
-interface UserData {
-  email: string;
-  nickname: string;
-  image: string;
-  numOfReadBook: number;
-  numOfCard: number;
-}
+export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
+  // 별점 계산 로직 (기존과 동일)
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const starElements = [];
+
+  // 채워진 별
+  for (let i = 0; i < fullStars; i++) {
+    starElements.push(
+      <img
+        key={`full-${i}`}
+        src={starFillIcon}
+        alt="filled star"
+        className="star full"
+      />
+    );
+  }
+
+  if (hasHalfStar) {
+    starElements.push(
+      <img
+        key="half"
+        src={starFillIcon}
+        alt="half star"
+        className="star half"
+        style={{ clipPath: 'inset(0 50% 0 0)' }}
+      />
+    );
+  }
+
+  for (let i = 0; i < emptyStars; i++) {
+    starElements.push(
+      <img
+        key={`empty-${i}`}
+        src={starLineIcon}
+        alt="empty star"
+        className="star empty"
+      />
+    );
+  }
+
+  return (
+    <div className="star-rating-full-page">
+      {starElements}
+    </div>
+  );
+};
 
 function LibraryPage() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
+  const location = useLocation();
+  const [books, setBooks] = useState<Book[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // fetchBooks 함수를 useCallback으로 감싸고, sortOrder가 변경될 때마다 재생성되도록 합니다.
+  const fetchBooks = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const queryParams: GetAllBooksQueryParams = {
+        page: 1,
+        size: 10,
+        sort: sortOrder,
+      };
+      const response = await getAllBooks(queryParams);
+
+      if (response.isSuccess) {
+        setBooks(response.result.memberBooks);
+        setFilteredBooks(response.result.memberBooks);
+      } else {
+        setError(response.message || "책 목록을 가져오는데 실패했습니다.");
+      }
+    } catch (err: any) {
+      setError("책 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [sortOrder]);
+
+  // 검색 필터링 함수
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setFilteredBooks(books);
+    } else {
+      const filtered = books.filter(book =>
+        book.title.toLowerCase().includes(query.toLowerCase()) ||
+        book.author.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredBooks(filtered);
+    }
+  }, [books]);
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      setIsLoading(true);
-      setError(null);
+    fetchBooks();
+  }, [fetchBooks, location.key]);
 
-      try {
-        // 사용자 프로필 조회
-        const userResponse = await getMemberProfile();
+  useEffect(() => {
+    handleSearch(searchQuery);
+  }, [books, searchQuery, handleSearch]);
 
-        if (userResponse.isSuccess && userResponse.result) {
-          setUserData({
-            email: userResponse.result.email,
-            nickname: userResponse.result.nickname,
-            image: userResponse.result.image,
-            numOfReadBook: userResponse.result.numOfReadBook,
-            numOfCard: userResponse.result.numOfCard,
-          });
-        } else {
-          setError(userResponse.message || "사용자 프로필을 가져오는데 실패했습니다.");
-        }
-
-        // 가장 최근에 읽은 책 조회
-        const recentBooksParams: GetAllBooksQueryParams = {
-          page: 1,
-          size: 1,
-          sort: 'newest',
-        };
-        const recentBooksResponse = await getAllBooks(recentBooksParams);
-
-        if (recentBooksResponse.isSuccess && 
-            recentBooksResponse.result?.memberBooks.length > 0) {
-          const mostRecentBook = recentBooksResponse.result.memberBooks[0];
-          if (mostRecentBook) {
-            setBookImageUrl(mostRecentBook.imageUrl);
-          }
-        }
-
-      } catch (err: any) {
-        console.error('데이터를 불러오는 중 오류 발생:', err);
-        setError('데이터를 불러오는 데 실패했습니다: ' + err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAllData();
+  const handleSortClick = useCallback(() => {
+    setSortOrder(prevOrder => (prevOrder === 'newest' ? 'oldest' : 'newest'));
   }, []);
 
+  const handleCreateBookClick = useCallback(() => {
+    navigate('/book-search');
+  }, [navigate]);
+
   const handleProfileClick = () => navigate('/my-page');
-  const handleSearchClick = () => navigate('/book-search');
 
-  // 로딩 상태 처리
+  const handleViewModeToggle = useCallback((mode: 'list' | 'grid') => {
+    setViewMode(mode);
+  }, []);
+
   if (isLoading) {
-    return <div className="loading-page-container">데이터를 불러오는 중...</div>;
+    return (
+      <div className="loading-page-container">
+        <p>책장 데이터를 불러오는 중...</p>
+      </div>
+    );
   }
 
-  // 에러 상태 처리
   if (error) {
-    return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
+    return (
+      <div className="loading-page-container">
+        <p style={{ color: 'red' }}>{error}</p>
+      </div>
+    );
   }
-
-  // 데이터 없음 상태 처리
-  if (!userData) {
-    return <div className="loading-page-container">사용자 데이터를 찾을 수 없습니다.</div>;
-  }
-
-  // 이미지 경로 설정
-  const heroBackgroundImageSrc = bookImageUrl || sampleBookBackground;
-  const heroBookSampleImageSrc = bookImageUrl || sampleBook;
-  const hasValidProfileImage = userData.image && 
-                              userData.image.trim() !== '' && 
-                              userData.image !== 'https://example.com/image.jpg';
 
   return (
     <div className="page-container">
-      <div className="library-hero-section">
-        <img
-          src={heroBackgroundImageSrc}
-          className="hero-background"
-          alt="Hero background"
-        />
-        <header className="hero-header">
-          <img src={appLogoIcon} className="icon" alt="앱 로고" />
-          <div className="header-icons">
-            <img src={notificationIcon} alt="알림" />
-            <button 
-              type="button" 
-              className="search-button" 
-              aria-label="검색" 
-              onClick={handleSearchClick}
-            >
-              <img src={searchIcon} alt="" aria-hidden="true" />
-            </button>
-          </div>
-        </header>
+      <TopBar onProfileClick={handleProfileClick} />
 
-        <div className="hero-content">
-          <button 
-            className="profile-circle" 
-            onClick={handleProfileClick} 
-            aria-label="프로필 보기"
+      <div className="header-margin"></div>
+
+      {/* 책장 제목과 책 수 */}
+      <div className="library-title-section">
+        <h2 className="library-title">나의책장 <span className="book-count">{filteredBooks.length}</span></h2>
+        <div className="view-toggle-buttons">
+          <button
+            className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={() => handleViewModeToggle('list')}
+            aria-label="리스트 보기"
           >
-            {hasValidProfileImage ? (
-              <img src={userData.image} className="profile-image" alt="프로필 이미지" />
-            ) : (
-              <div 
-                className="profile-placeholder" 
-                style={{ backgroundImage: `url(${sampleUser})` }}
-              />
-            )}
+            ☰
           </button>
-          <div className="welcome-text">
-            <h2>반가워요, {userData.nickname}님!</h2>
-            <p>오늘도 책 잘 기록해 봐요...</p>
-          </div>
-          <img
-            src={heroBookSampleImageSrc}
-            className="hero-book-sample"
-            alt="Hero book sample"
+          <button
+            className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+            onClick={() => handleViewModeToggle('grid')}
+            aria-label="그리드 보기"
+          >
+            ⊞
+          </button>
+        </div>
+      </div>
+
+      {/* 필터와 검색 섹션 */}
+      <div className="filter-search-section">
+        <div className="sort-options">
+          <span
+            className="sort-button"
+            onClick={handleSortClick}
+          >
+            {sortOrder === 'newest' ? '최신순' : '오래된순'}
+            <span className={sortOrder === 'newest' ? 'mgc_down_fill' : 'mgc_up_fill'}></span>
+          </span>
+        </div>
+        <div className="search-input-container">
+          <input
+            type="text"
+            placeholder="   텍스트를 입력하세요"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="book-search-input"
           />
         </div>
       </div>
 
-      <MyReadingCardSection />
-      <MyBookshelfSection />
-      <TodaysRecommendationSection />
+      {filteredBooks.length === 0 && !isLoading && !error ? (
+        <div className="no-books-message">
+          {searchQuery ? (
+            <p>검색 결과가 없습니다.</p>
+          ) : (
+            <p>등록된 책이 없습니다. 새로운 책을 등록해보세요!</p>
+          )}
+        </div>
+      ) : (
+        <div className={`books-container ${viewMode === 'grid' ? 'grid-view' : 'list-view'}`}>
+          {viewMode === 'list' ? (
+            <BookshelfList books={filteredBooks} />
+          ) : (
+            <LibraryPageGrid books={filteredBooks} />
+          )}
+        </div>
+      )}
+
+      <div className='main-page-margin'>
+      </div>
+
+      <div className="create-button-container">
+        <button className="create-button" onClick={handleCreateBookClick}>
+          + 등록하기
+        </button>
+      </div>
     </div>
   );
 }

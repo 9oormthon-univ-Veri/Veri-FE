@@ -69,7 +69,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   width: 100%;
   max-width: 450px;
   background-color: #fff;
-  display: flex;
   justify-content: space-between;
   padding: 4px 20px 16px 20px;
   align-items: center;
@@ -78,6 +77,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   box-shadow: 0 -2px 10px var(--shadow-color);
   z-index: 1000;
   display: flex;
+  box-sizing: border-box;
+  border-radius: 15px;
 }
 
 /* 탭 아이템 스케일 고정 */

@@ -1,0 +1,61 @@
+/* 그리드 뷰 스타일 - Home.css의 책장 스타일을 기반으로 함 */
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.bookshelf-item {
+  display: flex;
+  flex-shrink: 0;
+  height: 200px;
+  width: 110px;
+  text-align: center;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.book-cover-thumbnail {
+  height: 90%;
+  width: 100%;
+  position: relative;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+.book-cover-thumbnail img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-title {
+  text-align: left;
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-author {
+  text-align: left;
+  font-size: 11px;
+  color: #777;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

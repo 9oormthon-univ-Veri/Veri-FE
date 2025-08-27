@@ -178,8 +178,8 @@ export const setAccessToken = (token: string): void => {
     console.error('토큰 저장 중 오류:', error);
   }
 };
-
 export const removeAccessToken = (): void => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('accessToken');
 };
+

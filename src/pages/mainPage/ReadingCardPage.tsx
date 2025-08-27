@@ -5,7 +5,7 @@ import './ReadingCardPage.css';
 import ReadingCardItem from '../../components/ReadingCardPage/ReadingCardItem';
 import ReadingCardGridItem from '../../components/ReadingCardPage/ReadingCardGridItem';
 import { getMyCards, getCardDetailById, type MyCardItem, type GetMyCardsQueryParams } from '../../api/cardApi';
-import searchFillIcon from '../../assets/icons/TopBar/search_fill.svg';
+import TopBar from '../../components/TopBar';
 
 // 독서 카드 아이템 타입 정의
 export interface ReadingCardItemType {
@@ -123,9 +123,15 @@ function ReadingCardPage() {
         navigate('/book-search');
     };
 
+    const handleProfileClick = () => {
+        navigate('/my-page');
+    };
+
     // 로딩 및 에러 상태 처리
     if (isLoading) {
-        return <div className="loading-page-container">독서 카드를 불러오는 중...</div>;
+        return <div className="loading-page-container">
+            <div className="loading-spinner"></div>
+        </div>;
     }
 
     if (error) {
@@ -135,25 +141,10 @@ function ReadingCardPage() {
     return (
         <div className="page-container">
             <div className="reading-card-hero-section">
-                <header className="hero-header">
-                    <button 
-                        type="button" 
-                        className="color-main-icon" 
-                        onClick={() => navigate('/library')}
-                        aria-label="홈으로 이동"
-                    />
-                    <div className="header-icons">
-                        <div className="color-notificationl-icon" />
-                        <button 
-                            type="button" 
-                            className="search-button" 
-                            aria-label="검색" 
-                            onClick={handleSearchClick}
-                        >
-                            <img src={searchFillIcon} alt="" aria-hidden="true" />
-                        </button>
-                    </div>
-                </header>
+                <TopBar 
+                    onSearchClick={handleSearchClick}
+                    onProfileClick={handleProfileClick}
+                />
                 
                 <div className="header-margin" />
                 
@@ -222,10 +213,13 @@ function ReadingCardPage() {
                     </div>
                 )}
             </div>
+
+            <div className='main-page-margin'>
+            </div>
             
-            <div className="reading-create-button-container">
+            <div className="create-button-container">
                 <button className="create-button" onClick={handleCreateCardClick}>
-                    + 카드 만들기
+                    + 등록하기
                 </button>
             </div>
         </div>

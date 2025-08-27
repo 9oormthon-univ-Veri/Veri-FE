@@ -158,7 +158,9 @@ const CardCustomizationCompletePage: React.FC = () => {
     }, [image, extractedText, memberBookId, navigate, handleSave]);
 
     if (!image || !extractedText || memberBookId === undefined || !bookDetail) {
-        return <div className="loading-page-container">카드 정보를 불러오는 중...</div>;
+        return <div className="loading-page-container">
+            <div className="loading-spinner"></div>
+        </div>;
     }
 
     if (isSaving) {

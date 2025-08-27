@@ -45,6 +45,17 @@ code {
   height: 20px;
 }
 
+/* 플로팅 버튼 컨테이너 */
+.create-button-container {
+  position: fixed;
+  bottom: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 450px;
+  height: 100px;
+}
 
 .create-button {
   position: absolute;
@@ -53,87 +64,35 @@ code {
 
   display: inline-flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 
-  height: 36px;
-  padding: 7px 16px;
+  height: 40px;
+  padding: 10px 20px;
 
   border: none;
-  border-radius: 100px;
-  background: var(--primary-purple);
+  border-radius: 50px;
+  background: var(--gr, linear-gradient(163deg, #0CE189 11.43%, #0EB36F 95.34%));
   color: white;
-  color: #FFF;
 
-  text-align: right;
+  text-align: center;
   font-family: Pretendard;
   font-size: 16px;
   font-style: normal;
+  font-weight: 500;
   line-height: 140%;
-  /* 22.4px */
   letter-spacing: -0.408px;
   cursor: pointer;
 
-  box-shadow: 0px 0px 4px 0px rgba(57, 27, 226, 0.3);
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
 }
 
 .create-button:hover {
-  background: var(--primary-purple);
+  background: #00B874;
   transform: translateY(-2px);
-  box-shadow: 0px 2px 8px 0px rgba(57, 27, 226, 0.4);
-}
-
-
-@media (max-width: 400px) {
-  .create-button {
-    right: 10px; /* 작은 화면에서는 더 가까이 배치 */
-    font-size: 14px; /* 작은 화면에서는 폰트 크기 줄임 */
-    padding: 6px 12px; /* 패딩도 줄임 */
-  }
-}
-
-@media (max-width: 350px) {
-  .create-button {
-    right: 5px; /* 매우 작은 화면에서는 최소 거리 */
-    font-size: 12px;
-    padding: 5px 10px;
-  }
-}
-
-@media (min-width: 401px) and (max-width: 600px) {
-  .create-button {
-    right: 15px; /* 중간 크기 화면 */
-  }
-}
-
-@media (min-width: 601px) and (max-width: 1200px) {
-  .create-button {
-    right: 20px; /* 큰 화면 */
-  }
-}
-
-@media (min-width: 1201px) {
-  .create-button {
-    right: 20px; /* 매우 큰 화면 */
-  }
-}
-
-/* TabBar.tsx 관련 스타일 */
-.tab-bar-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
-  /* 적당한 최대 너비 설정 */
-  height: 80px;
-  background-color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 0 10px;
-  box-sizing: border-box;
-  position: absolute;
-  bottom: 20px;
+  box-shadow: 0px 6px 16px 0px rgba(0, 208, 133, 0.4);
 }
 
 .tab-item {
@@ -167,6 +126,11 @@ code {
   /* 부모와 높이 맞춤 */
 }
 
+.main-page-margin {
+  height: 100px;
+}
+
+
 .page-container {
   max-width: 100%;
   width: 100%;
@@ -177,6 +141,7 @@ code {
 }
 
 .loading-page-container {
+  justify-self: center;
   max-width: 100%;
   width: 100%;
   height: 100vh;
@@ -184,12 +149,53 @@ code {
   background-color: #ffffff;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 10px;
+}
 
+.loading-page-container p {
   font-size: 18px;
   font-weight: bold;
   color: #333;
+  margin: 20px;
+}
+
+.loading-page-container button {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+}
+
+/* 로딩 스피너 스타일 */
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid var(--primary-purple);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px 0;
+}
+
+/* 작은 로딩 스피너 */
+.loading-spinner-small {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-purple);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 10px 0;
+}
+
+/* 로딩 스피너 애니메이션 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .header-margin {
@@ -219,23 +225,20 @@ code {
 
 .header-icons {
   display: flex;
-  align-items: center;
   gap: 10px;
 }
 
-.header-icons .icon {
-  width: 24px;
-  height: 24px;
-  margin-left: 12px;
-  /* 아이콘들 사이의 간격 */
-  color: #ffffff;
-}
-
-.search-button{
+.header-icons button{
   background: none;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   padding: 0px;
+  margin: 0px;
 }
 
 .h3-white{
@@ -342,31 +345,38 @@ code {
   border-top: 1px solid #eee;
 }
 
-.color-main-icon {
-  width: 30px;
-  height: 30px;
-  background-color: #391BE2;
-  mask: url('/src/assets/icons/TopBar/union.svg') no-repeat center;
-  -webkit-mask: url('/src/assets/icons/TopBar/union.svg') no-repeat center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
+.main-icon{
+  width: 48px;
+  height: 14px;
+}
+
+.main-icon {
+  width: 48px;
+  height: 14px;
+  border: none;
+  background: none;
   cursor: pointer;
 }
 
 .color-notificationl-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #391BE233;
-  mask: url('/src/assets/icons/TopBar/notificationl.svg') no-repeat center;
-  -webkit-mask: url('/src/assets/icons/TopBar/notificationl.svg') no-repeat center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
-  margin-left: 10px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* 정렬 옵션 */
+.sort-options {
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px 0;
+  margin: 10px;
 }
 
 .sort-options .sort-button {
   display: flex;
-  padding: 6px 10px;
+  padding: 10px 10px;
   align-items: center;
   gap: 4px;
   border-radius: 15px;
@@ -374,7 +384,7 @@ code {
   background: none;
   color: var(--text-dark);
   font-family: Pretendard, sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 14px;
   cursor: pointer;

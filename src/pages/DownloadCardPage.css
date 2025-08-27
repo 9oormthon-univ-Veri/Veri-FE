@@ -203,32 +203,6 @@
     box-shadow: none;
 }
 
-.loading-page-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f0f2f5;
-    text-align: center;
-}
-
-.loading-page-container p {
-    font-size: 1.1em;
-    color: #555;
-}
-
-.loading-page-container button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    font-size: 1em;
-}
-
 /* 공유 버튼 강조 애니메이션 */
 @keyframes pulse {
     0% {

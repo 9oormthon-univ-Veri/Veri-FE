@@ -7,12 +7,12 @@ import FloatingCameraButton from './components/FloatingCameraButton';
 import './App.css';
 
 // Import page components
-import LibraryPage from './pages/mainPage/LibraryPage';
+import HomePage from './pages/mainPage/Home';
 import ReadingCardPage from './pages/mainPage/ReadingCardPage';
 import CommunityPage from './pages/mainPage/CommunityPage';
 import BookmarkPage from './pages/bookmarkPage';
-import MyPage from './pages/mainPage/MyPage';
-import MyBookshelfPage from './pages/MyBookshelfPage';
+import MyPage from './pages/MyPage';
+import LibraryPage from './pages/mainPage/LibraryPage';
 import BookDetailPage from './pages/detailPage/BookDetailPage';
 import ReadingCardDetailPage from './pages/detailPage/ReadingCardDetailPage';
 import LoginPage from './pages/LoginPage';
@@ -38,8 +38,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✨ 로그인 리디렉션 로직 (이전과 동일)
-    const publicPaths = ['/login', '/oauth/callback/kakao']; // Add OAuth callback to public paths
+    const publicPaths = ['/login', '/oauth/callback/kakao'];
 
     if (!isAuthenticated() && !publicPaths.includes(location.pathname)) {
       navigate('/login');
@@ -56,8 +55,6 @@ function App() {
     '/my-page'
   ].includes(location.pathname);
 
-  // You might want to hide the FloatingCameraButton on paths where it doesn't make sense,
-  // for example, on pages where card creation isn't the primary action or during the card creation flow itself.
   const showFloatingCameraButton = showTabBar && ![
     '/make-card',
     '/text-extraction-loading',
@@ -74,13 +71,12 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<LibraryPage />} />
-        <Route path="/library" element={<LibraryPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/reading-card" element={<ReadingCardPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/bookmark" element={<BookmarkPage />} />
         <Route path="/my-page" element={<MyPage />} />
-        <Route path="/my-bookshelf" element={<MyBookshelfPage />} />
+        <Route path="/library" element={<LibraryPage />} />
         <Route path="/book-detail/:id" element={<BookDetailPage />} />
         <Route path="/reading-card-detail/:id" element={<ReadingCardDetailPage />} />
         <Route path="/make-card" element={<MakeCardPage />} />

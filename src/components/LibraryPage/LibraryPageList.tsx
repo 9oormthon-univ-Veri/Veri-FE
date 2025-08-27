@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './BookshelfList.css';
+import './LibraryPageList.css';
 
-import { StarRatingFullPage } from '../../pages/MyBookshelfPage';
+import { StarRatingFullPage } from '../../pages/mainPage/LibraryPage';
 import { type Book, type BookStatus } from '../../api/bookApi'; // Ensure BookStatus is imported
 
 interface BookshelfListProps {

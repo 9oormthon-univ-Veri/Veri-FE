@@ -12,7 +12,7 @@ import {
     type Book,
     type CardSummary
 } from '../../api/bookApi';
-import { StarRatingFullPage } from '../MyBookshelfPage';
+import { StarRatingFullPage } from '../mainPage/LibraryPage';
 
 interface MyReadingCardSectionProps {
     cards: CardSummary[];
@@ -181,7 +181,7 @@ function BookDetailPage() {
     if (isLoading || isSavingChanges) {
         return (
             <div className="loading-page-container">
-                <p>{isSavingChanges ? '변경사항 저장 중...' : '책 정보를 불러오는 중...'}</p>
+                <div className="loading-spinner"></div>
             </div>
         );
     }

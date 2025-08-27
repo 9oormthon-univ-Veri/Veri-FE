@@ -154,6 +154,7 @@ const TextExtractionLoadingPage: React.FC = () => {
                     <header className="loading-header">
                         {isLoadingText ? (
                             <>
+                                <div className="loading-spinner"></div>
                                 <h3>텍스트를 분석중이에요</h3>
                                 <p>결과가 나올때까지 조금만 기다려주세요!</p>
                             </>

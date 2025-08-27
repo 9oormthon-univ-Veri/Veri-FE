@@ -49,14 +49,6 @@
   cursor: pointer;
 }
 
-/* 정렬 옵션 */
-.sort-options {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 0;
-  margin: 10px;
-}
-
 /* 뷰 모드 */
 .reading-card-grid-view {
   display: grid;
@@ -118,48 +110,4 @@
   background-color: var(--hover-dark);
   transform: translateY(-2px);
   transition: all 0.2s ease;
-}
-
-/* 플로팅 버튼 컨테이너 */
-.reading-create-button-container {
-  position: fixed;
-  bottom: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 450px;
-  height: 100px;
-}
-
-/* ReadingCardPage 버튼 크기 조정 */
-.reading-create-button-container .create-button {
-  height: 44px;
-  padding: 10px 20px;
-  font-size: 18px;
-}
-
-/* 작은 화면에서 버튼 위치 조정 */
-@media (max-width: 400px) {
-  .reading-create-button-container .create-button {
-    right: 10px;
-    font-size: 16px;
-    padding: 8px 16px;
-    height: 40px;
-  }
-}
-
-@media (max-width: 350px) {
-  .reading-create-button-container .create-button {
-    right: 5px;
-    font-size: 14px;
-    padding: 6px 12px;
-    height: 36px;
-  }
-}
-
-@media (min-width: 401px) and (max-width: 600px) {
-  .reading-create-button-container .create-button {
-    right: 15px;
-  }
 }

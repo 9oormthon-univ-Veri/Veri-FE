@@ -2,16 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
-import { getMemberProfile, type GetMemberProfileResponse, type MemberProfile } from '../../api/memberApi';
+import { getMemberProfile, type GetMemberProfileResponse, type MemberProfile } from '../api/memberApi';
 
 // 아이콘 import
-import searchFillIcon from '../../assets/icons/TopBar/search_fill.svg';
-import rightLineIcon from '../../assets/icons/right_line.svg';
-import scheduleFillIcon from '../../assets/icons/schedule_fill.svg';
-import saleFillIcon from '../../assets/icons/sale_fill.svg';
+import rightLineIcon from '../assets/icons/right_line.svg';
+import scheduleFillIcon from '../assets/icons/schedule_fill.svg';
+import saleFillIcon from '../assets/icons/sale_fill.svg';
+import TopBar from '../components/TopBar';
 
 // 이미지 import
-import sampleUser from '../../assets/images/profileSample/sample_user.png';
+import sampleUser from '../assets/images/profileSample/sample_user.png';
 
 interface UserData {
   email: string;
@@ -77,9 +77,11 @@ const MyPage: React.FC = () => {
   const handleSearchClick = () => navigate('/book-search');
 
   // 로딩 상태 처리
-  if (isLoading) {
-    return <div className="loading-page-container">사용자 데이터를 불러오는 중...</div>;
-  }
+      if (isLoading) {
+        return <div className="loading-page-container">
+            <div className="loading-spinner"></div>
+        </div>;
+    }
 
   // 에러 상태 처리
   if (error) {
@@ -93,25 +95,10 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="page-container">
-      <header className="hero-header">
-        <button 
-          type="button" 
-          className="color-main-icon" 
-          onClick={() => navigate('/library')}
-          aria-label="홈으로 이동"
-        />
-        <div className="header-icons">
-          <div className="color-notificationl-icon" />
-          <button 
-            type="button" 
-            className="search-button" 
-            aria-label="검색" 
-            onClick={handleSearchClick}
-          >
-            <img src={searchFillIcon} alt="" aria-hidden="true" />
-          </button>
-        </div>
-      </header>
+      <TopBar 
+        showProfile={false}
+        onSearchClick={handleSearchClick}
+      />
 
       <div className="header-margin" />
 
