@@ -131,10 +131,11 @@ export interface CreateBookRequest {
 
 export interface UpdateBookStatusRequest {
   score: number;
-  startedAt: string;
-  endedAt: string;
+  startedAt: string | null;
+  endedAt: string | null;
 }
 
+// UpdateBookContentRequest는 별도 용도로 유지 (책 메타데이터 수정용)
 export interface UpdateBookContentRequest {
   title?: string;
   image?: string;
@@ -185,6 +186,23 @@ const makeApiRequest = async <T>(
   options: RequestInit = {}
 ): Promise<T> => {
   const response = await fetchWithAuth(`${BASE_URL}${endpoint}`, options);
+  
+  // 204 No Content 또는 빈 응답 본문 처리
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return {} as T;
+  }
+  
+  // Content-Type이 JSON이 아닌 경우 처리
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    const text = await response.text();
+    if (!text.trim()) {
+      return {} as T;
+    }
+    // JSON이 아닌 텍스트 응답인 경우 에러로 처리하거나 적절히 변환
+    throw new Error(`Expected JSON response, but got: ${contentType}`);
+  }
+  
   return response.json();
 };
 
@@ -339,6 +357,26 @@ export const rateBook = async (memberBookId: number, score: number): Promise<Upd
   });
 };
 
+// 책장 도서 내용 전체 수정 (별점, 독서 시작/완료 시간, 독서 상태)
+// API 명세: PATCH /api/v2/bookshelf/{readingId}/modify
+// readingId는 memberBookId와 동일한 값입니다
+export const updateBookStatus = async (
+  memberBookId: number, // API 명세의 readingId에 해당
+  data: UpdateBookStatusRequest
+): Promise<UpdateBookStatusResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return createMockResponse({}, 'Mock 책 상태 수정 성공');
+  }
+
+  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/modify`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+};
+
+// 책 메타데이터 수정 (제목, 이미지, 저자, 출판사, ISBN)
+// 별도 엔드포인트가 있다면 해당 엔드포인트로 변경 필요
 export const updateBookContent = async (
   memberBookId: number, 
   bookData: UpdateBookContentRequest
@@ -348,6 +386,8 @@ export const updateBookContent = async (
     return createMockResponse({}, '목 책 내용 수정 성공');
   }
 
+  // 주의: 이 함수는 책 메타데이터 수정용이므로 별도 엔드포인트가 필요할 수 있습니다
+  // 현재는 같은 엔드포인트를 사용하지만, 실제 API에서는 다를 수 있습니다
   return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/modify`, {
     method: 'PATCH',
     body: JSON.stringify(bookData),
@@ -361,21 +401,6 @@ export const getMyBooksCount = async (): Promise<GetMyBooksCountResponse> => {
   }
 
   return makeApiRequest<GetMyBooksCountResponse>('/api/v2/bookshelf/my/count');
-};
-
-export const updateBookStatus = async (
-  memberBookId: number,
-  data: UpdateBookStatusRequest
-): Promise<UpdateBookStatusResponse> => {
-  if (USE_MOCK_DATA) {
-    await mockDelay();
-    return createMockResponse({}, 'Mock 책 상태 수정 성공');
-  }
-
-  return makeApiRequest<UpdateBookStatusResponse>(`/api/v2/bookshelf/${memberBookId}/modify`, {
-    method: 'PATCH',
-    body: JSON.stringify(data),
-  });
 };
 
 export const searchMyBook = async (

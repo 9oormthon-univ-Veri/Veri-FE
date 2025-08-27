@@ -134,7 +134,7 @@
 .start-date-section {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: start;
     margin-left: 15px;
     justify-content: start;
     font-size: 14px;

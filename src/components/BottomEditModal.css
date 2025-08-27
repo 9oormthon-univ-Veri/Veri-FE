@@ -103,6 +103,15 @@
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.start-time,
+.end-time {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .star-button {
@@ -117,7 +126,6 @@
 }
 
 .date-inputs p{
-    text-align: start;
 
     color: rgba(26, 26, 26, 0.60);
 
@@ -131,12 +139,13 @@
 }
 
 .date-input {
-    display: flex;
-    width: 165px;
+    flex: 1;
+    max-width: 165px;
     height: 40px;
-    padding: 5px;
+    padding: 5px 10px;
+    margin: 5px 0px 0px 0px;
     align-items: center;
-    gap: 10px;
+    box-sizing: border-box;
 
     border-radius: 7px;
     border: 1px solid #E7E9EF;
