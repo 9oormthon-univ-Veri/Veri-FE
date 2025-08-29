@@ -77,7 +77,7 @@ function ReadingCardPage() {
                 // 성공한 상세 정보들로 카드 업데이트
                 setReadingCards(prevCards => {
                     const updatedCards = [...prevCards];
-                    detailResults.forEach((result, idx) => {
+                    detailResults.forEach((result) => {
                         if (result.status === 'fulfilled' && result.value) {
                             const detail = result.value;
                             const cardIndex = response.result.cards.findIndex(card => card.cardId === detail.cardId);
