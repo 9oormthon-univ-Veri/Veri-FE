@@ -1,0 +1,107 @@
+.use-photo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.use-photo-back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.use-photo-back-button:hover {
+  opacity: 0.7;
+}
+
+.use-photo-image-preview-card {
+  width: 100%;
+  height: 470px;
+  background: var(--Grey_2, #E7E9EF);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.use-photo-book-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 16px;
+}
+
+.use-photo-no-image {
+  text-align: center;
+  color: #9BA2B1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.use-photo-no-image p {
+  margin: 5px 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.use-photo-button-container {
+  justify-content: center;
+  display: flex;
+  width: 90%;
+  max-width: 400px;
+}
+
+.use-photo-action-button {
+  background-color: var(--primary-green);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.8px;
+}
+
+.use-photo-action-button:hover {
+  opacity: 0.9;
+}
+
+.use-photo-action-button:disabled {
+  background: #9BA2B1;
+  cursor: not-allowed;
+} 

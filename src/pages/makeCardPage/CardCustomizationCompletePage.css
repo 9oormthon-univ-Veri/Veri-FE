@@ -120,6 +120,10 @@
   display: block;
 }
 
+.card-summary-text p {
+  text-align: left;
+}
+
 .card-summary-text strong {
   align-self: stretch;
   color: #1A1A1A;

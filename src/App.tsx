@@ -26,6 +26,8 @@ import DownloadCardPage from './pages/DownloadCardPage';
 import BookAddPage from './pages/BookAddPage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import CardBookSearchPage from './pages/makeCardPage/CardBookSearchPage';
+import CardBookSearchBeforePage from './pages/makeCardPage/CardBookSearchBeforePage';
+import UsePhotoPage from './pages/makeCardPage/UsePhotoPage';
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
 const isAuthenticated = () => {
@@ -89,6 +91,8 @@ function App() {
         <Route path="/book-add" element={<BookAddPage />} />
         <Route path="/oauth/callback/kakao" element={<OAuthCallbackPage />} />
         <Route path="/card-book-search" element={<CardBookSearchPage />} />
+        <Route path="/card-book-search-before" element={<CardBookSearchBeforePage />} />
+        <Route path="/use-photo" element={<UsePhotoPage />} />
         {/* 404 페이지 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>

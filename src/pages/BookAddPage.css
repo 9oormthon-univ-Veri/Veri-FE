@@ -112,7 +112,7 @@
 
     border: none;
     border-radius: 6px;
-    background: var(--green-point, #0CE19A);
+    background: var(--primary-green);
 
     color: #FFF;
     text-align: center;
@@ -122,6 +122,8 @@
     font-weight: 500;
     line-height: normal;
     letter-spacing: -0.72px;
+
+    cursor: pointer;
 }
 
 .add-book-button:hover {

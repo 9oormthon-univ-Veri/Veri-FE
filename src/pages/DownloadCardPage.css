@@ -262,7 +262,7 @@
 }
 
 .share-button-revised {
-    background-color: #00c774;
+    background-color: var(--primary-green);
     color: #ffffff;
     border: none;
 }

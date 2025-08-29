@@ -6,6 +6,7 @@ import ReadingCardItem from '../../components/ReadingCardPage/ReadingCardItem';
 import ReadingCardGridItem from '../../components/ReadingCardPage/ReadingCardGridItem';
 import { getMyCards, getCardDetailById, type MyCardItem, type GetMyCardsQueryParams } from '../../api/cardApi';
 import TopBar from '../../components/TopBar';
+import { SkeletonList, SkeletonReadingCard, SkeletonReadingCardGrid } from '../../components/SkeletonUI';
 
 // 독서 카드 아이템 타입 정의
 export interface ReadingCardItemType {
@@ -24,7 +25,7 @@ function ReadingCardPage() {
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeTab, setActiveTab] = useState<'image' | 'text'>('image');
 
-    // 독서 카드 데이터 가져오기
+    // 독서 카드 데이터 가져오기 (최적화된 버전)
     const fetchCards = useCallback(async () => {
         setIsLoading(true);
         setError(null);
@@ -39,60 +40,64 @@ function ReadingCardPage() {
             const response = await getMyCards(queryParams);
 
             if (response.isSuccess && response.result?.cards) {
-                const detailedCardsPromises = response.result.cards.map(async (card: MyCardItem) => {
-                    // cardId가 없는 경우 기본값 반환
-                    if (!card.cardId) {
-                        return {
-                            id: `temp-${Date.now()}-${Math.random()}`,
-                            title: card.content.length > 30 ? `${card.content.substring(0, 30)}...` : card.content || "제목 없음",
-                            contentPreview: card.content.length > 100 ? `${card.content.substring(0, 100)}...` : card.content,
-                            date: card.created,
-                            thumbnailUrl: card.image,
-                        };
-                    }
+                // 기본 카드 정보로 먼저 state 업데이트 (빠른 렌더링)
+                const basicCards = response.result.cards.map((card: MyCardItem) => ({
+                    id: card.cardId ? String(card.cardId) : `temp-${Date.now()}-${Math.random()}`,
+                    title: card.content.length > 30 ? `${card.content.substring(0, 30)}...` : card.content || "제목 없음",
+                    contentPreview: card.content.length > 100 ? `${card.content.substring(0, 100)}...` : card.content,
+                    date: card.created,
+                    thumbnailUrl: card.image,
+                }));
+                
+                setReadingCards(basicCards);
+                setIsLoading(false); // 기본 데이터 로딩 완료
 
-                    try {
-                        const detailResponse = await getCardDetailById(card.cardId);
-                        
-                        if (detailResponse.isSuccess && detailResponse.result) {
-                            return {
-                                id: String(card.cardId),
-                                title: detailResponse.result.book?.title,
-                                contentPreview: card.content.length > 100 ? `${card.content.substring(0, 100)}...` : card.content,
-                                date: card.created,
-                                thumbnailUrl: card.image,
-                            };
+                // 백그라운드에서 상세 정보 가져오기 (배치 처리)
+                const cardDetailPromises = response.result.cards
+                    .filter(card => card.cardId)
+                    .map(async (card: MyCardItem, index: number) => {
+                        try {
+                            const detailResponse = await getCardDetailById(card.cardId!);
+                            if (detailResponse.isSuccess && detailResponse.result?.book?.title) {
+                                return {
+                                    index,
+                                    cardId: card.cardId!,
+                                    bookTitle: detailResponse.result.book.title
+                                };
+                            }
+                        } catch (detailErr) {
+                            console.error(`카드 상세 정보 가져오기 실패 (ID: ${card.cardId}):`, detailErr);
                         }
-                        
-                        // 상세 정보 가져오기 실패 시 기본값 반환
-                        return {
-                            id: String(card.cardId),
-                            title: card.content.length > 30 ? `${card.content.substring(0, 30)}...` : card.content || "제목 없음",
-                            contentPreview: card.content.length > 100 ? `${card.content.substring(0, 100)}...` : card.content,
-                            date: card.created,
-                            thumbnailUrl: card.image,
-                        };
-                    } catch (detailErr) {
-                        console.error(`카드 상세 정보 가져오기 실패 (ID: ${card.cardId}):`, detailErr);
-                        return {
-                            id: String(card.cardId),
-                            title: card.content.length > 30 ? `${card.content.substring(0, 30)}...` : card.content || "제목 없음",
-                            contentPreview: card.content.length > 100 ? `${card.content.substring(0, 100)}...` : card.content,
-                            date: card.created,
-                            thumbnailUrl: card.image,
-                        };
-                    }
+                        return null;
+                    });
+
+                // 상세 정보를 배치로 처리
+                const detailResults = await Promise.allSettled(cardDetailPromises);
+                
+                // 성공한 상세 정보들로 카드 업데이트
+                setReadingCards(prevCards => {
+                    const updatedCards = [...prevCards];
+                    detailResults.forEach((result, idx) => {
+                        if (result.status === 'fulfilled' && result.value) {
+                            const detail = result.value;
+                            const cardIndex = response.result.cards.findIndex(card => card.cardId === detail.cardId);
+                            if (cardIndex !== -1 && updatedCards[cardIndex]) {
+                                updatedCards[cardIndex] = {
+                                    ...updatedCards[cardIndex],
+                                    title: detail.bookTitle
+                                };
+                            }
+                        }
+                    });
+                    return updatedCards;
                 });
-
-                const results = await Promise.allSettled(detailedCardsPromises);
-                const mappedCards = results
-                    .filter(result => result.status === 'fulfilled' && result.value)
-                    .map(result => (result as PromiseFulfilledResult<ReadingCardItemType>).value);
-
-                setReadingCards(mappedCards);
             } else {
                 setReadingCards([]);
-                setError("독서 카드를 불러왔으나, 표시할 내용이 없습니다.");
+                if (!response.result?.cards || response.result.cards.length === 0) {
+                    // 빈 배열은 오류가 아님
+                } else {
+                    setError("독서 카드를 불러왔으나, 표시할 내용이 없습니다.");
+                }
             }
         } catch (err: any) {
             console.error('독서 카드 데이터 로딩 오류:', err);
@@ -127,13 +132,7 @@ function ReadingCardPage() {
         navigate('/my-page');
     };
 
-    // 로딩 및 에러 상태 처리
-    if (isLoading) {
-        return <div className="loading-page-container">
-            <div className="loading-spinner"></div>
-        </div>;
-    }
-
+    // 에러 상태 처리
     if (error) {
         return <div className="loading-page-container" style={{ color: 'red' }}>{error}</div>;
     }
@@ -176,7 +175,11 @@ function ReadingCardPage() {
                 {/* 이미지 뷰 */}
                 {activeTab === 'image' && (
                     <div className="reading-card-grid-view">
-                        {readingCards.length > 0 ? (
+                        {isLoading ? (
+                            <SkeletonList count={8}>
+                                <SkeletonReadingCardGrid />
+                            </SkeletonList>
+                        ) : readingCards.length > 0 ? (
                             readingCards.map((card) => (
                                 <ReadingCardGridItem
                                     key={card.id}
@@ -196,7 +199,11 @@ function ReadingCardPage() {
                 {/* 텍스트 뷰 */}
                 {activeTab === 'text' && (
                     <div className="reading-card-text-view">
-                        {readingCards.length > 0 ? (
+                        {isLoading ? (
+                            <SkeletonList count={5}>
+                                <SkeletonReadingCard />
+                            </SkeletonList>
+                        ) : readingCards.length > 0 ? (
                             readingCards.map((card) => (
                                 <ReadingCardItem
                                     key={card.id}

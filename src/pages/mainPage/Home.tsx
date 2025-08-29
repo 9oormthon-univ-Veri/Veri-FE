@@ -5,6 +5,7 @@ import TodaysRecommendationSection from '../../components/HomePage/TodaysRecomme
 import { useNavigate } from 'react-router-dom';
 import { getMemberProfile } from '../../api/memberApi';
 import { getAllBooks, type GetAllBooksQueryParams } from '../../api/bookApi';
+import { SkeletonHeroSection } from '../../components/SkeletonUI';
 
 // 아이콘 import
 import appLogoIcon from '../../assets/icons/TopBar/union.svg';
@@ -29,18 +30,14 @@ function LibraryPage() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const [isBookDataLoading, setIsBookDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      setIsLoading(true);
-      setError(null);
-
+    const fetchUserProfile = async () => {
       try {
-        // 사용자 프로필 조회
         const userResponse = await getMemberProfile();
-
         if (userResponse.isSuccess && userResponse.result) {
           setUserData({
             email: userResponse.result.email,
@@ -52,8 +49,16 @@ function LibraryPage() {
         } else {
           setError(userResponse.message || "사용자 프로필을 가져오는데 실패했습니다.");
         }
+      } catch (err: any) {
+        console.error('사용자 프로필 로딩 오류:', err);
+        setError('사용자 프로필을 불러오는 데 실패했습니다: ' + err.message);
+      } finally {
+        setIsUserDataLoading(false);
+      }
+    };
 
-        // 가장 최근에 읽은 책 조회
+    const fetchRecentBook = async () => {
+      try {
         const recentBooksParams: GetAllBooksQueryParams = {
           page: 1,
           size: 1,
@@ -68,36 +73,37 @@ function LibraryPage() {
             setBookImageUrl(mostRecentBook.imageUrl);
           }
         }
-
       } catch (err: any) {
-        console.error('데이터를 불러오는 중 오류 발생:', err);
-        setError('데이터를 불러오는 데 실패했습니다: ' + err.message);
+        console.error('최근 책 데이터 로딩 오류:', err);
+        // 책 데이터는 실패해도 사용자에게 오류를 보여주지 않음
       } finally {
-        setIsLoading(false);
+        setIsBookDataLoading(false);
       }
     };
 
-    fetchAllData();
+    // 병렬로 데이터 fetch
+    fetchUserProfile();
+    fetchRecentBook();
   }, []);
 
   const handleProfileClick = () => navigate('/my-page');
   const handleSearchClick = () => navigate('/book-search');
-
-  // 로딩 상태 처리
-  if (isLoading) {
-    return <div className="loading-page-container">
-      <div className="loading-spinner"></div>
-    </div>;
-  }
 
   // 에러 상태 처리
   if (error) {
     return <div className="loading-page-container"><p style={{ color: 'red' }}>{error}</p></div>;
   }
 
-  // 데이터 없음 상태 처리
-  if (!userData) {
-    return <div className="loading-page-container"><p>사용자 데이터를 찾을 수 없습니다.</p></div>;
+  // 사용자 데이터 로딩 중이거나 데이터 없음 상태 처리
+  if (isUserDataLoading || !userData) {
+    return (
+      <div className="page-container">
+        <SkeletonHeroSection />
+        <MyReadingCardSection />
+        <TodaysRecommendationSection />
+        <div className='main-page-margin' />
+      </div>
+    );
   }
 
   // 이미지 경로 설정

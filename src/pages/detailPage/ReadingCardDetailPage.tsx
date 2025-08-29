@@ -8,6 +8,7 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 import { getCardDetailById, deleteCard, type Card } from '../../api/cardApi';
 import ReadingCardEditModal from '../../components/ReadingCardEditModal';
+import DeleteConfirmationModal from '../../components/ReadingCardDetailPage/DeleteConfirmationModal';
 import './ReadingCardDetailPage.css';
 
 function ReadingCardDetailPage() {
@@ -21,6 +22,7 @@ function ReadingCardDetailPage() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,29 +86,38 @@ function ReadingCardDetailPage() {
     }
   }, [cardDetail, navigate]);
 
-  const handleDeleteCard = useCallback(async () => {
+  const handleDeleteCard = useCallback(() => {
     if (!cardDetail || !cardDetail.cardId) {
       alert('삭제할 독서 카드 정보가 없습니다.');
       return;
     }
+    setMenuOpen(false);
+    setIsDeleteConfirmModalOpen(true);
+  }, [cardDetail]);
 
-    if (window.confirm('정말로 이 독서 카드를 삭제하시겠습니까?')) {
-      setIsProcessing(true);
-      setMenuOpen(false);
-      try {
-        const response = await deleteCard(cardDetail.cardId);
-        if (response.isSuccess) {
-          alert('독서 카드가 성공적으로 삭제되었습니다.');
-          navigate('/reading-card');
-        } else {
-          alert(`독서 카드 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
-        }
-      } catch (err: any) {
-        console.error('독서 카드 삭제 중 오류 발생:', err);
-        alert(`독서 카드 삭제 중 오류가 발생했습니다: ${err.message}`);
-      } finally {
-        setIsProcessing(false);
+  const confirmDeleteCard = useCallback(async () => {
+    if (!cardDetail || !cardDetail.cardId) {
+      alert('삭제할 독서 카드 정보가 없습니다.');
+      setIsDeleteConfirmModalOpen(false);
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const response = await deleteCard(cardDetail.cardId);
+      if (response.isSuccess) {
+        alert('독서 카드가 성공적으로 삭제되었습니다.');
+        navigate('/reading-card');
+      } else {
+        alert(`독서 카드 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
       }
+    } catch (err: any) {
+      console.error('독서 카드 삭제 중 오류 발생:', err);
+      alert(`독서 카드 삭제 중 오류가 발생했습니다: ${err.message}`);
+    } finally {
+      setIsProcessing(false);
+      setIsDeleteConfirmModalOpen(false);
     }
   }, [cardDetail, navigate]);
 
@@ -303,6 +314,14 @@ function ReadingCardDetailPage() {
           onUpdateSuccess={handleUpdateSuccess}
         />
       )}
+
+      {/* 독서 카드 삭제 확인 모달 */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteConfirmModalOpen}
+        onClose={() => setIsDeleteConfirmModalOpen(false)}
+        onConfirm={confirmDeleteCard}
+        isLoading={isProcessing}
+      />
     </div>
   );
 }

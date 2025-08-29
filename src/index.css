@@ -73,7 +73,7 @@ code {
 
   border: none;
   border-radius: 50px;
-  background: var(--gr, linear-gradient(163deg, #0CE189 11.43%, #0EB36F 95.34%));
+  background: linear-gradient(163deg, var(--primary-green) 11.43%, var(--primary-green) 95.34%);
   color: white;
 
   text-align: center;
@@ -86,11 +86,10 @@ code {
   cursor: pointer;
 
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .create-button:hover {
-  background: #00B874;
   transform: translateY(-2px);
   box-shadow: 0px 6px 16px 0px rgba(0, 208, 133, 0.4);
 }
@@ -138,6 +137,36 @@ code {
   background-color: #ffffff;
   min-height: 100vh;
   box-sizing: border-box;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* 페이지 로딩 중 투명도 조절 */
+.page-container.loading {
+  opacity: 0.7;
+}
+
+/* 페이지 전환 애니메이션 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .loading-page-container {
@@ -170,14 +199,14 @@ code {
   color: white;
 }
 
-/* 로딩 스피너 스타일 */
+/* 로딩 스피너 스타일 - 개선된 애니메이션 */
 .loading-spinner {
   width: 60px;
   height: 60px;
   border: 6px solid #f3f3f3;
   border-top: 6px solid var(--primary-purple);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
   margin: 20px 0;
 }
 

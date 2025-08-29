@@ -1,0 +1,178 @@
+.book-search-before-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+    background-color: white;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.completion-section {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    width: 100%;
+    max-width: 400px;
+}
+
+.completion-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.completion-subtitle {
+    font-size: 16px;
+    color: #6A717B;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.card-preview-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    width: 100%;
+    max-width: 400px;
+}
+
+.card-preview-complete {
+    height: 100%;
+}
+
+.card-preview-complete-card {
+    border-radius: 16px;
+    position: relative;
+    height: 350px;
+    margin: 14px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-overlay-text {
+    position: absolute;
+    color: white;
+    padding: 16px;
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+    text-align: left;
+}
+
+.card-summary-text {
+    margin-top: 20px;
+    padding: 16px;
+    text-align: left;
+    display: block;
+}
+
+.summary-subtitle {
+    align-self: stretch;
+    color: #1A1A1A;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 160%;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.summary-body {
+    flex: 1 0 0;
+    align-self: stretch;
+    color: rgba(26, 26, 26, 0.60);
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 160%;
+    text-align: center;
+}
+
+.action-section {
+    padding: 20px;
+    background-color: white;
+    width: 100%;
+    max-width: 400px;
+}
+
+.book-registration-button {
+    width: 100%;
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-registration-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+.book-registration-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.mgc_right_fill {
+    margin-left: 4px;
+    transition: transform 0.2s ease;
+    color: white !important;
+    font-size: 24px;
+}
+
+.mgc_right_fill::before {
+    color: white !important;
+}
+
+.book-registration-button:hover .mgc_right_fill {
+    transform: translateX(2px);
+}
+
+
+
+@media (max-width: 480px) {
+    .completion-title {
+        font-size: 20px;
+    }
+    
+    .completion-subtitle {
+        font-size: 14px;
+    }
+    
+    .card-preview-container {
+        width: 240px;
+        height: 340px;
+    }
+    
+    .preview-text-overlay {
+        max-width: 200px;
+        font-size: 12px;
+        padding: 10px 12px;
+    }
+}

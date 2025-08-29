@@ -5,7 +5,6 @@ import Toast from '../../components/Toast';
 
 import PicFillIconSVG from '../../assets/icons/CustomizePage/pic_fill.svg?react';
 import FontSizeFillIconSVG from '../../assets/icons/CustomizePage/font_size_fill.svg?react';
-import BookOpenIconSVG from '../../assets/icons/CustomizePage/book-open.svg?react';
 import CheckFillIconSVG from '../../assets/icons/CustomizePage/check_fill.svg?react';
 
 import SkyBackground from '../../assets/images/cardSample/sky.jpg';
@@ -18,17 +17,12 @@ const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [selectedBookId] = useState<number | undefined>(
-        location.state?.selectedBookId as number | undefined
-    );
-    const [selectedBookTitle] = useState<string | undefined>(
-        location.state?.selectedBookTitle as string | undefined
-    );
+
 
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
 
-    const [selectedTab, setSelectedTab] = useState<'image' | 'text' | 'book'>('image');
+    const [selectedTab, setSelectedTab] = useState<'image' | 'text'>('image');
     const [isBlocked, setIsBlocked] = useState(false);
     const [toast, setToast] = useState<{
         message: string;
@@ -128,11 +122,7 @@ const CardCustomizationPage: React.FC = () => {
         return null;
     }
 
-    useEffect(() => {
-        if (selectedBookId !== undefined) {
-            setSelectedTab('book');
-        }
-    }, [selectedBookId]);
+
 
     if (!image && !isBlocked) {
         return (
@@ -187,24 +177,12 @@ const CardCustomizationPage: React.FC = () => {
             return;
         }
 
-        // 목업 모드에서는 책 선택이 없어도 기본 책 ID 사용
-        const bookIdToUse = selectedBookId || 1; // 목업 모드에서 기본값으로 1번 책 사용
-        
-        // 책을 선택하지 않은 경우 사용자에게 알림
-        if (!selectedBookId) {
-            const shouldContinue = confirm('책을 선택하지 않으셨습니다.');
-            if (!shouldContinue) {
-                return;
-            }
-        }
-
-        navigate('/card-complete', {
+        navigate('/card-book-search-before', {
             state: {
                 image: getBackgroundImage(),
                 extractedText,
                 font: selectedFont,
-                bookId: bookIdToUse,
-                textPosition: textPosition, // 텍스트 위치 정보 추가
+                textPosition: textPosition,
             },
         });
     };
@@ -294,30 +272,7 @@ const CardCustomizationPage: React.FC = () => {
                         </div>
                     )}
 
-                    {selectedTab === 'book' && (
-                        <div className="book-selection-area">
-                            {selectedBookId ? (
-                                <p className="selected-book-info">
-                                    선택된 책: <strong>{selectedBookTitle}</strong>
-                                </p>
-                            ) : (
-                                <p className="no-book-selected">
-                                    카드를 연결할 책을 찾아주세요.
-                                </p>
-                            )}
-                            <button
-                                className="search-book-button"
-                                onClick={() => navigate('/card-book-search', {
-                                    state: {
-                                        image: image,
-                                        extractedText: extractedText,
-                                    }
-                                })}
-                            >
-                                책 찾아보기
-                            </button>
-                        </div>
-                    )}
+
                 </div>
 
                 <div className="tab-buttons">
@@ -339,15 +294,7 @@ const CardCustomizationPage: React.FC = () => {
                         </div>
                         <div className="tab-label">글자</div>
                     </button>
-                    <button
-                        className={selectedTab === 'book' ? 'tab-selected' : 'tab'}
-                        onClick={() => setSelectedTab('book')}
-                    >
-                        <div className="tab-icon">
-                            <BookOpenIconSVG className={`tab-icon-svg ${selectedTab === 'book' ? 'active' : ''}`} />
-                        </div>
-                        <div className="tab-label">책 찾기</div>
-                    </button>
+
                 </div>
             </div>
             <Toast 

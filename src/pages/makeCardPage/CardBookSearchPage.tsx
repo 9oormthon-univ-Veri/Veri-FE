@@ -8,7 +8,7 @@ import './CardBookSearchPage.css';
 import type { BookItem, BookSearchResponseResult } from '../../api/bookSearchApi';
 import { searchBooks } from '../../api/bookSearchApi';
 import { removeAccessToken } from '../../api/auth';
-import { createBook, searchMyBook } from '../../api/bookApi';
+import { createBook, searchMyBook, getAllBooks, type Book } from '../../api/bookApi';
 import type { CreateBookRequest } from '../../api/bookApi';
 import Toast from '../../components/Toast';
 
@@ -18,6 +18,8 @@ const CardBookSearchPage: React.FC = () => {
 
     const initialImage = location.state?.image as string | undefined;
     const initialExtractedText = location.state?.extractedText as string | undefined;
+    const initialFont = location.state?.font as string | undefined;
+    const initialTextPosition = location.state?.textPosition as { x: number; y: number } | undefined;
 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchedQuery, setSearchedQuery] = useState('');
@@ -35,6 +37,10 @@ const CardBookSearchPage: React.FC = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
 
+    const [myBooks, setMyBooks] = useState<Book[]>([]);
+    const [isLoadingMyBooks, setIsLoadingMyBooks] = useState(false);
+    const [myBooksError, setMyBooksError] = useState<string | null>(null);
+
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize] = useState<number>(9);
 
@@ -48,6 +54,7 @@ const CardBookSearchPage: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [selectedBook, setSelectedBook] = useState<BookItem | null>(null);
     const [toast, setToast] = useState<{
         message: string;
         type: 'success' | 'error' | 'warning' | 'info';
@@ -148,6 +155,36 @@ const CardBookSearchPage: React.FC = () => {
         }
     }, [navigate]);
 
+    const fetchMyBooks = useCallback(async () => {
+        setIsLoadingMyBooks(true);
+        setMyBooksError(null);
+        try {
+            const response = await getAllBooks({ page: 1, size: 100 }); // 충분히 많은 수로 설정
+            
+            if (!response.isSuccess || !response.result) {
+                setMyBooksError(response.message || '내 책장을 불러오는데 실패했습니다.');
+                return;
+            }
+            
+            setMyBooks(response.result.memberBooks);
+        } catch (error: any) {
+            console.error('내 책장 로드 중 오류:', error);
+            if (error.message === 'TOKEN_EXPIRED') {
+                showToast('세션이 만료되었습니다. 다시 로그인해주세요.', 'error');
+                removeAccessToken();
+                navigate('/login');
+            } else {
+                setMyBooksError(`내 책장 로드 중 오류: ${error.message}`);
+            }
+        } finally {
+            setIsLoadingMyBooks(false);
+        }
+    }, [navigate]);
+
+    useEffect(() => {
+        fetchMyBooks();
+    }, [fetchMyBooks]);
+
     const handleSearch = useCallback(async (event: React.FormEvent | null, currentSearchTerm: string = searchTerm) => {
         event?.preventDefault();
 
@@ -206,6 +243,48 @@ const CardBookSearchPage: React.FC = () => {
         setRecentSearches(prevSearches => prevSearches.filter(item => item !== itemToDelete));
     }, []);
 
+    const handleSelectBook = useCallback((book: BookItem) => {
+        setSelectedBook(book);
+    }, []);
+
+    const handleSelectMyBook = useCallback((book: Book) => {
+        // Book 타입을 BookItem 타입으로 변환
+        const bookItem: BookItem = {
+            title: book.title,
+            author: book.author,
+            imageUrl: book.imageUrl,
+            publisher: '', // Book 타입에는 publisher가 없으므로 빈 문자열
+            isbn: '' // Book 타입에는 isbn이 없으므로 빈 문자열
+        };
+        setSelectedBook(bookItem);
+    }, []);
+
+    const handleRegisterMyBook = useCallback(async (book: Book) => {
+        setIsSubmitting(true);
+        setSubmitError(null);
+        setSubmitSuccess(false);
+
+        try {
+            showToast('기존 책에 독서카드가 추가됩니다.', 'info');
+            setSubmitSuccess(true);
+
+            navigate('/card-complete', {
+                state: {
+                    image: initialImage,
+                    extractedText: initialExtractedText,
+                    font: initialFont,
+                    textPosition: initialTextPosition,
+                    bookId: book.memberBookId,
+                }
+            });
+        } catch (err: any) {
+            console.error('책 등록 중 예상치 못한 오류:', err);
+            setSubmitError('책 등록 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, [navigate, initialImage, initialExtractedText, initialFont, initialTextPosition]);
+
     const handleRegisterBook = useCallback(async (book: BookItem) => {
         setIsSubmitting(true);
         setSubmitError(null);
@@ -254,12 +333,13 @@ const CardBookSearchPage: React.FC = () => {
 
             setSubmitSuccess(true);
 
-            navigate('/customize-card', {
+            navigate('/card-complete', {
                 state: {
                     image: initialImage,
                     extractedText: initialExtractedText,
-                    selectedBookId: memberBookId,
-                    selectedBookTitle: book.title,
+                    font: initialFont,
+                    textPosition: initialTextPosition,
+                    bookId: memberBookId,
                 }
             });
         } catch (err: any) {
@@ -328,54 +408,151 @@ const CardBookSearchPage: React.FC = () => {
 
             <div className="search-results-area">
                 {isSearching && !loadingMore && <p className="loading-message">책을 검색 중입니다...</p>}
+                {isLoadingMyBooks && <p className="loading-message">내 책장을 불러오는 중입니다...</p>}
                 {searchError && <p className="error-message">{searchError}</p>}
+                {myBooksError && <p className="error-message">{myBooksError}</p>}
                 {submitError && <p className="error-message">{submitError}</p>}
                 {isSubmitting && <p className="loading-message">책을 등록 중입니다...</p>}
 
+                {/* 검색 결과가 있는 경우 */}
                 {!isSearching && !searchError && searchResults.length > 0 ? (
-                    <div className="book-list">
-                        {searchResults.map((book, index) => {
-                            const isLastElement = searchResults.length === index + 1;
-                            return (
-                                <div
-                                    ref={isLastElement && hasMore ? lastBookElementRef : null}
-                                    key={book.isbn}
-                                    className="book-item"
-                                    onClick={() => handleRegisterBook(book)}
-                                >
-                                    <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
-                                    <div className="book-details">
-                                        <p className="book-title">{book.title}</p>
-                                        <p className="book-author">{book.author}</p>
+                    <div>
+                        <p className="section-title">검색 결과</p>
+                        <div className="book-list">
+                            {searchResults.map((book, index) => {
+                                const isLastElement = searchResults.length === index + 1;
+                                const isSelected = selectedBook?.title === book.title && selectedBook?.author === book.author;
+                                return (
+                                    <div
+                                        ref={isLastElement && hasMore ? lastBookElementRef : null}
+                                        key={`search-${book.isbn}-${index}`}
+                                        className={`book-item ${isSelected ? 'book-item-selected' : ''}`}
+                                        onClick={() => handleSelectBook(book)}
+                                    >
+                                        <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
+                                        <div className="book-details">
+                                            <p className="book-title">{book.title}</p>
+                                            <p className="book-author">{book.author}</p>
+                                        </div>
+                                        {isSelected && (
+                                            <div className="check-mark">
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="10" cy="10" r="10" fill="var(--primary-green)"/>
+                                                    <path d="M6 10L9 13L14 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            );
-                        })}
-                        {loadingMore && <p className="loading-message">더 많은 책을 불러오는 중...</p>}
+                                );
+                            })}
+                            {loadingMore && <p className="loading-message">더 많은 책을 불러오는 중...</p>}
+                        </div>
                     </div>
                 ) : (
+                    /* 검색어가 없거나 검색 결과가 없는 경우 내 책장 표시 */
                     !isSearching && !searchError && !submitError && (
-                        (searchedQuery === '' && searchTerm.length === 0 && !isInputFocused && recentSearches.length === 0) ? (
-                            <p className="initial-message">책 제목, 저자, ISBN으로 검색해보세요.</p>
-                        ) :
-                            (searchedQuery === '' && searchTerm.length > 0 && isInputFocused) ? (
-                                <p className="initial-message">검색 버튼을 눌러 책을 찾아보세요.</p>
-                            ) :
-                                (searchedQuery !== '' && searchResults.length === 0) ? (
-                                    <p className="no-results-message">'{searchedQuery}'에 대한 검색 결과가 없습니다.</p>
+                        searchTerm.trim() === '' ? (
+                            /* 검색어가 없는 경우 - 내 책장 표시 */
+                            !isLoadingMyBooks && !myBooksError && myBooks.length > 0 ? (
+                                <div>
+                                    <p className="section-title">나의 책장에 있는 책들이에요~~</p>
+                                    <div className="book-list">
+                                        {myBooks.map((book) => {
+                                            const isSelected = selectedBook?.title === book.title && selectedBook?.author === book.author;
+                                            return (
+                                                <div
+                                                    key={`mybook-${book.memberBookId}`}
+                                                    className={`book-item ${isSelected ? 'book-item-selected' : ''}`}
+                                                    onClick={() => handleSelectMyBook(book)}
+                                                >
+                                                    <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
+                                                    <div className="book-details">
+                                                        <p className="book-title">{book.title}</p>
+                                                        <p className="book-author">{book.author}</p>
+                                                    </div>
+                                                    {isSelected && (
+                                                        <div className="check-mark">
+                                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <circle cx="10" cy="10" r="10" fill="var(--primary-green)"/>
+                                                                <path d="M6 10L9 13L14 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                            </svg>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ) : !isLoadingMyBooks && myBooks.length === 0 && !myBooksError ? (
+                                <p className="initial-message">아직 책장에 등록된 책이 없습니다. 책 제목, 저자, ISBN으로 검색해보세요.</p>
+                            ) : null
+                        ) : (
+                            /* 검색어는 있지만 결과가 없는 경우 */
+                            searchedQuery !== '' && searchResults.length === 0 ? (
+                                <p className="no-results-message">'{searchedQuery}'에 대한 검색 결과가 없습니다.</p>
+                            ) : (
+                                searchTerm.length > 0 && isInputFocused ? (
+                                    <p className="initial-message">검색 버튼을 눌러 책을 찾아보세요.</p>
                                 ) : null
+                            )
+                        )
                     )
                 )}
                 {submitSuccess && (
                     <p className="success-message">책이 성공적으로 등록되었습니다!</p>
                 )}
             </div>
+
             <Toast
                 message={toast.message}
                 type={toast.type}
                 isVisible={toast.isVisible}
                 onClose={hideToast}
             />
+
+            {/* 하단 선택된 책 정보 또는 안내 메시지 */}
+            <div className={`bottom-selection-area ${selectedBook ? 'has-selection' : ''}`}>
+                {selectedBook ? (
+                    <div className="selected-book-info">
+                        <div className="selected-book-details">
+                            <img src={selectedBook.imageUrl} alt={selectedBook.title} className="selected-book-thumbnail" />
+                            <div className="selected-book-text">
+                                <p className="selected-book-title">{selectedBook.title}</p>
+                                <p className="selected-book-author">{selectedBook.author}</p>
+                            </div>
+                        </div>
+                        <button 
+                            className="register-button"
+                            onClick={() => {
+                                // 내 책장의 책인지 확인 (isbn이 없으면 내 책장의 책)
+                                if (!selectedBook.isbn) {
+                                    // 내 책장에서 해당 책 찾기
+                                    const myBook = myBooks.find(book => 
+                                        book.title === selectedBook.title && book.author === selectedBook.author
+                                    );
+                                    if (myBook) {
+                                        handleRegisterMyBook(myBook);
+                                    }
+                                } else {
+                                    // 검색 결과의 책
+                                    handleRegisterBook(selectedBook);
+                                }
+                            }}
+                            disabled={isSubmitting}
+                        >
+                            선택완료
+                        </button>
+                    </div>
+                ) : (
+                    <div className="no-selection-info">
+                        <div className="no-selection-icon">📚</div>
+                        <p className="no-selection-text">선택된 책이 없어요</p>
+                        <button className="disabled-button" disabled>
+                            선택완료
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

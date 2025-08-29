@@ -162,7 +162,7 @@
 
 /* 공유하기 버튼 스타일 (녹색) */
 .share-button-revised {
-    background-color: #00c774;
+    background-color: var(--primary-green);
     /* 초록색 배경 */
     color: #ffffff;
     /* 흰색 텍스트 */

@@ -9,6 +9,7 @@ import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../../api/b
 import BookshelfList from '../../components/LibraryPage/LibraryPageList';
 import LibraryPageGrid from '../../components/LibraryPage/LibraryPageGrid';
 import TopBar from '../../components/TopBar';
+import { SkeletonList, SkeletonCard } from '../../components/SkeletonUI';
 
 
 export const StarRatingFullPage: React.FC<{ rating: number }> = ({ rating }) => {
@@ -133,14 +134,6 @@ function LibraryPage() {
     setViewMode(mode);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="loading-page-container">
-        <p>책장 데이터를 불러오는 중...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="loading-page-container">
@@ -198,7 +191,13 @@ function LibraryPage() {
         </div>
       </div>
 
-      {filteredBooks.length === 0 && !isLoading && !error ? (
+      {isLoading ? (
+        <div className="books-container list-view">
+          <SkeletonList count={5}>
+            <SkeletonCard />
+          </SkeletonList>
+        </div>
+      ) : filteredBooks.length === 0 && !error ? (
         <div className="no-books-message">
           {searchQuery ? (
             <p>검색 결과가 없습니다.</p>

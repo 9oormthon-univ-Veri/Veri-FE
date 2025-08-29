@@ -1,0 +1,240 @@
+/* Skeleton UI 애니메이션 - 개선된 성능과 부드러움 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f6f7f8 25%, #edeef1 50%, #f6f7f8 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.8s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+/* 기본 스켈레톤 요소들 */
+.skeleton-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #fff;
+  margin-bottom: 8px;
+}
+
+.skeleton-image {
+  width: 80px;
+  height: 120px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-title {
+  height: 18px;
+  width: 80%;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 60%;
+  border-radius: 4px;
+}
+
+/* 책 아이템 스켈레톤 */
+.skeleton-book-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110px;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.skeleton-book-cover {
+  width: 100px;
+  height: 140px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.skeleton-book-title {
+  width: 90%;
+  height: 13px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.skeleton-book-author {
+  width: 70%;
+  height: 11px;
+  border-radius: 4px;
+}
+
+/* 독서카드 스켈레톤 */
+.skeleton-reading-card {
+  display: flex;
+  gap: 12px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.skeleton-card-image {
+  width: 100px;
+  height: 150px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.skeleton-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-card-text {
+  height: 60px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.skeleton-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.skeleton-card-book-title {
+  height: 16px;
+  width: 80%;
+  border-radius: 4px;
+}
+
+.skeleton-card-date {
+  height: 12px;
+  width: 50%;
+  border-radius: 4px;
+}
+
+/* 독서카드 그리드 스켈레톤 */
+.skeleton-reading-card-grid {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  margin: 2px;
+}
+
+.skeleton-grid-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* 히어로 섹션 스켈레톤 */
+.skeleton-hero-section {
+  position: relative;
+  height: 270px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.skeleton-hero-background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
+}
+
+.skeleton-hero-content {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 15px;
+  background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
+}
+
+.skeleton-profile-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.skeleton-welcome-text {
+  flex: 1;
+  margin-left: 12px;
+  margin-bottom: 20px;
+}
+
+.skeleton-welcome-title {
+  height: 18px;
+  width: 60%;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.skeleton-welcome-subtitle {
+  height: 14px;
+  width: 80%;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.skeleton-hero-book {
+  width: 150px;
+  height: 200px;
+  border-radius: 15px 15px 0 0;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 모든 스켈레톤 요소에 shimmer 효과 적용 */
+.skeleton-image,
+.skeleton-title,
+.skeleton-text,
+.skeleton-book-cover,
+.skeleton-book-title,
+.skeleton-book-author,
+.skeleton-card-image,
+.skeleton-card-text,
+.skeleton-card-book-title,
+.skeleton-card-date,
+.skeleton-grid-image {
+  @extend .skeleton-shimmer;
+}
+
+/* Shimmer 클래스를 직접 적용 */
+.skeleton-image,
+.skeleton-title,
+.skeleton-text,
+.skeleton-book-cover,
+.skeleton-book-title,
+.skeleton-book-author,
+.skeleton-card-image,
+.skeleton-card-text,
+.skeleton-card-book-title,
+.skeleton-card-date,
+.skeleton-grid-image {
+  background: linear-gradient(90deg, #f6f7f8 25%, #edeef1 50%, #f6f7f8 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.8s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+} 

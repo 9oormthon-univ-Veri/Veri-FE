@@ -133,14 +133,14 @@ const MakeCardPage: React.FC = () => {
       setUploadError(null);
       try {
         const uploadedUrl = await uploadImage(file);
-        setSelectedGalleryImage(uploadedUrl);
-        setCapturedImage(null);
-        setCurrentImageIndex(0);
         console.log('갤러리 이미지 업로드 성공:', uploadedUrl);
+        // 바로 UsePhotoPage로 이동
+        navigate('/use-photo', {
+          state: { image: uploadedUrl }
+        });
       } catch (err: any) {
         showToast(`갤러리 이미지 업로드 실패: ${err.message}`, 'error');
         setUploadError(`갤러리 이미지 업로드 실패: ${err.message}`);
-      } finally {
         setIsUploading(false);
       }
     }
@@ -222,16 +222,16 @@ const MakeCardPage: React.FC = () => {
         setUploadError(null);
         try {
           const uploadedUrl = await uploadImage(photoFile);
-          setCapturedImage(uploadedUrl);
-          setSelectedGalleryImage(null);
-          setCurrentImageIndex(0);
           stopCameraStream();
           setCameraError(null);
           console.log('촬영된 사진 업로드 성공:', uploadedUrl);
+          // 바로 UsePhotoPage로 이동
+          navigate('/use-photo', {
+            state: { image: uploadedUrl }
+          });
         } catch (err: any) {
           console.error('촬영된 사진 업로드 실패:', err);
           setUploadError(`사진 업로드 실패: ${err.message}`);
-        } finally {
           setIsUploading(false);
         }
       }
@@ -328,24 +328,7 @@ const MakeCardPage: React.FC = () => {
           )}
         </div>
 
-        {(!isCameraActive && imagesToDisplay[currentImageIndex]) && (
-          <div className="use-photo-button-container" style={{ marginTop: '16px', textAlign: 'center' }}>
-            <button
-              className="use-photo-button"
-              onClick={() => {
-                const currentDisplayedImage = imagesToDisplay[currentImageIndex];
-                if (currentDisplayedImage) {
-                  processAndNavigateToOcr(currentDisplayedImage);
-                } else {
-                  showToast('사용할 이미지를 선택해주세요.', 'warning');
-                }
-              }}
-              disabled={isUploading || !imagesToDisplay[currentImageIndex]}
-            >
-              {isUploading ? '업로드 중...' : '사진 사용하기'}
-            </button>
-          </div>
-        )}
+
 
         <input
           type="file"
