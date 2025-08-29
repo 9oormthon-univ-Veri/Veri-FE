@@ -60,34 +60,7 @@ const MakeCardPage: React.FC = () => {
   if (selectedGalleryImage) allAvailableImages.push(selectedGalleryImage);
   const imagesToDisplay = allAvailableImages;
 
-  const processAndNavigateToOcr = useCallback(async (imageToProcess: string) => {
-    setIsUploading(true);
-    setUploadError(null);
-    try {
-      let finalImageUrl: string;
 
-      if (imageToProcess.startsWith('data:')) {
-        const response = await fetch(imageToProcess);
-        const blob = await response.blob();
-        const file = new File([blob], `captured_photo_${Date.now()}.png`, { type: 'image/png' });
-        finalImageUrl = await uploadImage(file);
-      } else {
-        finalImageUrl = imageToProcess;
-      }
-
-      console.log('OCR을 위해 전달될 최종 이미지 URL:', finalImageUrl);
-
-      navigate('/text-extraction-loading', {
-        state: {
-          image: finalImageUrl,
-        },
-      });
-    } catch (err: any) {
-      console.error('이미지 업로드 또는 OCR 페이지 이동 중 오류 발생:', err);
-      setUploadError(`이미지 처리 중 오류가 발생했습니다: ${err.message}`);
-      setIsUploading(false);
-    }
-  }, [navigate]);
 
   useEffect(() => {
     if (videoRef.current && stream) {

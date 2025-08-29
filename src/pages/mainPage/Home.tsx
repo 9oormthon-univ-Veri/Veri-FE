@@ -31,7 +31,6 @@ function LibraryPage() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
-  const [isBookDataLoading, setIsBookDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -76,8 +75,6 @@ function LibraryPage() {
       } catch (err: any) {
         console.error('최근 책 데이터 로딩 오류:', err);
         // 책 데이터는 실패해도 사용자에게 오류를 보여주지 않음
-      } finally {
-        setIsBookDataLoading(false);
       }
     };
 

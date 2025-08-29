@@ -207,20 +207,7 @@
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-/* 모든 스켈레톤 요소에 shimmer 효과 적용 */
-.skeleton-image,
-.skeleton-title,
-.skeleton-text,
-.skeleton-book-cover,
-.skeleton-book-title,
-.skeleton-book-author,
-.skeleton-card-image,
-.skeleton-card-text,
-.skeleton-card-book-title,
-.skeleton-card-date,
-.skeleton-grid-image {
-  @extend .skeleton-shimmer;
-}
+/* 모든 스켈레톤 요소에 shimmer 효과는 아래에서 직접 적용됩니다 */
 
 /* Shimmer 클래스를 직접 적용 */
 .skeleton-image,
