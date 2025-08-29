@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Toast from '../../components/Toast';
 import './UsePhotoPage.css';
 
 const UsePhotoPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { image } = location.state || {};
+    const [toast, setToast] = useState<{
+        message: string;
+        type: 'success' | 'error' | 'warning' | 'info';
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+        setToast({ message, type, isVisible: true });
+    };
+
+    const hideToast = () => {
+        setToast(prev => ({ ...prev, isVisible: false }));
+    };
+
+    // OCR 실패로 돌아온 경우 에러 메시지 처리
+    useEffect(() => {
+        const errorMessage = location.state?.errorMessage as string | undefined;
+        const errorType = location.state?.errorType as 'success' | 'error' | 'warning' | 'info' | undefined;
+        
+        if (errorMessage) {
+            showToast(errorMessage, errorType || 'error');
+            // 에러 메시지를 표시한 후 state를 정리
+            navigate(location.pathname, { replace: true, state: { image } });
+        }
+    }, [location.state, navigate, image]);
 
     const handleUsePhoto = () => {
         // OCR 페이지로 이동
@@ -21,10 +51,14 @@ const UsePhotoPage: React.FC = () => {
     return (
         <div className="page-container">
             <div className="use-photo-wrapper">
-                <button className="use-photo-back-button" onClick={handleBack}>
-                    <span className="mgc_left_fill"></span>
+            <header className="detail-header">
+                <button className="header-left-arrow" onClick={handleBack}>
+                    <span
+                        className="mgc_left_fill"
+                    ></span>
                 </button>
-
+                <div className="dummy-box"></div>
+            </header>
                 <div className="use-photo-image-preview-card">
                     {image ? (
                         <img
@@ -49,6 +83,12 @@ const UsePhotoPage: React.FC = () => {
                     </button>
                 </div>
             </div>
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={hideToast}
+            />
         </div>
     );
 };

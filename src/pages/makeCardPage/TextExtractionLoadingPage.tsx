@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { extractTextFromImage } from '../../api/ocrApi';
 import Toast from '../../components/Toast';
+import CardLoading from '../../assets/images/CardLoading.png';
 
 import './TextExtractionLoadingPage.css';
 
@@ -78,9 +79,10 @@ const TextExtractionLoadingPage: React.FC = () => {
 
                 if (!extractedText || extractedText.trim().length === 0) {
                     sessionStorage.removeItem(processingKey);
-                    navigate('/make-card', {
+                    navigate('/use-photo', {
                         replace: true,
                         state: {
+                            image,
                             errorMessage: '이미지에서 텍스트가 감지되지 않았습니다. 다른 이미지를 시도하거나 직접 입력해 주세요.',
                             errorType: 'warning'
                         }
@@ -154,7 +156,6 @@ const TextExtractionLoadingPage: React.FC = () => {
                     <header className="loading-header">
                         {isLoadingText ? (
                             <>
-                                <div className="loading-spinner"></div>
                                 <h3>텍스트를 분석중이에요</h3>
                                 <p>결과가 나올때까지 조금만 기다려주세요!</p>
                             </>
@@ -166,29 +167,15 @@ const TextExtractionLoadingPage: React.FC = () => {
                     </header>
 
                     <div className="loading-content">
-                        {image && (
-                            <img
-                                src={image}
-                                alt="업로드된 이미지"
-                                style={{ marginTop: '20px', maxWidth: '80%', borderRadius: '8px' }}
-                            />
-                        )}
+                        <img
+                            src={CardLoading}
+                            alt="텍스트 분석 중"
+                            style={{ marginTop: '20px', maxWidth: '80%', borderRadius: '8px' }}
+                        />
                         {ocrError ? (
                             <div style={{ textAlign: 'center' }}>
                                 <p style={{ color: 'red', marginBottom: '20px' }}>{ocrError}</p>
                                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                                    <button
-                                        onClick={() => navigate('/make-card')}
-                                        style={{
-                                            padding: '10px 20px',
-                                            backgroundColor: '#f0f0f0',
-                                            border: '1px solid #ccc',
-                                            borderRadius: '5px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        홈으로 돌아가기
-                                    </button>
                                     <button
                                         onClick={() => window.location.reload()}
                                         style={{
@@ -201,6 +188,19 @@ const TextExtractionLoadingPage: React.FC = () => {
                                         }}
                                     >
                                         다시 시도
+                                    </button>
+                                    <button
+                                        onClick={() => navigate('/make-card')}
+                                        style={{
+                                            padding: '10px 20px',
+                                            backgroundColor: '#28a745',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        새 이미지 선택
                                     </button>
                                 </div>
                             </div>
