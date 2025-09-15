@@ -1,0 +1,88 @@
+/* src/components/ReadingStatusModal.css */
+
+.reading-status-modal {
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 120px;
+  padding: 4px 0;
+  border: 1px solid #E7E9EF;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-option {
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.status-option:hover {
+  background-color: #f8f9fa;
+}
+
+.status-divider {
+  height: 1px;
+  background-color: #E7E9EF;
+  margin: 4px 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #464A52;
+  user-select: none;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.custom-checkbox {
+  width: 8px;
+  height: 8px;
+  border: 2px solid #CCD1DB;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background-color: white;
+  flex-shrink: 0;
+}
+
+.custom-checkbox .checkmark {
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hidden-checkbox:checked + .custom-checkbox {
+  background-color: black;
+  border-color: black;
+}
+
+.hidden-checkbox:checked + .custom-checkbox .checkmark {
+  opacity: 1;
+}
+
+.status-text {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 호버 효과 */
+.checkbox-label:hover .custom-checkbox {
+  border-color: #311CA8;
+}
+
+.checkbox-label:hover .status-text {
+  color: #311CA8;
+} 

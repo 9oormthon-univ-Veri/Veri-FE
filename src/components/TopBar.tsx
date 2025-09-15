@@ -1,9 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import searchFillIcon from '../assets/icons/TopBar/search_fill.svg';
+import './TopBar.css';
 import profileIcon from '../assets/icons/TopBar/profile.svg';
 import unionIcon from '../assets/icons/TopBar/union_fill.svg';
-import notificationIcon from '../assets/icons/TopBar/notificationl_fill.svg';
 
 interface TopBarProps {
   showProfile?: boolean;
@@ -60,7 +59,7 @@ const TopBar: React.FC<TopBarProps> = ({
           aria-label="검색" 
           onClick={handleSearchClick}
         >
-          <img src={searchFillIcon} alt="" aria-hidden="true" />
+          <span className="mgc_search_2_fill"></span>
         </button>
         <button 
           type="button" 
@@ -68,7 +67,7 @@ const TopBar: React.FC<TopBarProps> = ({
           aria-label="알림"
           onClick={handleNotificationClick}
         >
-          <img src={notificationIcon} alt="알림" />
+          <span className="mgc_notification_fill"></span>
         </button>
         {showProfile && (
           <button

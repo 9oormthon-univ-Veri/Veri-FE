@@ -3,74 +3,228 @@
 .community-content {
   padding: 0 20px;
   min-height: calc(100vh - 160px);
+  background-color: white;
 }
 
-.community-section {
+/* 독서카드 섹션 */
+.reading-cards-section {
   background-color: #fff;
   padding: 20px;
-  border-radius: 12px;
   margin-bottom: 20px;
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   color: #333;
   margin: 0 0 20px 0;
-  text-align: center;
+  text-align: left;
 }
 
-.community-loading {
-  margin-top: 20px;
-}
-
-.community-placeholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  padding: 40px;
-}
-
-.placeholder-content {
-  text-align: center;
-  max-width: 300px;
-}
-
-.placeholder-icon {
-  font-size: 48px;
+.reading-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   margin-bottom: 20px;
+}
+
+.reading-card-item {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.reading-card-item:hover {
+  transform: scale(1.02);
+}
+
+.reading-card-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-color: #e0e0e0;
+}
+
+.more-cards-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 8px;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.more-cards-button:hover {
+  background-color: #eeeeee;
+}
+
+/* 이달의 추천 섹션 */
+.recommendations-section {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.recommendations-header {
+  margin-bottom: 20px;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0 0 0;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recommendation-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.recommendation-item:hover {
+  background-color: #f8f9fa;
+}
+
+.recommendation-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.recommendation-header {
+  margin-bottom: 15px;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+
+.author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-details {
+  flex: 1;
+}
+
+.author-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.author-description {
+  font-size: 12px;
+  color: #999;
+}
+
+.recommendation-image {
+  width: 100%;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.recommendation-image img {
+  width: 100%;
+  height: auto;
   display: block;
 }
 
-.placeholder-content h3 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 12px 0;
+.recommendation-actions {
+  margin-bottom: 15px;
 }
 
-.placeholder-content p {
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
   font-size: 14px;
   color: #666;
+  padding: 0;
+}
+
+.action-button:hover {
+  color: #333;
+}
+
+.heart-icon,
+.comment-icon {
+  font-size: 16px;
+}
+
+.recommendation-content {
+  font-size: 14px;
   line-height: 1.5;
-  margin: 0 0 24px 0;
+  color: #333;
 }
 
-.coming-soon {
-  display: inline-block;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, var(--primary-green), var(--primary-green));
-  border-radius: 20px;
-  color: white;
+.recommendation-content p {
+  margin: 0 0 10px 0;
+}
+
+.recommendation-date {
   font-size: 12px;
-  font-weight: 600;
+  color: #999;
+  margin-top: 10px;
 }
 
-.coming-soon span {
-  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 600;
+/* 로딩 상태 */
+.cards-loading,
+.recommendations-loading {
+  margin-top: 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .community-content {
+    padding: 0 15px;
+  }
+  
+  .reading-cards-section,
+  .recommendations-section {
+    padding: 15px;
+  }
+  
+  .reading-cards-grid {
+    gap: 8px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+  }
 }

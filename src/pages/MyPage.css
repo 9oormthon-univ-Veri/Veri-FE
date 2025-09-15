@@ -1,29 +1,23 @@
 /* MyPage 스타일 */
 
-/* CSS 변수 정의 */
-:root {
-  --primary-bg: rgba(231, 233, 239, 0.30);
-  --secondary-bg: rgba(231, 233, 239, 0.50);
-  --text-dark: #1A1A1A;
-  --text-gray: rgba(26, 26, 26, 0.80);
-  --text-black: #333;
-  --border-radius: 16px;
-  --border-radius-small: 12px;
-  --spacing-sm: 5px;
-  --spacing-md: 10px;
-  --spacing-lg: 15px;
-  --spacing-xl: 20px;
-}
+/* 간격/반경은 일반 픽셀 값 사용 */
 
 /* 프로필 섹션 */
 .my-page-profile-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: var(--border-radius);
-  background: var(--primary-bg);
-  margin: 0 var(--spacing-lg);
-  padding: var(--spacing-xl);
+  border-radius: 16px;
+  background: #FFFFFF;
+  margin: 20px 20px 0px 20px;
+}
+
+/* 좌측 프로필 묶음 */
+.profile-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .profile-avatar {
@@ -31,7 +25,7 @@
   height: 60px;
   background-color: #ffffff;
   border-radius: 50%;
-  margin-right: var(--spacing-lg);
+  margin-right: 15px;
   flex-shrink: 0;
 }
 
@@ -52,49 +46,100 @@
 
 .profile-info {
   flex-grow: 1;
+  display: flex;
+  align-items: center;
 }
 
 .profile-name {
   font-size: 1.2em;
   font-weight: 500;
-  color: var(--text-black);
+  color: var(--text-dark);
   margin: 0;
   text-align: left;
   line-height: normal;
   letter-spacing: -0.64px;
 }
 
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.icon-button .mgc_edit_2_fill::before {
+  font-size: 16px;
+  color: #6A717B !important;
+}
+
+/* 프로필 내부 배지 그룹 */
+.profile-stats {
+  display: flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+
+.stat-badge {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 70px;
+  height: 57px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  background: black;
+  color: #fff;
+}
+
+.stat-badge-value {
+  margin: 2px 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.stat-badge-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
 .profile-arrow {
   width: 20px;
   height: 20px;
-  margin-left: var(--spacing-md);
+  margin-left: 10px;
   filter: invert(50%);
 }
 
-/* 통계 카드 섹션 */
+/* 통계 카드 섹션 (이전) */
 .my-page-stats-cards {
-  padding: 0 var(--spacing-sm);
-  margin: var(--spacing-md);
+  padding: 0 5px;
+  margin: 10px;
   display: flex;
   justify-content: space-between;
-  gap: var(--spacing-lg);
+  gap: 15px;
 }
 
 .stat-card {
   flex: 1;
-  border-radius: var(--border-radius);
-  background: var(--primary-bg);
+  border-radius: 16px;
+  background: black;
   display: flex;
   width: 170px;
-  padding: var(--spacing-md) 0;
+  padding: 10px 0;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 10px;
 }
 
 .stat-value {
-  margin: var(--spacing-md) 0;
-  color: var(--text-gray);
+  margin: 10px 0;
+  color: var(--text-dark-gray);
   text-align: center;
   font-family: Pretendard, sans-serif;
   font-size: 24px;
@@ -102,8 +147,8 @@
 }
 
 .stat-label {
-  margin: var(--spacing-sm) 0;
-  color: var(--text-gray);
+  margin: 5px 0;
+  color: var(--text-dark-gray);
   font-family: Pretendard, sans-serif;
   font-size: 15px;
   font-weight: 400;
@@ -113,12 +158,13 @@
 
 /* 소식 섹션 */
 .my-page-news-section {
-  border-radius: var(--border-radius-small);
-  background: var(--primary-bg);
-  margin: var(--spacing-lg);
-  padding: 16px var(--spacing-xl) var(--spacing-xl);
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  margin: 20px;
+  padding: 16px 20px 20px;
   align-items: flex-start;
-  gap: var(--spacing-xl);
+  gap: 20px;
 }
 
 .my-page-section-title {
@@ -128,14 +174,14 @@
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.64px;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 20px;
   text-align: left;
 }
 
 .news-item {
   display: flex;
   align-items: center;
-  padding: 7px 0;
+  padding: 10px 0;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -148,8 +194,7 @@
   width: 22px;
   height: 22px;
   margin-right: 8px;
-  border-radius: var(--border-radius);
-  background: var(--secondary-bg);
+  border-radius: 16px;
 }
 
 .news-label {
@@ -166,6 +211,6 @@
 .news-arrow {
   width: 18px;
   height: 18px;
-  margin-left: var(--spacing-md);
+  margin-left: 10px;
   filter: invert(50%);
 }

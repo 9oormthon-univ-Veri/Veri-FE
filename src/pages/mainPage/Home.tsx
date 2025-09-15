@@ -8,15 +8,13 @@ import { getAllBooks, type GetAllBooksQueryParams } from '../../api/bookApi';
 import { SkeletonHeroSection } from '../../components/SkeletonUI';
 
 // 아이콘 import
-import appLogoIcon from '../../assets/icons/TopBar/union.svg';
-import notificationIcon from '../../assets/icons/TopBar/notificationl.svg';
-import searchIcon from '../../assets/icons/TopBar/search.svg';
+import unionIcon from '../../assets/icons/TopBar/union_fill.svg';
+import profileIcon from '../../assets/icons/TopBar/profile.svg';
 
 // 이미지 import
 import sampleBookBackground from '../../assets/images/profileSample/sample_book_background.png';
 import sampleBook from '../../assets/images/profileSample/sample_book.png';
 import sampleUser from '../../assets/images/profileSample/sample_user.png';
-import profileIcon from '../../assets/icons/TopBar/profile.svg';
 
 interface UserData {
   email: string;
@@ -125,7 +123,7 @@ function LibraryPage() {
             onClick={() => navigate('/')}
             aria-label="홈으로 이동"
           >
-            <img src={appLogoIcon} alt="앱 로고" />
+            <img src={unionIcon} alt="홈" />
           </button>
           <div className="header-icons">
             <button
@@ -134,14 +132,14 @@ function LibraryPage() {
               aria-label="검색"
               onClick={handleSearchClick}
             >
-              <img src={searchIcon} alt="" aria-hidden="true" />
+              <span className="mgc_search_2_fill"></span>
             </button>
             <button
               type="button"
               className="notification-button"
               aria-label="알림"
             >
-              <img src={notificationIcon} alt="알림" />
+              <span className="mgc_notification_fill"></span>
             </button>
             <button
               type="button"

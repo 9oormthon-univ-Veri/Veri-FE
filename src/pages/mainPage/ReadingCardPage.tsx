@@ -20,10 +20,26 @@ export interface ReadingCardItemType {
 function ReadingCardPage() {
     const navigate = useNavigate();
     const [readingCards, setReadingCards] = useState<ReadingCardItemType[]>([]);
+    const [filteredCards, setFilteredCards] = useState<ReadingCardItemType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [activeTab, setActiveTab] = useState<'image' | 'text'>('image');
+    const [searchQuery, setSearchQuery] = useState<string>('');
+
+    // 검색 필터링 함수
+    const handleSearch = useCallback((query: string) => {
+        setSearchQuery(query);
+        if (!query.trim()) {
+            setFilteredCards(readingCards);
+        } else {
+            const filtered = readingCards.filter(card =>
+                (card.title && card.title.toLowerCase().includes(query.toLowerCase())) ||
+                card.contentPreview.toLowerCase().includes(query.toLowerCase())
+            );
+            setFilteredCards(filtered);
+        }
+    }, [readingCards]);
 
     // 독서 카드 데이터 가져오기 (최적화된 버전)
     const fetchCards = useCallback(async () => {
@@ -50,6 +66,7 @@ function ReadingCardPage() {
                 }));
                 
                 setReadingCards(basicCards);
+                setFilteredCards(basicCards);
                 setIsLoading(false); // 기본 데이터 로딩 완료
 
                 // 백그라운드에서 상세 정보 가져오기 (배치 처리)
@@ -93,6 +110,7 @@ function ReadingCardPage() {
                 });
             } else {
                 setReadingCards([]);
+                setFilteredCards([]);
                 if (!response.result?.cards || response.result.cards.length === 0) {
                     // 빈 배열은 오류가 아님
                 } else {
@@ -110,6 +128,10 @@ function ReadingCardPage() {
     useEffect(() => {
         fetchCards();
     }, [fetchCards]);
+
+    useEffect(() => {
+        handleSearch(searchQuery);
+    }, [readingCards, searchQuery, handleSearch]);
 
     // 이벤트 핸들러들
     const handleSortClick = useCallback(() => {
@@ -161,6 +183,20 @@ function ReadingCardPage() {
                         텍스트
                     </button>
                 </nav>
+                
+                {/* 텍스트 뷰에서만 검색 입력 필드 표시 */}
+                {activeTab === 'text' && (
+                    <div className="reading-card-search-input-container">
+                        <input
+                            type="text"
+                            placeholder="텍스트를 입력하세요"
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            className="card-search-input"
+                        />
+                        <span className="mgc_search_2_fill"></span>
+                    </div>
+                )}
 
                 <div className="sort-options">
                     <span 
@@ -179,8 +215,8 @@ function ReadingCardPage() {
                             <SkeletonList count={8}>
                                 <SkeletonReadingCardGrid />
                             </SkeletonList>
-                        ) : readingCards.length > 0 ? (
-                            readingCards.map((card) => (
+                        ) : filteredCards.length > 0 ? (
+                            filteredCards.map((card) => (
                                 <ReadingCardGridItem
                                     key={card.id}
                                     id={card.id}
@@ -203,8 +239,8 @@ function ReadingCardPage() {
                             <SkeletonList count={5}>
                                 <SkeletonReadingCard />
                             </SkeletonList>
-                        ) : readingCards.length > 0 ? (
-                            readingCards.map((card) => (
+                        ) : filteredCards.length > 0 ? (
+                            filteredCards.map((card) => (
                                 <ReadingCardItem
                                     key={card.id}
                                     id={card.id}
@@ -215,7 +251,9 @@ function ReadingCardPage() {
                                 />
                             ))
                         ) : (
-                            <p className="no-cards-message">등록된 독서 카드가 없습니다.</p>
+                            <p className="no-cards-message">
+                                {searchQuery ? "검색 결과가 없습니다." : "등록된 독서 카드가 없습니다."}
+                            </p>
                         )}
                     </div>
                 )}

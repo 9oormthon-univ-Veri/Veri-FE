@@ -23,8 +23,20 @@
 /* 히어로 섹션 */
 .library-hero-section {
     position: relative;
-    height: 270px;
+    height: 240px;
     overflow: hidden;
+}
+
+/* 히어로 헤더의 아이콘 폰트 스타일 */
+.library-hero-section .hero-header .header-icons .mgc_search_2_fill,
+.library-hero-section .hero-header .header-icons .mgc_notification_fill {
+  font-size: 20px;
+}
+
+.library-hero-section .hero-header .header-icons .mgc_search_2_fill::before,
+.library-hero-section .hero-header .header-icons .mgc_notification_fill::before {
+  font-size: 22px;
+  color: #ffffff !important;
 }
 
 .hero-background {
@@ -124,7 +136,7 @@
 .hero-book-sample {
     border: none;
     width: 150px;
-    height: 200px;
+    height: 160px;
     background-color: #f0f0f0;
     margin-left: 20px;
     overflow: hidden;

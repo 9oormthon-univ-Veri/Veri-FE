@@ -15,6 +15,7 @@ import MyPage from './pages/MyPage';
 import LibraryPage from './pages/mainPage/LibraryPage';
 import BookDetailPage from './pages/detailPage/BookDetailPage';
 import ReadingCardDetailPage from './pages/detailPage/ReadingCardDetailPage';
+import CommunityPostDetailPage from './pages/detailPage/CommunityPostDetailPage';
 import LoginPage from './pages/LoginPage';
 import MakeCardPage from './pages/makeCardPage/MakeCardPage';
 import TextExtractionLoadingPage from './pages/makeCardPage/TextExtractionLoadingPage';
@@ -28,6 +29,7 @@ import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import CardBookSearchPage from './pages/makeCardPage/CardBookSearchPage';
 import CardBookSearchBeforePage from './pages/makeCardPage/CardBookSearchBeforePage';
 import UsePhotoPage from './pages/makeCardPage/UsePhotoPage';
+import EditMyNamePage from './pages/EditMyNamePage';
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
 const isAuthenticated = () => {
@@ -81,6 +83,7 @@ function App() {
         <Route path="/library" element={<LibraryPage />} />
         <Route path="/book-detail/:id" element={<BookDetailPage />} />
         <Route path="/reading-card-detail/:id" element={<ReadingCardDetailPage />} />
+        <Route path="/community/post/:postId" element={<CommunityPostDetailPage />} />
         <Route path="/make-card" element={<MakeCardPage />} />
         <Route path="/text-extraction-loading" element={<TextExtractionLoadingPage />} />
         <Route path="/text-extraction-result" element={<TextExtractionResultPage />} />
@@ -93,6 +96,7 @@ function App() {
         <Route path="/card-book-search" element={<CardBookSearchPage />} />
         <Route path="/card-book-search-before" element={<CardBookSearchBeforePage />} />
         <Route path="/use-photo" element={<UsePhotoPage />} />
+        <Route path="/edit-my-name" element={<EditMyNamePage />} />
         {/* 404 페이지 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>

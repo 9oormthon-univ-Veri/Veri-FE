@@ -1,0 +1,96 @@
+import React, { useEffect, useRef } from 'react';
+import './ReadingStatusModal.css';
+
+interface ReadingStatusModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedStatuses: string[];
+  onStatusChange: (statuses: string[]) => void;
+  buttonRef: React.RefObject<HTMLButtonElement | null>;
+}
+
+const ReadingStatusModal: React.FC<ReadingStatusModalProps> = ({
+  isOpen,
+  onClose,
+  selectedStatuses,
+  onStatusChange,
+  buttonRef
+}) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current && modalRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const modal = modalRef.current;
+      
+      // 버튼 바로 아래에 모달 위치 설정
+      modal.style.top = `${buttonRect.bottom + 8}px`;
+      modal.style.left = `${buttonRect.left}px`;
+    }
+  }, [isOpen, buttonRef]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node) && 
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose, buttonRef]);
+
+  const handleStatusToggle = (status: string) => {
+    let newStatuses;
+    if (selectedStatuses.includes(status)) {
+      newStatuses = selectedStatuses.filter(s => s !== status);
+    } else {
+      newStatuses = [...selectedStatuses, status];
+    }
+    onStatusChange(newStatuses);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="reading-status-modal" ref={modalRef}>
+        <div className="status-option">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={selectedStatuses.includes('reading')}
+              onChange={() => handleStatusToggle('reading')}
+              className="hidden-checkbox"
+            />
+            <div className="custom-checkbox">
+              {selectedStatuses.includes('reading') && <span className="checkmark">✓</span>}
+            </div>
+            <span className="status-text">독서중</span>
+          </label>
+        </div>
+        <div className="status-divider"></div>
+        <div className="status-option">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={selectedStatuses.includes('completed')}
+              onChange={() => handleStatusToggle('completed')}
+              className="hidden-checkbox"
+            />
+            <div className="custom-checkbox">
+              {selectedStatuses.includes('completed') && <span className="checkmark">✓</span>}
+            </div>
+            <span className="status-text">독서완료</span>
+          </label>
+        </div>
+    </div>
+  );
+};
+
+export default ReadingStatusModal; 

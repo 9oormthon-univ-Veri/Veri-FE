@@ -312,9 +312,9 @@
     color: #333;
     line-height: 1.3;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    line-clamp: 2;
+    line-clamp: 1;
     overflow: hidden;
 }
 
@@ -323,6 +323,9 @@
     font-size: 14px;
     color: #666;
     line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .register-button {

@@ -31,7 +31,7 @@ const MyPage: React.FC = () => {
     const fetchUserData = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const response: GetMemberProfileResponse = await getMemberProfile();
 
@@ -42,9 +42,9 @@ const MyPage: React.FC = () => {
             nickname: apiResult.nickname,
             numOfReadBook: apiResult.numOfReadBook,
             numOfCard: apiResult.numOfCard,
-            profileImageUrl: apiResult.image && 
-                            apiResult.image.trim() !== '' && 
-                            apiResult.image !== 'https://example.com/image.jpg'
+            profileImageUrl: apiResult.image &&
+              apiResult.image.trim() !== '' &&
+              apiResult.image !== 'https://example.com/image.jpg'
               ? apiResult.image
               : null,
           });
@@ -76,12 +76,17 @@ const MyPage: React.FC = () => {
 
   const handleSearchClick = () => navigate('/book-search');
 
+  const goToEditMyName = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate('/edit-my-name');
+  };
+
   // 로딩 상태 처리
-      if (isLoading) {
-        return <div className="loading-page-container">
-            <div className="loading-spinner"></div>
-        </div>;
-    }
+  if (isLoading) {
+    return <div className="loading-page-container">
+      <div className="loading-spinner"></div>
+    </div>;
+  }
 
   // 에러 상태 처리
   if (error) {
@@ -95,38 +100,39 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="page-container">
-      <TopBar 
-        showProfile={false}
-        onSearchClick={handleSearchClick}
-      />
+      <TopBar/>
 
       <div className="header-margin" />
 
       <div className="my-page-profile-section" onClick={handleProfileClick}>
-        <div className="profile-avatar">
-          {userData.profileImageUrl ? (
-            <img src={userData.profileImageUrl} className="avatar-image" alt="프로필" />
-          ) : (
-            <div
-              className="avatar-placeholder"
-              style={{ backgroundImage: `url(${sampleUser})` }}
-            />
-          )}
+        <div className="profile-left">
+          <div className="profile-avatar">
+            {userData.profileImageUrl ? (
+              <img src={userData.profileImageUrl} className="avatar-image" alt="프로필" />
+            ) : (
+              <div
+                className="avatar-placeholder"
+                style={{ backgroundImage: `url(${sampleUser})` }}
+              />
+            )}
+          </div>
+          <div className="profile-info">
+            <p className="profile-name">{userData.nickname}</p>
+            <button type="button" className="icon-button" aria-label="닉네임 수정" onClick={goToEditMyName}>
+              <span className="mgc_edit_2_fill"></span>
+            </button>
+          </div>
         </div>
-        <div className="profile-info">
-          <p className="profile-name">{userData.nickname}</p>
-        </div>
-        <img src={rightLineIcon} alt="더 보기" className="profile-arrow" />
-      </div>
 
-      <div className="my-page-stats-cards">
-        <div className="stat-card">
-          <p className="stat-value">{userData.numOfReadBook}</p>
-          <p className="stat-label">내가 읽은 책</p>
-        </div>
-        <div className="stat-card">
-          <p className="stat-value">{userData.numOfCard}</p>
-          <p className="stat-label">나의 독서카드</p>
+        <div className="profile-stats">
+          <div className="stat-badge">
+            <p className="stat-badge-value">{userData.numOfReadBook}</p>
+            <p className="stat-badge-label">읽은 책</p>
+          </div>
+          <div className="stat-badge">
+            <p className="stat-badge-value">{userData.numOfCard}</p>
+            <p className="stat-badge-label">독서카드</p>
+          </div>
         </div>
       </div>
 

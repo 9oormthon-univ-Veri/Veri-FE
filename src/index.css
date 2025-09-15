@@ -15,6 +15,7 @@
   --accent-color: var(--primary-green);
   --background-light: var(--very-light-purple);
   --text-dark: #333;
+  --text-dark-gray: #6A717B;
   --text-light: #666;
   --border-color: #eee;
   --shadow-color: rgba(0, 0, 0, 0.1);
@@ -233,42 +234,7 @@ code {
   background-color: #fff;
 }
 
-.hero-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 75px;
-  padding: 16px 20px;
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  z-index: 2;
-  box-sizing: border-box;
-}
 
-.hero-header>.icon:first-child {
-  width: 40px;
-  height: 40px;
-}
-
-.header-icons {
-  display: flex;
-  gap: 10px;
-}
-
-.header-icons button{
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0px;
-  margin: 0px;
-}
 
 .h3-white{
   color: #ffffff !important;
@@ -374,50 +340,34 @@ code {
   border-top: 1px solid #eee;
 }
 
-.main-icon{
-  width: 48px;
-  height: 14px;
-}
 
-.main-icon {
-  width: 48px;
-  height: 14px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.color-notificationl-icon {
-  width: 20px;
-  height: 20px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
 
 /* 정렬 옵션 */
 .sort-options {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   padding: 5px 0;
-  margin: 10px;
+  margin: 5px;
+  gap: 5px;
 }
 
 .sort-options .sort-button {
   display: flex;
-  padding: 10px 10px;
   align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 15px;
+  padding: 5px;
   gap: 4px;
   border-radius: 15px;
   border: 0.5px solid var(--border-light);
   background: none;
   color: var(--text-dark);
-  font-family: Pretendard, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 .sort-options .sort-button:hover {
@@ -438,6 +388,11 @@ code {
 .sort-button .mgc_up_fill::before {
     font-size: 15px;
     color: #9BA2B1 !important;
+}
+
+.search-input-container {
+  position: relative;
+  width: 100%;
 }
 
 @font-face {

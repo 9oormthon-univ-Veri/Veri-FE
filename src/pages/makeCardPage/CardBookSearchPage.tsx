@@ -429,7 +429,9 @@ const CardBookSearchPage: React.FC = () => {
                                         className={`book-item ${isSelected ? 'book-item-selected' : ''}`}
                                         onClick={() => handleSelectBook(book)}
                                     >
-                                        <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
+                                        <div className="book-cover-thumbnail">
+                                            <img src={book.imageUrl} alt={book.title} />
+                                        </div>
                                         <div className="book-details">
                                             <p className="book-title">{book.title}</p>
                                             <p className="book-author">{book.author}</p>
@@ -515,7 +517,9 @@ const CardBookSearchPage: React.FC = () => {
                 {selectedBook ? (
                     <div className="selected-book-info">
                         <div className="selected-book-details">
-                            <img src={selectedBook.imageUrl} alt={selectedBook.title} className="selected-book-thumbnail" />
+                            {/*<div className="selected-book-thumbnail">
+                                <img src={selectedBook.imageUrl} alt={selectedBook.title} />
+                            </div>*/}
                             <div className="selected-book-text">
                                 <p className="selected-book-title">{selectedBook.title}</p>
                                 <p className="selected-book-author">{selectedBook.author}</p>
