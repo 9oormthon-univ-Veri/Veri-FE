@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CommunityPostDetailPage.css';
 
 interface CommunityPost {
@@ -63,7 +63,6 @@ const mockComments: Comment[] = [
 
 function CommunityPostDetailPage() {
   const navigate = useNavigate();
-  const { postId } = useParams();
   const [post] = useState<CommunityPost>(mockPost);
   const [comments] = useState<Comment[]>(mockComments);
   const [newComment, setNewComment] = useState('');
