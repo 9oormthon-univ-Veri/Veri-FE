@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './LibraryPage.css';
 import starFillIcon from '../../assets/icons/star_fill.svg';
 import starLineIcon from '../../assets/icons/star_line.svg';
-import searchIcon from '../../assets/icons/TopBar/search.svg';
 
 import { getAllBooks, type Book, type GetAllBooksQueryParams } from '../../api/bookApi';
 import BookshelfList from '../../components/LibraryPage/LibraryPageList';

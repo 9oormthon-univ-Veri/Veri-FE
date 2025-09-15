@@ -74,8 +74,6 @@ const MyPage: React.FC = () => {
     console.log('이벤트 페이지로 이동');
   };
 
-  const handleSearchClick = () => navigate('/book-search');
-
   const goToEditMyName = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate('/edit-my-name');
