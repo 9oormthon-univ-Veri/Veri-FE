@@ -30,6 +30,7 @@ import CardBookSearchPage from './pages/makeCardPage/CardBookSearchPage';
 import CardBookSearchBeforePage from './pages/makeCardPage/CardBookSearchBeforePage';
 import UsePhotoPage from './pages/makeCardPage/UsePhotoPage';
 import EditMyNamePage from './pages/EditMyNamePage';
+import WritePostPage from './pages/WritePostPage/WritePostPage';
 
 // 인증 상태를 확인하는 헬퍼 함수 (로직은 그대로 유지)
 const isAuthenticated = () => {
@@ -97,6 +98,7 @@ function App() {
         <Route path="/card-book-search-before" element={<CardBookSearchBeforePage />} />
         <Route path="/use-photo" element={<UsePhotoPage />} />
         <Route path="/edit-my-name" element={<EditMyNamePage />} />
+        <Route path="/write-post" element={<WritePostPage />} />
         {/* 404 페이지 */}
         <Route path="*" element={<div style={{ padding: '20px', textAlign: 'center' }}><h2>404 - Page Not Found</h2></div>} />
       </Routes>
