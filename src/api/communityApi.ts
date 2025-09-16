@@ -52,6 +52,7 @@ interface BaseApiResponse<T> {
 export type GetPostFeedResponse = BaseApiResponse<PostFeedResponse>;
 export type GetMyPostsResponse = BaseApiResponse<MyPostsResponse>;
 export type CreatePostResponse = BaseApiResponse<number>;
+export type DeletePostResponse = BaseApiResponse<Record<string, never>>;
 
 // 쿼리 파라미터 타입들
 export interface GetPostFeedQueryParams {
@@ -271,5 +272,25 @@ export const createPost = async (
   return makeApiRequest<CreatePostResponse>('/api/v1/posts', {
     method: 'POST',
     body: JSON.stringify(postData),
+  });
+};
+
+/**
+ * 게시글 삭제
+ * 게시글을 삭제합니다.
+ * 
+ * @param postId - 삭제할 게시글 ID
+ * @returns 삭제 결과
+ */
+export const deletePost = async (
+  postId: number
+): Promise<DeletePostResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    return createMockResponse({}, '목 게시글 삭제 성공');
+  }
+
+  return makeApiRequest<DeletePostResponse>(`/api/v1/posts/${postId}`, {
+    method: 'DELETE',
   });
 };
