@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPostDetail } from '../../api/communityApi';
-import type { PostDetail, Comment } from '../../api/communityApi';
+import type { PostDetail } from '../../api/communityApi';
 import './CommunityPostDetailPage.css';
 
 function CommunityPostDetailPage() {

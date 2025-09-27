@@ -136,12 +136,6 @@ function CommunityPage() {
     navigate(`/community/post/${postId}`);
   };
 
-  const handleLoadMore = () => {
-    if (!isLoading && hasMore) {
-      loadPosts(currentPage + 1, false);
-    }
-  };
-
   const handleRefresh = () => {
     loadPosts(1, true);
   };
@@ -149,17 +143,7 @@ function CommunityPage() {
   const handleWritePost = () => {
     navigate('/write-post');
   };
-
-  // 날짜 포맷팅 함수
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\./g, '.').replace(/\s/g, '');
-  };
-
+  
   return (
     <div className="page-container">
       <TopBar onProfileClick={handleProfileClick} />
