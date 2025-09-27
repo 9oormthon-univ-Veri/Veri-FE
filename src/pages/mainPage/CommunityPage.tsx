@@ -18,7 +18,7 @@ const mockReadingCards = [
 const mockRecommendations = [
   {
     id: 1,
-    author: '김현아',
+    author: '홍길동',
     authorDescription: '📚 내가 남은 스물다섯 번의 개월',
     image: '/src/assets/images/cardSample/forest.jpg',
     likes: 125,
@@ -28,7 +28,7 @@ const mockRecommendations = [
   },
   {
     id: 2,
-    author: '김현아',
+    author: '홍길동',
     authorDescription: '📚 내가 남은 스물다섯 번의 개월',
     image: '/src/assets/images/cardSample/river.jpg',
     likes: 125,

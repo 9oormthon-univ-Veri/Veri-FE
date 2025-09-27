@@ -29,7 +29,7 @@ interface Comment {
 // 목업 데이터
 const mockPost: CommunityPost = {
   id: 1,
-  author: '김현아',
+  author: '홍길동',
   authorDescription: '📚 내가 남은 스물다섯 번의 개월',
   image: '/src/assets/images/cardSample/forest.jpg',
   likes: 125,
