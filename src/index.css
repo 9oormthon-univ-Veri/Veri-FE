@@ -23,7 +23,7 @@
 
 body {
   margin: 0;
-  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-family: Pretendard;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
@@ -37,8 +37,7 @@ body::-webkit-scrollbar {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: Pretendard;
 }
 
 .dummy-box {
@@ -308,6 +307,7 @@ code {
 
 .header-right-wrapper {
   position: relative;
+  width: 40px;
 }
 
 .header-dropdown-menu {
@@ -396,7 +396,7 @@ code {
 }
 
 @font-face {
-  font-family: 'Nanum Pen'; /* This is the name you'll use in CSS */
+  font-family: Pretendard; /* This is the name you'll use in CSS */
   src: url('/fonts/NanumPen.ttf') format('truetype'); /* Adjust the path if necessary */
   font-weight: normal;
   font-style: normal;
@@ -404,7 +404,7 @@ code {
 
 /* Define Noto Sans KR font */
 @font-face {
-  font-family: 'Noto Sans KR'; /* This is the name you'll use in CSS */
+  font-family: Pretendard; /* This is the name you'll use in CSS */
   src: url('/fonts/NotoSansKR.ttf') format('truetype'); /* Adjust the path if necessary */
   font-weight: normal;
   font-style: normal;

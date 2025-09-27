@@ -81,7 +81,7 @@
 /* 카카오 로그인 텍스트 */
 .kakao-social-text {
     color: #000;
-    font-family: "Apple SD Gothic Neo";
+    font-family: "Pretendard";
     font-size: 15px;
     font-weight: 500;
     line-height: 150%;
@@ -94,7 +94,7 @@
 /* 네이버 로그인 텍스트 */
 .naver-social-text {
     color: var(--naver-text, #FFF);
-    font-family: "Apple SD Gothic Neo";
+    font-family: "Pretendard";
     font-size: 15px;
     font-weight: 500;
     line-height: 150%;

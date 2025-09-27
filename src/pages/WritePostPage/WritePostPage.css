@@ -105,7 +105,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 16px;
-  font-family: inherit;
+  font-family: Pretendard;
   line-height: 1.6;
   resize: vertical;
   min-height: 300px;
@@ -263,8 +263,7 @@
 .bottom-actions {
   display: flex;
   gap: 12px;
-  padding: 20px 0;
-  border-top: 1px solid #e2e8f0;
+  padding: 20px 20px;
   position: sticky;
   bottom: 0;
   background-color: white;

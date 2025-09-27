@@ -9,19 +9,55 @@ import {
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL || 'https://api.veri.me.kr';
 
 // 타입 정의
+export interface AuthorInfo {
+  id: number;
+  nickname: string;
+  profileImageUrl: string;
+}
+
+export interface BookInfo {
+  title: string;
+  author: string;
+  imageUrl: string;
+  publisher: string;
+  isbn: string;
+}
+
 export interface Post {
   postId: number;
   title: string;
   content: string;
-  author: string;
-  authorImage?: string;
-  createdAt: string;
-  updatedAt: string;
+  thumbnail: string | null;
+  author: AuthorInfo;
+  book?: BookInfo; // 선택적 속성으로 변경
   likeCount: number;
   commentCount: number;
+  createdAt: string;
+  isPublic: boolean;
+}
+
+// 댓글 타입
+export interface Comment {
+  commentId: number;
+  content: string;
+  author: AuthorInfo;
+  createdAt: string;
+  isDeleted: boolean;
+}
+
+// 게시글 상세 정보 타입
+export interface PostDetail {
+  postId: number;
+  title: string;
+  content: string;
+  images: string[];
+  author: AuthorInfo;
+  book?: BookInfo;
+  likeCount: number;
   isLiked: boolean;
-  images?: string[];
-  tags?: string[];
+  comments: Comment[];
+  commentCount: number;
+  createdAt: string;
 }
 
 export interface PostFeedResponse {
@@ -40,6 +76,31 @@ export interface MyPostsResponse {
   totalPages: number;
 }
 
+// 카드 관련 타입들
+export interface CardMember {
+  id: number;
+  nickname: string;
+  profileImageUrl: string;
+}
+
+export interface Card {
+  cardId: number;
+  member: CardMember;
+  bookTitle: string;
+  content: string;
+  image: string;
+  created: string;
+  isPublic: boolean;
+}
+
+export interface CardListResponse {
+  cards: Card[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 // 공통 응답 타입
 interface BaseApiResponse<T> {
   isSuccess: boolean;
@@ -51,6 +112,8 @@ interface BaseApiResponse<T> {
 // 구체적인 응답 타입들
 export type GetPostFeedResponse = BaseApiResponse<PostFeedResponse>;
 export type GetMyPostsResponse = BaseApiResponse<MyPostsResponse>;
+export type GetPostDetailResponse = BaseApiResponse<PostDetail>;
+export type GetCardsResponse = BaseApiResponse<CardListResponse>;
 export type CreatePostResponse = BaseApiResponse<number>;
 export type DeletePostResponse = BaseApiResponse<Record<string, never>>;
 
@@ -62,6 +125,12 @@ export interface GetPostFeedQueryParams {
 }
 
 export interface GetMyPostsQueryParams {
+  page?: number;
+  size?: number;
+  sort?: 'newest' | 'oldest' | 'popular';
+}
+
+export interface GetCardsQueryParams {
   page?: number;
   size?: number;
   sort?: 'newest' | 'oldest' | 'popular';
@@ -139,43 +208,110 @@ const createMockPosts = (): Post[] => [
     postId: 1,
     title: "오늘 읽은 책에 대한 감상",
     content: "정말 좋은 책이었습니다. 특히 마지막 장면이 인상적이었어요.",
-    author: "독서왕",
-    authorImage: "/images/profileSample/sample_user.png",
-    createdAt: "2024-01-15T10:30:00Z",
-    updatedAt: "2024-01-15T10:30:00Z",
+    author: {
+      id: 1,
+      nickname: "독서왕",
+      profileImageUrl: "/images/profileSample/sample_user.png",
+    },
+    book: {
+      title: "오늘 읽은 책",
+      author: "작가A",
+      imageUrl: "/images/cardSample/forest.jpg",
+      publisher: "출판사A",
+      isbn: "1234567890123",
+    },
     likeCount: 15,
     commentCount: 3,
-    isLiked: false,
-    images: ["/images/cardSample/forest.jpg"],
-    tags: ["감상", "추천"]
+    createdAt: "2024-01-15T10:30:00Z",
+    isPublic: true,
+    thumbnail: "/images/cardSample/forest.jpg",
   },
   {
     postId: 2,
     title: "새로 발견한 작가의 작품들",
     content: "이번에 새로 알게 된 작가인데, 작품 스타일이 정말 독특해요.",
-    author: "책벌레",
-    authorImage: "/images/profileSample/sample_user.png",
-    createdAt: "2024-01-14T15:20:00Z",
-    updatedAt: "2024-01-14T15:20:00Z",
+    author: {
+      id: 2,
+      nickname: "책벌레",
+      profileImageUrl: "/images/profileSample/sample_user.png",
+    },
+    book: {
+      title: "새로운 작품",
+      author: "작가B",
+      imageUrl: "/images/cardSample/sea.jpg",
+      publisher: "출판사B",
+      isbn: "9876543210987",
+    },
     likeCount: 8,
     commentCount: 1,
-    isLiked: true,
-    images: ["/images/cardSample/sea.jpg", "/images/cardSample/sky.jpg"],
-    tags: ["작가", "발견"]
+    createdAt: "2024-01-14T15:20:00Z",
+    isPublic: true,
+    thumbnail: "/images/cardSample/sea.jpg",
   },
   {
     postId: 3,
     title: "독서 모임 후기",
     content: "이번 주 독서 모임에서 정말 좋은 이야기들을 나눴어요.",
-    author: "독서모임장",
-    authorImage: "/images/profileSample/sample_user.png",
-    createdAt: "2024-01-13T20:45:00Z",
-    updatedAt: "2024-01-13T20:45:00Z",
+    author: {
+      id: 3,
+      nickname: "독서모임장",
+      profileImageUrl: "/images/profileSample/sample_user.png",
+    },
+    book: {
+      title: "독서 모임 후기",
+      author: "작가C",
+      imageUrl: "/images/cardSample/sky.jpg",
+      publisher: "출판사C",
+      isbn: "1122334455667",
+    },
     likeCount: 22,
     commentCount: 7,
-    isLiked: false,
-    images: [],
-    tags: ["모임", "후기"]
+    createdAt: "2024-01-13T20:45:00Z",
+    isPublic: true,
+    thumbnail: "/images/cardSample/sky.jpg",
+  }
+];
+
+// Mock 카드 데이터 생성
+const createMockCards = (): Card[] => [
+  {
+    cardId: 1,
+    member: {
+      id: 1,
+      nickname: "독서왕",
+      profileImageUrl: "/images/profileSample/sample_user.png"
+    },
+    bookTitle: "오늘 읽은 책",
+    content: "정말 좋은 책이었습니다. 특히 마지막 장면이 인상적이었어요.",
+    image: "/images/cardSample/forest.jpg",
+    created: "2024-01-15T10:30:00Z",
+    isPublic: true
+  },
+  {
+    cardId: 2,
+    member: {
+      id: 2,
+      nickname: "책벌레",
+      profileImageUrl: "/images/profileSample/sample_user.png"
+    },
+    bookTitle: "새로운 작품",
+    content: "이번에 새로 알게 된 작가인데, 작품 스타일이 정말 독특해요.",
+    image: "/images/cardSample/sea.jpg",
+    created: "2024-01-14T15:20:00Z",
+    isPublic: true
+  },
+  {
+    cardId: 3,
+    member: {
+      id: 3,
+      nickname: "독서모임장",
+      profileImageUrl: "/images/profileSample/sample_user.png"
+    },
+    bookTitle: "독서 모임 후기",
+    content: "이번 주 독서 모임에서 정말 좋은 이야기들을 나눴어요.",
+    image: "/images/cardSample/sky.jpg",
+    created: "2024-01-13T20:45:00Z",
+    isPublic: true
   }
 ];
 
@@ -215,6 +351,98 @@ export const getPostFeed = async (
   if (params.sort !== undefined) url.searchParams.append('sort', params.sort);
 
   return makeApiRequest<GetPostFeedResponse>(url.pathname + url.search);
+};
+
+/**
+ * 전체 카드 목록 조회
+ * 모든 사용자의 공개된 카드 목록을 페이지네이션과 정렬 기준으로 조회합니다.
+ * 
+ * @param params - 쿼리 파라미터 (page, size, sort)
+ * @returns 카드 목록과 페이지네이션 정보
+ */
+export const getCards = async (
+  params: GetCardsQueryParams = {}
+): Promise<GetCardsResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    const mockCards = createMockCards();
+    const page = params.page || 1;
+    const size = params.size || 10;
+    const startIndex = (page - 1) * size;
+    const endIndex = startIndex + size;
+    const paginatedCards = mockCards.slice(startIndex, endIndex);
+    
+    return createMockResponse({
+      cards: paginatedCards,
+      page: page,
+      size: size,
+      totalElements: mockCards.length,
+      totalPages: Math.ceil(mockCards.length / size),
+    }, '목 전체 카드 조회 성공');
+  }
+
+  const url = new URL('/api/v1/cards', BASE_URL);
+  if (params.page !== undefined) url.searchParams.append('page', String(params.page));
+  if (params.size !== undefined) url.searchParams.append('size', String(params.size));
+  if (params.sort !== undefined) url.searchParams.append('sort', params.sort);
+
+  return makeApiRequest<GetCardsResponse>(url.pathname + url.search);
+};
+
+/**
+ * 게시글 상세 조회
+ * 게시글 ID로 게시글의 상세 정보를 조회합니다.
+ * 
+ * @param postId - 조회할 게시글 ID
+ * @returns 게시글 상세 정보
+ */
+export const getPostDetail = async (
+  postId: number
+): Promise<GetPostDetailResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    const mockPosts = createMockPosts();
+    const post = mockPosts.find(p => p.postId === postId);
+    
+    if (!post) {
+      throw new Error('게시글을 찾을 수 없습니다.');
+    }
+    
+    // Post를 PostDetail로 변환
+    const postDetail: PostDetail = {
+      ...post,
+      images: post.thumbnail ? [post.thumbnail] : [],
+      isLiked: false, // Mock 데이터에서는 false로 설정
+      comments: [
+        {
+          commentId: 1,
+          content: "정말 좋은 글이네요!",
+          author: {
+            id: 10,
+            nickname: "댓글러",
+            profileImageUrl: "/images/profileSample/sample_user.png"
+          },
+          createdAt: "2024-01-16T09:15:00Z",
+          isDeleted: false
+        },
+        {
+          commentId: 2,
+          content: "저도 이 책 읽어보고 싶어요.",
+          author: {
+            id: 11,
+            nickname: "독서러버",
+            profileImageUrl: "/images/profileSample/sample_user.png"
+          },
+          createdAt: "2024-01-16T10:30:00Z",
+          isDeleted: false
+        }
+      ]
+    };
+    
+    return createMockResponse(postDetail, '목 게시글 상세 조회 성공');
+  }
+
+  return makeApiRequest<GetPostDetailResponse>(`/api/v1/posts/${postId}`);
 };
 
 /**

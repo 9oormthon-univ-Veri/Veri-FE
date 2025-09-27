@@ -141,7 +141,7 @@
   margin: 10px 0;
   color: var(--text-dark-gray);
   text-align: center;
-  font-family: Pretendard, sans-serif;
+  font-family: Pretendard;
   font-size: 24px;
   font-weight: 500;
 }
@@ -149,7 +149,7 @@
 .stat-label {
   margin: 5px 0;
   color: var(--text-dark-gray);
-  font-family: Pretendard, sans-serif;
+  font-family: Pretendard;
   font-size: 15px;
   font-weight: 400;
   line-height: normal;
@@ -169,7 +169,7 @@
 
 .my-page-section-title {
   color: var(--text-dark);
-  font-family: Pretendard, sans-serif;
+  font-family: Pretendard;
   font-size: 16px;
   font-weight: 700;
   line-height: normal;
@@ -200,7 +200,7 @@
 .news-label {
   flex-grow: 1;
   color: var(--text-dark);
-  font-family: Pretendard, sans-serif;
+  font-family: Pretendard;
   font-size: 16px;
   font-weight: 400;
   line-height: normal;
