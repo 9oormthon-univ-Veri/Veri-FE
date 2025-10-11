@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './BookDetailPage.css';
 import DeleteConfirmationModal from '../../components/BookDetailPage/DeleteConfirmationModal';
 import BottomEditModal from '../../components/BottomEditModal'; // ✨ 경로 확인
+import Toast from '../../components/Toast';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -75,6 +76,11 @@ function BookDetailPage() {
     const menuRef = useRef<HTMLDivElement>(null);
     const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info'; isVisible: boolean }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -155,14 +161,14 @@ function BookDetailPage() {
         try {
             const response = await deleteBook(book.memberBookId);
             if (response.isSuccess) {
-                alert('책이 성공적으로 삭제되었습니다.');
-                navigate('/my-bookshelf');
+                setToast({ message: '책이 성공적으로 삭제되었습니다.', type: 'success', isVisible: true });
+                setTimeout(() => navigate('/my-bookshelf'), 1500);
             } else {
-                alert(`책 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+                setToast({ message: `책 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`, type: 'error', isVisible: true });
             }
         } catch (err: any) {
             console.error('책 삭제 중 오류 발생:', err);
-            alert(`책 삭제 중 오류가 발생했습니다: ${err.message}`);
+            setToast({ message: `책 삭제 중 오류가 발생했습니다: ${err.message}`, type: 'error', isVisible: true });
         } finally {
             setIsSavingChanges(false);
             setIsDeleteConfirmModalOpen(false);
@@ -301,6 +307,14 @@ function BookDetailPage() {
                 defaultEndedAt={book.endedAt}
                 bookTitle={book.title} // ✨ 책 제목 전달
                 bookAuthor={book.author} // ✨ 책 작가 전달
+            />
+
+            {/* Toast 알림 */}
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
             />
         </div>
     );

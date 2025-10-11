@@ -268,7 +268,7 @@ section {
 }
 
 .my-bookshelf .book-cover-thumbnail {
-    height: 90%;
+    height: 200px;
     width: 100%;
     position: relative;
     background-color: #f0f0f0;

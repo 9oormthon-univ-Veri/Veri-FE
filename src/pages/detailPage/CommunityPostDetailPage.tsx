@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getPostDetail } from '../../api/communityApi';
 import type { PostDetail } from '../../api/communityApi';
 import { createComment, deleteComment, updateComment } from '../../api/communityCommentsApi';
+import Toast from '../../components/Toast';
 import './CommunityPostDetailPage.css';
 
 function CommunityPostDetailPage() {
@@ -17,6 +18,11 @@ function CommunityPostDetailPage() {
   const [editingContent, setEditingContent] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info'; isVisible: boolean }>({
+    message: '',
+    type: 'info',
+    isVisible: false
+  });
 
   // 게시글 데이터 로드
   useEffect(() => {
@@ -79,11 +85,11 @@ function CommunityPostDetailPage() {
           setPost(updatedPost.result);
         }
       } else {
-        alert(response.message || '댓글 작성에 실패했습니다.');
+        setToast({ message: response.message || '댓글 작성에 실패했습니다.', type: 'error', isVisible: true });
       }
     } catch (err) {
       console.error('댓글 작성 실패:', err);
-      alert('댓글 작성 중 오류가 발생했습니다.');
+      setToast({ message: '댓글 작성 중 오류가 발생했습니다.', type: 'error', isVisible: true });
     } finally {
       setSubmittingComment(false);
     }
@@ -102,11 +108,11 @@ function CommunityPostDetailPage() {
           setPost(updatedPost.result);
         }
       } else {
-        alert(response.message || '댓글 삭제에 실패했습니다.');
+        setToast({ message: response.message || '댓글 삭제에 실패했습니다.', type: 'error', isVisible: true });
       }
     } catch (err) {
       console.error('댓글 삭제 실패:', err);
-      alert('댓글 삭제 중 오류가 발생했습니다.');
+      setToast({ message: '댓글 삭제 중 오류가 발생했습니다.', type: 'error', isVisible: true });
     }
   };
 
@@ -137,11 +143,11 @@ function CommunityPostDetailPage() {
           setPost(updatedPost.result);
         }
       } else {
-        alert(response.message || '댓글 수정에 실패했습니다.');
+        setToast({ message: response.message || '댓글 수정에 실패했습니다.', type: 'error', isVisible: true });
       }
     } catch (err) {
       console.error('댓글 수정 실패:', err);
-      alert('댓글 수정 중 오류가 발생했습니다.');
+      setToast({ message: '댓글 수정 중 오류가 발생했습니다.', type: 'error', isVisible: true });
     }
   };
 
@@ -438,6 +444,14 @@ function CommunityPostDetailPage() {
           </button>
         </form>
       </div>
+
+      {/* Toast 알림 */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+      />
     </div>
   );
 }

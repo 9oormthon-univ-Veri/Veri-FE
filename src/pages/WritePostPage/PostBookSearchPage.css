@@ -229,37 +229,6 @@
     color: #888;
 }
 
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-    padding-bottom: 20px;
-}
-
-.pagination-controls button {
-    padding: 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-    font-size: 14px;
-    color: #333;
-}
-
-.pagination-controls button:disabled {
-    background-color: #f0f0f0;
-    color: #aaa;
-    cursor: not-allowed;
-}
-
-.pagination-controls span {
-    font-size: 15px;
-    color: #555;
-    font-weight: bold;
-}
-
 /* 하단 선택 영역 스타일 */
 .bottom-selection-area {
     position: fixed;
@@ -290,14 +259,6 @@
     align-items: center;
     gap: 12px;
     flex: 1;
-}
-
-.selected-book-thumbnail {
-    width: 40px;
-    height: 55px;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
 }
 
 .selected-book-text {
@@ -393,3 +354,4 @@
 .page-container {
     padding-bottom: 100px; /* 하단 선택 영역을 위한 여백 */
 }
+

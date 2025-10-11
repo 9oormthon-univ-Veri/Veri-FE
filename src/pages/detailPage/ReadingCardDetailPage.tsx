@@ -9,6 +9,7 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { getCardDetailById, deleteCard, type Card } from '../../api/cardApi';
 import ReadingCardEditModal from '../../components/ReadingCardEditModal';
 import DeleteConfirmationModal from '../../components/ReadingCardDetailPage/DeleteConfirmationModal';
+import Toast from '../../components/Toast';
 import './ReadingCardDetailPage.css';
 
 function ReadingCardDetailPage() {
@@ -23,6 +24,11 @@ function ReadingCardDetailPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info'; isVisible: boolean }>({
+    message: '',
+    type: 'info',
+    isVisible: false
+  });
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,13 +88,13 @@ function ReadingCardDetailPage() {
     if (cardDetail) {
       navigate('/download-card', { state: { cardDetail: cardDetail, action: 'share' } });
     } else {
-      alert('공유할 독서 카드 정보를 불러오지 못했습니다.');
+      setToast({ message: '공유할 독서 카드 정보를 불러오지 못했습니다.', type: 'error', isVisible: true });
     }
   }, [cardDetail, navigate]);
 
   const handleDeleteCard = useCallback(() => {
     if (!cardDetail || !cardDetail.cardId) {
-      alert('삭제할 독서 카드 정보가 없습니다.');
+      setToast({ message: '삭제할 독서 카드 정보가 없습니다.', type: 'error', isVisible: true });
       return;
     }
     setMenuOpen(false);
@@ -97,7 +103,7 @@ function ReadingCardDetailPage() {
 
   const confirmDeleteCard = useCallback(async () => {
     if (!cardDetail || !cardDetail.cardId) {
-      alert('삭제할 독서 카드 정보가 없습니다.');
+      setToast({ message: '삭제할 독서 카드 정보가 없습니다.', type: 'error', isVisible: true });
       setIsDeleteConfirmModalOpen(false);
       return;
     }
@@ -107,14 +113,14 @@ function ReadingCardDetailPage() {
     try {
       const response = await deleteCard(cardDetail.cardId);
       if (response.isSuccess) {
-        alert('독서 카드가 성공적으로 삭제되었습니다.');
-        navigate('/reading-card');
+        setToast({ message: '독서 카드가 성공적으로 삭제되었습니다.', type: 'success', isVisible: true });
+        setTimeout(() => navigate('/reading-card'), 1500);
       } else {
-        alert(`독서 카드 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+        setToast({ message: `독서 카드 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`, type: 'error', isVisible: true });
       }
     } catch (err: any) {
       console.error('독서 카드 삭제 중 오류 발생:', err);
-      alert(`독서 카드 삭제 중 오류가 발생했습니다: ${err.message}`);
+      setToast({ message: `독서 카드 삭제 중 오류가 발생했습니다: ${err.message}`, type: 'error', isVisible: true });
     } finally {
       setIsProcessing(false);
       setIsDeleteConfirmModalOpen(false);
@@ -160,7 +166,7 @@ function ReadingCardDetailPage() {
     if (cardDetail && cardDetail.book && cardDetail.book.id) {
       navigate(`/book-detail/${cardDetail.book.id}`);
     } else {
-      alert("책 ID 정보를 찾을 수 없습니다.");
+      setToast({ message: "책 ID 정보를 찾을 수 없습니다.", type: 'error', isVisible: true });
     }
   };
 
@@ -194,7 +200,7 @@ function ReadingCardDetailPage() {
     if (cardDetail) {
       navigate('/download-card', { state: { cardDetail: cardDetail, action: 'download' } }); // action 추가
     } else {
-      alert('다운로드할 독서 카드 정보를 불러오지 못했습니다.');
+      setToast({ message: '다운로드할 독서 카드 정보를 불러오지 못했습니다.', type: 'error', isVisible: true });
     }
   }, [cardDetail, navigate]);
 
@@ -321,6 +327,14 @@ function ReadingCardDetailPage() {
         onClose={() => setIsDeleteConfirmModalOpen(false)}
         onConfirm={confirmDeleteCard}
         isLoading={isProcessing}
+      />
+
+      {/* Toast 알림 */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
       />
     </div>
   );

@@ -80,9 +80,15 @@ const makeApiRequest = async <T>(
 ): Promise<T> => {
   const response = await fetchWithAuth(`${BASE_URL}${endpoint}`, options);
   
-  // 204 No Content 또는 빈 응답 본문 처리
+  // 204 No Content 또는 빈 응답 본문 처리 - 성공 응답으로 처리
   if (response.status === 204 || response.headers.get('content-length') === '0') {
-    return {} as T;
+    // 204 No Content는 성공을 의미하므로 isSuccess: true로 반환
+    return {
+      isSuccess: true,
+      code: 'C0000',
+      message: '요청에 성공했습니다.',
+      result: {}
+    } as T;
   }
   
   // Content-Type이 JSON이 아닌 경우 처리
@@ -90,7 +96,13 @@ const makeApiRequest = async <T>(
   if (!contentType || !contentType.includes('application/json')) {
     const text = await response.text();
     if (!text.trim()) {
-      return {} as T;
+      // 빈 텍스트도 성공으로 처리
+      return {
+        isSuccess: true,
+        code: 'C0000',
+        message: '요청에 성공했습니다.',
+        result: {}
+      } as T;
     }
     // JSON이 아닌 텍스트 응답인 경우 에러로 처리하거나 적절히 변환
     throw new Error(`Expected JSON response, but got: ${contentType}`);
