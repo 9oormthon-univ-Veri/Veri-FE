@@ -1,9 +1,10 @@
-/* WritePostPage 스타일 */
+/* WritePostPage 스타일 - 이미지와 동일한 디자인 */
 
-.write-post-content {
-  padding: 0 20px;
-  min-height: calc(100vh - 160px);
-  background-color: white;
+.write-post-page {
+  min-height: 100vh;
+  background-color: #fff;
+  padding: 0;
+  margin: 0;
 }
 
 /* 헤더 */
@@ -11,204 +12,172 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 20px;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.back-button {
+.close-button {
   background: none;
   border: none;
-  color: #4a90e2;
-  font-size: 16px;
+  padding: 8px;
   cursor: pointer;
+  color: #333;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 6px;
+  justify-content: center;
+  border-radius: 8px;
   transition: background-color 0.2s ease;
 }
 
-.back-button:hover {
-  background-color: #f7fafc;
-}
-
-.back-icon {
-  font-size: 18px;
-  font-weight: bold;
+.close-button:hover {
+  background-color: #f5f5f5;
 }
 
 .page-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #333;
   margin: 0;
+  text-align: center;
 }
 
-.submit-button {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.header-spacer {
+  width: 40px; /* X 버튼과 같은 너비로 균형 맞춤 */
 }
 
-.submit-button:hover:not(:disabled) {
-  background-color: #357abd;
-}
-
-.submit-button:disabled {
-  background-color: #cbd5e0;
-  cursor: not-allowed;
-}
-
-/* 작성 폼 */
-.write-form {
-  margin-bottom: 30px;
-}
-
-.form-group {
-  margin-bottom: 24px;
+/* 메인 콘텐츠 */
+.write-post-content {
+  padding: 20px;
+  padding-bottom: 100px; /* 제출 버튼 공간 확보 */
+  max-width: 100%;
 }
 
 .form-label {
   display: block;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: #333;
-  margin-bottom: 8px;
+  margin: 8px;
+  text-align: left;
 }
 
+/* 제목 입력 */
 .title-input {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 0;
   font-size: 16px;
+  font-weight: 400;
+  color: black;
+  background: transparent;
+  outline: none;
   transition: border-color 0.2s ease;
   box-sizing: border-box;
 }
 
 .title-input:focus {
-  outline: none;
-  border-color: #4a90e2;
+  border-bottom-color: #333;
 }
 
-.content-textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+.title-input::placeholder {
   font-size: 16px;
-  font-family: Pretendard;
+  font-weight: 400;
+  color: black;
+  text-align: left;
+}
+
+/* 내용 입력 */
+.content-input {
+  width: 100%;
+  border: none;
+  padding: 16px 0;
+  font-size: 14px;
   line-height: 1.6;
-  resize: vertical;
-  min-height: 300px;
-  transition: border-color 0.2s ease;
+  color: #333;
+  background: transparent;
+  outline: none;
+  resize: none;
+  min-height: 200px;
+  font-family: inherit;
   box-sizing: border-box;
 }
 
-.content-textarea:focus {
-  outline: none;
-  border-color: #4a90e2;
-}
-
-.tags-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
-}
-
-.tags-input:focus {
-  outline: none;
-  border-color: #4a90e2;
-}
-
-.character-count {
-  text-align: right;
-  font-size: 12px;
+.content-input::placeholder {
   color: #999;
-  margin-top: 4px;
 }
 
-.form-help {
-  font-size: 12px;
-  color: #666;
-  margin-top: 4px;
+/* 이미지 섹션 */
+.image-section {
+  margin-bottom: 40px;
 }
 
-/* 이미지 업로드 */
-.image-upload-area {
-  border: 2px dashed #cbd5e0;
+.image-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.image-upload-slot,
+.image-slot {
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
   border-radius: 8px;
-  padding: 40px 20px;
-  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-upload-slot {
+  background-color: var(--light-gray);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.image-upload-area:hover {
-  border-color: #4a90e2;
-  background-color: #f7fafc;
+.image-upload-slot:hover {
+  background-color: #f3f4f6;
 }
 
-.upload-label {
-  display: block;
+.post-page-camera-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
+  color: #6b7280;
 }
 
-.upload-placeholder {
-  color: #666;
+.post-page-camera-button .mgc_camera_2_fill::before {
+  font-size: 24px;
+  color: #FFFFFF;
 }
 
-.upload-icon {
-  font-size: 32px;
-  display: block;
-  margin-bottom: 12px;
+.image-slot {
+  background-color: #f0f0f0;
 }
 
-.upload-placeholder p {
-  margin: 4px 0;
-  font-size: 14px;
-}
-
-.upload-hint {
-  font-size: 12px !important;
-  color: #999 !important;
-}
-
-/* 이미지 미리보기 */
-.image-preview-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.image-preview-item {
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 2px solid #e2e8f0;
-}
-
-.image-preview-item img {
+.image-slot img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.remove-image-button {
+.image-slot.empty {
+  background-color: var(--light-gray);
+  border: none;
+}
+
+.remove-image-btn {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -222,157 +191,145 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
   transition: background-color 0.2s ease;
 }
 
-.remove-image-button:hover {
+.remove-image-btn:hover {
   background-color: rgba(0, 0, 0, 0.9);
 }
 
-/* 업로드 제한 메시지 */
-.upload-limit-message {
-  background-color: #fef5e7;
-  border: 1px solid #f6e05e;
-  border-radius: 6px;
-  padding: 12px;
-  text-align: center;
-  color: #744210;
-  font-size: 14px;
+/* 책 선택 섹션 */
+.book-section {
+  margin-top: 40px;
 }
 
-/* 업로드 상태 */
-.upload-status {
-  background-color: #e6f3ff;
-  border: 1px solid #4a90e2;
-  border-radius: 6px;
-  padding: 12px;
-  text-align: center;
-  color: #2c5aa0;
-  font-size: 14px;
-  margin-top: 12px;
+.book-label-section {
+  display: flex;  
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.upload-status p {
-  margin: 0;
-  font-weight: 500;
-}
-
-/* 하단 액션 버튼들 */
-.bottom-actions {
-  display: flex;
-  gap: 12px;
-  padding: 20px 20px;
-  position: sticky;
-  bottom: 0;
-  background-color: white;
-}
-
-.cancel-button {
-  flex: 1;
-  background-color: #f7fafc;
-  color: #4a5568;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 14px 20px;
+.book-label {
   font-size: 16px;
   font-weight: 500;
+  color: var(--Black, #1A1A1A);
+}
+
+.book-hint {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.bookshelf-button {
+  width: 100%;
+  background-color: var(--light-gray-2);
+  border: none;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 16px;
+  color: #333;
 }
 
-.cancel-button:hover:not(:disabled) {
-  background-color: #edf2f7;
-  border-color: #cbd5e0;
+.bookshelf-button:hover {
+  background-color: #f8f9fa;
+  border-color: #d1d5db;
 }
 
-.cancel-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.bookshelf-button span {
+  font-weight: 500;
 }
 
-.submit-button-large {
-  flex: 2;
-  background-color: #4a90e2;
+.bookshelf-button .mgc_right_fill::before {
+  font-size: 24px;
+  color: var(--text-light) !important;
+}
+
+/* 제출 섹션 */
+.submit-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-top: 1px solid #f0f0f0;
+  padding: 16px 20px;
+  z-index: 100;
+}
+
+.submit-post-button {
+  width: 100%;
+  background-color: #333;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 14px 20px;
+  border-radius: 12px;
+  padding: 16px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.submit-button-large:hover:not(:disabled) {
-  background-color: #357abd;
+.submit-post-button:hover:not(:disabled) {
+  background-color: #555;
 }
 
-.submit-button-large:disabled {
-  background-color: #cbd5e0;
+.submit-post-button:disabled {
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 480px) {
-  .write-post-content {
-    padding: 0 15px;
-  }
-  
   .write-post-header {
-    padding: 15px 0;
+    padding: 16px;
   }
   
   .page-title {
-    font-size: 18px;
+    font-size: 16px;
   }
   
-  .back-button {
-    font-size: 14px;
-    padding: 6px 10px;
+  .write-post-content {
+    padding: 16px;
   }
   
-  .submit-button {
-    padding: 6px 12px;
-    font-size: 12px;
+  .image-upload-slot,
+  .image-slot {
+    width: 80px;
+    height: 80px;
   }
   
   .title-input,
-  .content-textarea,
-  .tags-input {
+  .content-input {
     font-size: 16px; /* iOS 줌 방지 */
   }
   
-  .content-textarea {
-    min-height: 250px;
+  .content-input {
+    min-height: 150px;
   }
-  
-  .bottom-actions {
-    flex-direction: column;
-  }
-  
-  .cancel-button,
-  .submit-button-large {
-    flex: none;
-    padding: 12px 16px;
-    font-size: 14px;
-  }
-  
-  .image-preview-container {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 8px;
-  }
-  
-  .image-upload-area {
-    padding: 30px 15px;
-  }
-  
-  .upload-icon {
-    font-size: 24px;
-  }
-  
-  .upload-placeholder p {
-    font-size: 13px;
-  }
+}
+
+/* 스크롤바 스타일링 */
+.image-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.image-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.image-grid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.image-grid::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

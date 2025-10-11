@@ -13,9 +13,16 @@
   margin-bottom: 20px;
 }
 
-.section-title {
+.reading-cards-section-title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
+  color: #333;
+  text-align: left;
+}
+
+.recommendations-section-title {
+  font-size: 18px;
+  font-weight: 500;
   color: #333;
   text-align: left;
 }
@@ -67,7 +74,7 @@
 /* 이달의 추천 섹션 */
 .recommendations-section {
   background-color: #fff;
-  padding: 20px;
+  padding: 10px;
   margin-bottom: 20px;
 }
 
@@ -81,7 +88,7 @@
 .header-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 10px;
 }
 
@@ -92,11 +99,11 @@
 }
 
 .write-post-button {
-  background-color: #4a90e2;
+  background-color: var(--light-gray-2);
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 5px 8px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -107,13 +114,9 @@
   white-space: nowrap;
 }
 
-.write-post-button:hover {
-  background-color: #357abd;
-  transform: translateY(-1px);
-}
-
 .write-icon {
   font-size: 16px;
+  color: var(--Black, #1A1A1A) !important;
 }
 
 .section-subtitle {
@@ -129,7 +132,8 @@
 }
 
 .recommendation-item {
-  padding-bottom: 20px;
+  padding: 15px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -311,7 +315,6 @@
   line-height: 1.5;
   margin: 0 0 10px 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

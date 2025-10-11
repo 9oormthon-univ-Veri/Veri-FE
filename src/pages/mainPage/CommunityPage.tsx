@@ -129,7 +129,7 @@ function CommunityPage() {
   };
 
   const handleMoreCardsClick = () => {
-    navigate('/reading-card');
+    navigate('/community/reading-cards');
   };
 
   const handlePostClick = (postId: number) => {
@@ -153,7 +153,7 @@ function CommunityPage() {
       <div className="community-content">
         {/* 독서카드 섹션 */}
         <div className="reading-cards-section">
-          <h2 className="section-title">독서카드</h2>
+          <h2 className="reading-cards-section-title">독서카드</h2>
           
           {cardsLoading ? (
             <div className="cards-loading">
@@ -186,12 +186,11 @@ function CommunityPage() {
           <div className="recommendations-header">
             <div className="header-content">
               <div className="title-section">
-                <h2 className="section-title">이달의 추천</h2>
+                <h2 className="recommendations-section-title">이달의 추천</h2>
                 <p className="section-subtitle">다른 회원들의 글을 만나보세요</p>
               </div>
               <button className="write-post-button" onClick={handleWritePost}>
-                <span className="write-icon">✏️</span>
-                글쓰기
+                <span className="write-icon">글 쓰기</span>
               </button>
             </div>
             {error && (
@@ -259,7 +258,7 @@ function CommunityPage() {
                           // TODO: 좋아요 API 호출
                         }}
                       >
-                        <span className="heart-icon">♡</span>
+                        <span className="mgc_heart_line"></span>
                         <span>{post.likeCount}</span>
                       </button>
                       <button 
@@ -269,7 +268,7 @@ function CommunityPage() {
                           // TODO: 댓글 모달 열기
                         }}
                       >
-                        <span className="comment-icon">💬</span>
+                        <span className="mgc_chat_3_line"></span>
                         <span>{post.commentCount}</span>
                       </button>
                     </div>

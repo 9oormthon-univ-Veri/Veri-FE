@@ -1,7 +1,6 @@
 // src/pages/WritePostPage/WritePostPage.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import TopBar from '../../components/TopBar';
 import { createPost } from '../../api/communityApi';
 import type { CreatePostRequest } from '../../api/communityApi';
 import { uploadImage } from '../../api/imageApi';
@@ -11,10 +10,9 @@ function WritePostPage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [bookId] = useState<number | undefined>(undefined); // 향후 책 연동 기능 구현 시 사용
+  const [selectedBook, setSelectedBook] = useState<{ id: number; title: string; author: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
 
@@ -29,10 +27,10 @@ function WritePostPage() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       let uploadedImageUrls: string[] = [];
-      
+
       // 이미지가 있는 경우 업로드
       if (imageFiles.length > 0) {
         setIsUploadingImages(true);
@@ -51,11 +49,11 @@ function WritePostPage() {
         title: title.trim(),
         content: content.trim(),
         images: uploadedImageUrls,
-        ...(bookId && { bookId }) // bookId가 있을 때만 포함
+        ...(selectedBook && { bookId: selectedBook.id }) // 선택된 책이 있을 때만 포함
       };
-      
+
       const response = await createPost(postData);
-      
+
       if (response.isSuccess) {
         alert('게시글이 성공적으로 작성되었습니다!');
         navigate('/community');
@@ -71,8 +69,9 @@ function WritePostPage() {
     }
   };
 
-  const handleProfileClick = () => {
-    navigate('/my-page');
+  const handleBookSelection = () => {
+    // 책장 페이지로 이동 (선택된 책 정보를 전달)
+    navigate('/library', { state: { selectMode: true, onBookSelect: setSelectedBook } });
   };
 
   // 이미지 파일 선택 핸들러
@@ -88,7 +87,7 @@ function WritePostPage() {
       const file = files[i];
       if (file && file.type.startsWith('image/')) {
         newFiles.push(file);
-        
+
         // 미리보기를 위한 base64 변환
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -102,7 +101,7 @@ function WritePostPage() {
         reader.readAsDataURL(file);
       }
     }
-    
+
     setImageFiles(prev => [...prev, ...newFiles]);
   };
 
@@ -114,150 +113,95 @@ function WritePostPage() {
 
   return (
     <div className="page-container">
-      <TopBar onProfileClick={handleProfileClick} />
-      
+      {/* 헤더 */}
+      <header className="detail-header">
+        <button className="header-left-arrow" onClick={() => navigate(-1)}>
+          <span
+            className="mgc_close_line"
+          ></span>
+        </button>
+        <h3>글쓰기</h3>
+        <div className="header-right-wrapper">
+          <button
+            className="header-menu-button"
+          >
+          </button>
+        </div>
+      </header>
+
       <div className="header-margin"></div>
-      
+
       <div className="write-post-content">
-        {/* 헤더 */}
-        <div className="write-post-header">
-          <button className="back-button" onClick={handleBack}>
-            <span className="back-icon">←</span>
-            뒤로가기
-          </button>
-          <h1 className="page-title">글쓰기</h1>
-          <button 
-            className="submit-button"
-            onClick={handleSubmit}
-            disabled={isSubmitting || !title.trim() || !content.trim()}
-          >
-            {isSubmitting ? '작성 중...' : '등록'}
-          </button>
+        {/* 제목 입력 */}
+        <div className="form-section">
+          <input
+            type="text"
+            className="title-input"
+            placeholder="제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={100}
+          />
         </div>
 
-        {/* 작성 폼 */}
-        <div className="write-form">
-          {/* 제목 입력 */}
-          <div className="form-group">
-            <label className="form-label">제목</label>
-            <input
-              type="text"
-              className="title-input"
-              placeholder="제목을 입력해주세요"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={100}
-            />
-            <div className="character-count">{title.length}/100</div>
-          </div>
+        {/* 내용 입력 */}
+        <div className="form-section">
+          <textarea
+            className="content-input"
+            placeholder="내용을 입력하세요."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            maxLength={2000}
+          />
+        </div>
 
-          {/* 내용 입력 */}
-          <div className="form-group">
-            <label className="form-label">내용</label>
-            <textarea
-              className="content-textarea"
-              placeholder="내용을 입력해주세요"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={15}
-              maxLength={2000}
-            />
-            <div className="character-count">{content.length}/2000</div>
-          </div>
-
-          {/* 태그 입력 */}
-          <div className="form-group">
-            <label className="form-label">태그 (선택사항)</label>
-            <input
-              type="text"
-              className="tags-input"
-              placeholder="태그를 쉼표로 구분하여 입력해주세요 (예: 독서, 추천, 감상)"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            />
-            <div className="form-help">
-              태그는 쉼표(,)로 구분하여 입력해주세요
+        {/* 이미지 섹션 */}
+        <div className="image-section">
+          <div className="image-grid">
+            {/* 카메라 버튼 (첫 번째 슬롯) */}
+            <div className="image-upload-slot">
+              <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                multiple
+                onChange={handleImageSelect}
+                style={{ display: 'none' }}
+              />
+              <label htmlFor="image-upload" className="post-page-camera-button">
+                <span className="mgc_camera_2_fill"></span>
+              </label>
             </div>
-          </div>
 
-          {/* 이미지 업로드 */}
-          <div className="form-group">
-            <label className="form-label">이미지 (선택사항)</label>
-            
-            {/* 이미지 미리보기 */}
-            {images.length > 0 && (
-              <div className="image-preview-container">
-                {images.map((image, index) => (
-                  <div key={index} className="image-preview-item">
-                    <img src={image} alt={`미리보기 ${index + 1}`} />
-                    <button 
-                      type="button"
-                      className="remove-image-button"
-                      onClick={() => handleRemoveImage(index)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+            {/* 업로드된 이미지들 */}
+            {images.map((image, index) => (
+              <div key={index} className="image-slot">
+                <img src={image} alt={`업로드 ${index + 1}`} />
+                <button
+                  type="button"
+                  className="remove-image-btn"
+                  onClick={() => handleRemoveImage(index)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
               </div>
-            )}
-            
-            {/* 파일 선택 영역 */}
-            {images.length < 10 && (
-              <div className="image-upload-area">
-                <input
-                  type="file"
-                  id="image-upload"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageSelect}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="image-upload" className="upload-label">
-                  <div className="upload-placeholder">
-                    <span className="upload-icon">📷</span>
-                    <p>이미지를 업로드하려면 클릭하세요</p>
-                    <p className="upload-hint">JPG, PNG 파일만 업로드 가능합니다 (최대 10개)</p>
-                  </div>
-                </label>
-              </div>
-            )}
-            
-            {images.length >= 10 && (
-              <div className="upload-limit-message">
-                최대 10개의 이미지만 업로드할 수 있습니다.
-              </div>
-            )}
-            
-            {/* 업로드 상태 표시 */}
-            {isUploadingImages && (
-              <div className="upload-status">
-                <p>이미지를 업로드하고 있습니다...</p>
-              </div>
-            )}
+            ))}
           </div>
         </div>
 
-        {/* 하단 액션 버튼들 */}
-        <div className="bottom-actions">
-          <button 
-            className="cancel-button"
-            onClick={handleBack}
-            disabled={isSubmitting}
-          >
-            취소
-          </button>
-          <button 
-            className="submit-button-large"
-            onClick={handleSubmit}
-            disabled={isSubmitting || isUploadingImages || !title.trim() || !content.trim()}
-          >
-            {isUploadingImages ? '이미지 업로드 중...' : isSubmitting ? '작성 중...' : '게시글 등록'}
+        {/* 책 선택 섹션 */}
+        <div className="book-section">
+          <div className="book-label-section">          
+            <div className="book-label">책 선택하기</div>
+            <div className="book-hint">내 책장에서 책을 선택해주세요</div></div>
+          <button className="bookshelf-button" onClick={handleBookSelection}>
+            <span>책장 바로가기</span>
+            <span className="mgc_right_fill"></span>
           </button>
         </div>
       </div>
-
-      <div className='main-page-margin'></div>
     </div>
   );
 }

@@ -38,9 +38,9 @@ export interface Post {
 
 // 댓글 타입
 export interface Comment {
-  commentId: number;
+  commentId: number | null;
   content: string;
-  author: AuthorInfo;
+  author: AuthorInfo | null;
   createdAt: string;
   isDeleted: boolean;
 }

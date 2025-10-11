@@ -8,7 +8,9 @@
   --dark-purple: #311CA8;
   --light-purple: #9B90E9;
   --very-light-purple: #D6D1F6;
-  
+  --light-gray: #DBDFE4;
+  --light-gray-2: #F4F5F7;
+
   /* 기본 테마 (보라색 계열) */
   --main-color: var(--primary-purple);
   --secondary-color: var(--light-purple);
@@ -265,6 +267,11 @@ code {
     width: 40px;
     height: 40px;
     z-index: 1;
+}
+
+.mgc_close_line {
+  font-size: 20px;
+  color: #333 !important;
 }
 
 .header-left-arrow .mgc_left_fill {
