@@ -83,6 +83,7 @@ interface BaseApiResponse<T> {
 // 구체적인 응답 타입들
 export type GetAllBooksResponse = BaseApiResponse<BooksResult>;
 export type GetBookByIdResponse = BaseApiResponse<{
+  bookId: number;
   memberBookId: number;
   title: string;
   author: string;
@@ -239,7 +240,7 @@ export const getBookById = async (memberBookId: number): Promise<GetBookByIdResp
     const book = mockBooks.find(b => b.memberBookId === memberBookId);
     if (book) {
       return createMockResponse({
-        bookId: book.bookId,
+        bookId: book.bookId || book.memberBookId,
         memberBookId: book.memberBookId,
         title: book.title,
         author: book.author,

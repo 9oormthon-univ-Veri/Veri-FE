@@ -101,6 +101,7 @@ function BookDetailPage() {
             const response = await getBookById(memberBookId);
             if (response.isSuccess && response.result) {
                 const fetchedBook: Book = {
+                    bookId: response.result.bookId,
                     memberBookId: response.result.memberBookId,
                     title: response.result.title,
                     author: response.result.author,
