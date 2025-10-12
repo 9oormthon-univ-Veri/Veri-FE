@@ -22,7 +22,7 @@
 
 .recommendations-section-title {
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
   text-align: left;
 }
@@ -74,7 +74,6 @@
 /* 이달의 추천 섹션 */
 .recommendations-section {
   background-color: #fff;
-  padding: 10px;
   margin-bottom: 20px;
 }
 
@@ -82,14 +81,13 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  padding: 0px 10px 0px 10px;
 }
 
 .title-section {

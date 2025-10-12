@@ -21,6 +21,7 @@ function WritePostPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [selectedBook, setSelectedBook] = useState<SelectedBookInfo | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [toast, setToast] = useState<{
     message: string;
     type: 'success' | 'error' | 'warning' | 'info';
@@ -39,12 +40,83 @@ function WritePostPage() {
     setToast(prev => ({ ...prev, isVisible: false }));
   };
 
-  // location.state에서 선택된 책 정보 받기
+  // base64를 File 객체로 변환하는 헬퍼 함수
+  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
+    const response = await fetch(base64);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+  };
+
+  // 컴포넌트 마운트 시 데이터 복원
   useEffect(() => {
-    if (location.state?.selectedBook) {
-      setSelectedBook(location.state.selectedBook);
+    const restoreDraft = async () => {
+      try {
+        // location.state에서 책 정보 먼저 확인 (책 검색에서 돌아올 때)
+        if (location.state?.selectedBook) {
+          setSelectedBook(location.state.selectedBook);
+        }
+        
+        // localStorage에서 저장된 데이터 복원
+        const savedData = localStorage.getItem('writePostDraft');
+        if (savedData) {
+          const draft = JSON.parse(savedData);
+          
+          // 제목과 내용은 항상 복원
+          setTitle(draft.title || '');
+          setContent(draft.content || '');
+          
+          // 선택된 책은 location.state가 없을 때만 복원
+          if (!location.state?.selectedBook && draft.selectedBook) {
+            setSelectedBook(draft.selectedBook);
+          }
+          
+          // 이미지도 항상 복원
+          if (draft.images && draft.images.length > 0) {
+            setImages(draft.images);
+            
+            // base64 이미지를 File 객체로 복원
+            const restoredFiles: File[] = [];
+            for (let i = 0; i < draft.images.length; i++) {
+              try {
+                const file = await base64ToFile(draft.images[i], `restored-image-${i}.jpg`);
+                restoredFiles.push(file);
+              } catch (error) {
+                console.error('이미지 복원 실패:', error);
+              }
+            }
+            setImageFiles(restoredFiles);
+          }
+        }
+        
+        // 복원 완료 후 초기 로딩 플래그 해제
+        setIsInitialLoad(false);
+      } catch (error) {
+        console.error('데이터 복원 실패:', error);
+        setIsInitialLoad(false);
+      }
+    };
+    
+    restoreDraft();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 제목, 내용, 이미지, 선택된 책이 변경될 때마다 localStorage에 저장
+  // 초기 로딩이 완료된 후에만 저장
+  useEffect(() => {
+    if (!isInitialLoad) {
+      try {
+        const draft = {
+          title,
+          content,
+          images,
+          selectedBook
+        };
+        localStorage.setItem('writePostDraft', JSON.stringify(draft));
+      } catch (error) {
+        console.error('임시 저장 실패:', error);
+      }
     }
-  }, [location.state]);
+  }, [title, content, images, selectedBook, isInitialLoad]);
 
   const handleBookSelection = () => {
     // 책 검색 페이지로 이동
@@ -143,6 +215,8 @@ function WritePostPage() {
       const response = await createPost(postData);
 
       if (response.isSuccess) {
+        // 게시글 작성 성공 시 임시 저장 데이터 삭제
+        localStorage.removeItem('writePostDraft');
         showToast('게시글이 작성되었습니다!', 'success');
         setTimeout(() => {
           navigate('/community');

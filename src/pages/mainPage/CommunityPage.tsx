@@ -186,7 +186,7 @@ function CommunityPage() {
           <div className="recommendations-header">
             <div className="header-content">
               <div className="title-section">
-                <h2 className="recommendations-section-title">이달의 추천</h2>
+                <h2 className="recommendations-section-title">이달의 추천글</h2>
                 <p className="section-subtitle">다른 회원들의 글을 만나보세요</p>
               </div>
               <button className="write-post-button" onClick={handleWritePost}>
