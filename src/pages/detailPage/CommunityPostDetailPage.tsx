@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPostDetail } from '../../api/communityApi';
+import { getPostDetail, deletePost } from '../../api/communityApi';
 import type { PostDetail } from '../../api/communityApi';
 import { createComment, deleteComment, updateComment } from '../../api/communityCommentsApi';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import DeleteConfirmationModal from '../../components/CommunityPostDetailPage/DeleteConfirmationModal';
 import Toast from '../../components/Toast';
 import './CommunityPostDetailPage.css';
 
@@ -18,11 +21,26 @@ function CommunityPostDetailPage() {
   const [editingContent, setEditingContent] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info'; isVisible: boolean }>({
     message: '',
     type: 'info',
     isVisible: false
   });
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 메뉴 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // 게시글 데이터 로드
   useEffect(() => {
@@ -151,6 +169,51 @@ function CommunityPostDetailPage() {
     }
   };
 
+  // 게시글 삭제 핸들러
+  const handleDeletePost = () => {
+    if (!post || !post.postId) {
+      setToast({ message: '삭제할 게시글 정보가 없습니다.', type: 'error', isVisible: true });
+      return;
+    }
+    setMenuOpen(false);
+    setIsDeleteConfirmModalOpen(true);
+  };
+
+  // 게시글 삭제 확인 핸들러
+  const confirmDeletePost = async () => {
+    if (!post || !post.postId) {
+      setToast({ message: '삭제할 게시글 정보가 없습니다.', type: 'error', isVisible: true });
+      setIsDeleteConfirmModalOpen(false);
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const response = await deletePost(post.postId);
+      if (response.isSuccess) {
+        navigate('/community');
+      } else {
+        setToast({ message: `게시글 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`, type: 'error', isVisible: true });
+      }
+    } catch (err: any) {
+      console.error('게시글 삭제 중 오류 발생:', err);
+      setToast({ message: `게시글 삭제 중 오류가 발생했습니다: ${err.message}`, type: 'error', isVisible: true });
+    } finally {
+      setIsProcessing(false);
+      setIsDeleteConfirmModalOpen(false);
+    }
+  };
+
+  // 게시글 수정 핸들러 (추후 구현)
+  const handleEditPost = () => {
+    if (!post) return;
+    setMenuOpen(false);
+    setToast({ message: '게시글 수정 기능은 준비 중입니다.', type: 'info', isVisible: true });
+    // TODO: 게시글 수정 페이지로 이동
+    // navigate(`/edit-post/${post.postId}`);
+  };
+
   // 날짜 포맷팅 함수
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -209,7 +272,7 @@ function CommunityPostDetailPage() {
     document.addEventListener('touchend', handleTouchEnd);
   };
 
-  if (loading) {
+  if (loading || isProcessing) {
     return (
       <div className="loading-page-container">
           <div className="loading-spinner"></div>
@@ -251,8 +314,24 @@ function CommunityPostDetailPage() {
         <div className="header-right-wrapper">
           <button
             className="header-menu-button"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            disabled={isProcessing}
           >
+            <BsThreeDotsVertical size={20} color="#333" />
           </button>
+
+          {menuOpen && (
+            <div className="header-dropdown-menu" ref={menuRef}>
+              <div className="menu-item" onClick={handleEditPost}>
+                <FiEdit2 size={16} />
+                <span>수정하기</span>
+              </div>
+              <div className="menu-item" onClick={handleDeletePost}>
+                <FiTrash2 size={16} />
+                <span>삭제하기</span>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -451,6 +530,14 @@ function CommunityPostDetailPage() {
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+      />
+
+      {/* 게시글 삭제 확인 모달 */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteConfirmModalOpen}
+        onClose={() => setIsDeleteConfirmModalOpen(false)}
+        onConfirm={confirmDeletePost}
+        isLoading={isProcessing}
       />
     </div>
   );

@@ -9,7 +9,7 @@ import Toast from '../../components/Toast';
 
 // 선택된 책 정보 타입 (memberBookId 포함)
 interface SelectedBookInfo extends BookItem {
-  memberBookId?: number;
+  bookId?: number;
 }
 
 function WritePostPage() {
@@ -206,8 +206,8 @@ function WritePostPage() {
       };
 
       // selectedBook의 memberBookId를 bookId로 전달
-      if (selectedBook?.memberBookId) {
-        postData.bookId = selectedBook.memberBookId;
+      if (selectedBook?.bookId) {
+        postData.bookId = selectedBook.bookId;
       }
 
       console.log('게시글 작성 데이터:', postData);
@@ -217,10 +217,7 @@ function WritePostPage() {
       if (response.isSuccess) {
         // 게시글 작성 성공 시 임시 저장 데이터 삭제
         localStorage.removeItem('writePostDraft');
-        showToast('게시글이 작성되었습니다!', 'success');
-        setTimeout(() => {
-          navigate('/community');
-        }, 1000);
+        navigate('/community');
       } else {
         showToast(response.message || '게시글 작성에 실패했습니다.', 'error');
       }

@@ -113,8 +113,7 @@ function ReadingCardDetailPage() {
     try {
       const response = await deleteCard(cardDetail.cardId);
       if (response.isSuccess) {
-        setToast({ message: '독서 카드가 성공적으로 삭제되었습니다.', type: 'success', isVisible: true });
-        setTimeout(() => navigate('/reading-card'), 1500);
+        navigate('/reading-card');
       } else {
         setToast({ message: `독서 카드 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`, type: 'error', isVisible: true });
       }

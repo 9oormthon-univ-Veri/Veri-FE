@@ -185,7 +185,13 @@ const makeApiRequest = async <T>(
   
   // 204 No Content 또는 빈 응답 본문 처리
   if (response.status === 204 || response.headers.get('content-length') === '0') {
-    return {} as T;
+    // 204는 성공적인 응답이므로 BaseApiResponse 형식으로 반환
+    return {
+      isSuccess: true,
+      code: 'SUCCESS',
+      message: '요청이 성공적으로 처리되었습니다.',
+      result: {}
+    } as T;
   }
   
   // Content-Type이 JSON이 아닌 경우 처리
@@ -193,7 +199,13 @@ const makeApiRequest = async <T>(
   if (!contentType || !contentType.includes('application/json')) {
     const text = await response.text();
     if (!text.trim()) {
-      return {} as T;
+      // 빈 응답도 성공으로 간주
+      return {
+        isSuccess: true,
+        code: 'SUCCESS',
+        message: '요청이 성공적으로 처리되었습니다.',
+        result: {}
+      } as T;
     }
     // JSON이 아닌 텍스트 응답인 경우 에러로 처리하거나 적절히 변환
     throw new Error(`Expected JSON response, but got: ${contentType}`);

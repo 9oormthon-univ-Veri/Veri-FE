@@ -161,8 +161,7 @@ function BookDetailPage() {
         try {
             const response = await deleteBook(book.memberBookId);
             if (response.isSuccess) {
-                setToast({ message: '책이 성공적으로 삭제되었습니다.', type: 'success', isVisible: true });
-                setTimeout(() => navigate('/my-bookshelf'), 1500);
+                navigate('/my-bookshelf');
             } else {
                 setToast({ message: `책 삭제에 실패했습니다: ${response.message || '알 수 없는 오류'}`, type: 'error', isVisible: true });
             }

@@ -21,6 +21,7 @@ export interface CardSummary {
 }
 
 export interface Book {
+  bookId: number;
   memberBookId: number;
   title: string;
   author: string;
@@ -213,7 +214,10 @@ export const getAllBooks = async (
   if (USE_MOCK_DATA) {
     await mockDelay();
     return createMockResponse({
-      memberBooks: mockBooks,
+      memberBooks: mockBooks.map(book => ({
+        ...book,
+        bookId: book.memberBookId
+      })),
       page: params.page || 1,
       size: params.size || 10,
       totalElements: mockBooks.length,
@@ -235,6 +239,7 @@ export const getBookById = async (memberBookId: number): Promise<GetBookByIdResp
     const book = mockBooks.find(b => b.memberBookId === memberBookId);
     if (book) {
       return createMockResponse({
+        bookId: book.bookId,
         memberBookId: book.memberBookId,
         title: book.title,
         author: book.author,

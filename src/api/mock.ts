@@ -50,6 +50,7 @@ export const mockUser = {
 // 목업 책 데이터
 export const mockBooks = [
   {
+    bookId: 1,
     memberBookId: 1,
     title: '해리포터와 마법사의 돌, 해리포터와 마법사의 돌, 해리포터와 마법사의 돌, 해리포터와 마법사의 돌',
     author: 'J.K. 롤링',
