@@ -64,12 +64,12 @@ const ReadingStatusModal: React.FC<ReadingStatusModalProps> = ({
           <label className="checkbox-label">
             <input
               type="checkbox"
-              checked={selectedStatuses.includes('reading')}
-              onChange={() => handleStatusToggle('reading')}
+              checked={selectedStatuses.includes('READING')}
+              onChange={() => handleStatusToggle('READING')}
               className="hidden-checkbox"
             />
             <div className="custom-checkbox">
-              {selectedStatuses.includes('reading') && <span className="checkmark">✓</span>}
+              {selectedStatuses.includes('READING') && <span className="checkmark">✓</span>}
             </div>
             <span className="status-text">독서중</span>
           </label>
@@ -79,12 +79,12 @@ const ReadingStatusModal: React.FC<ReadingStatusModalProps> = ({
           <label className="checkbox-label">
             <input
               type="checkbox"
-              checked={selectedStatuses.includes('completed')}
-              onChange={() => handleStatusToggle('completed')}
+              checked={selectedStatuses.includes('DONE')}
+              onChange={() => handleStatusToggle('DONE')}
               className="hidden-checkbox"
             />
             <div className="custom-checkbox">
-              {selectedStatuses.includes('completed') && <span className="checkmark">✓</span>}
+              {selectedStatuses.includes('DONE') && <span className="checkmark">✓</span>}
             </div>
             <span className="status-text">독서완료</span>
           </label>

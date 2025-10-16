@@ -73,7 +73,7 @@ function LibraryPage() {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest' | 'rating'>('newest');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedReadingStatuses, setSelectedReadingStatuses] = useState<string[]>(['reading', 'completed']);
+  const [selectedReadingStatuses, setSelectedReadingStatuses] = useState<string[]>(['READING', 'DONE']);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const statusButtonRef = useRef<HTMLButtonElement>(null);
@@ -120,14 +120,32 @@ function LibraryPage() {
     // 독서 상태 필터 - 선택된 상태들만 표시
     if (statusFilters.length > 0) {
       filtered = filtered.filter(book => {
-        // readingStatus 속성이 없는 경우 'reading'으로 기본값 설정
-        const status = (book as any).readingStatus || 'reading';
-        return statusFilters.includes(status);
+        // Book 타입의 status 속성 사용 (NOT_START, READING, DONE)
+        return statusFilters.includes(book.status);
       });
     }
 
-    setFilteredBooks(filtered);
-  }, []);
+    // 정렬 적용 (클라이언트 사이드)
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortOrder === 'newest') {
+        // 최신순: endedAt 또는 startedAt이 최근인 것부터
+        const dateA = new Date(a.endedAt || a.startedAt || 0).getTime();
+        const dateB = new Date(b.endedAt || b.startedAt || 0).getTime();
+        return dateB - dateA;
+      } else if (sortOrder === 'oldest') {
+        // 오래된순: endedAt 또는 startedAt이 오래된 것부터
+        const dateA = new Date(a.endedAt || a.startedAt || 0).getTime();
+        const dateB = new Date(b.endedAt || b.startedAt || 0).getTime();
+        return dateA - dateB;
+      } else if (sortOrder === 'rating') {
+        // 별점순: 높은 별점부터
+        return b.score - a.score;
+      }
+      return 0;
+    });
+
+    setFilteredBooks(sorted);
+  }, [sortOrder]);
 
   // 검색 필터링 함수
   const handleSearch = useCallback((query: string) => {
@@ -140,6 +158,13 @@ function LibraryPage() {
     setSelectedReadingStatuses(statuses);
     applyFilters(books, searchQuery, statuses);
   }, [books, searchQuery, applyFilters]);
+
+  // sortOrder 변경 시 필터 재적용
+  useEffect(() => {
+    if (books.length > 0) {
+      applyFilters(books, searchQuery, selectedReadingStatuses);
+    }
+  }, [sortOrder, books, searchQuery, selectedReadingStatuses, applyFilters]);
 
   useEffect(() => {
     fetchBooks();
@@ -250,7 +275,7 @@ function LibraryPage() {
           {searchQuery ? (
             <p>검색 결과가 없습니다.</p>
           ) : selectedReadingStatuses.length < 2 ? (
-            <p>{selectedReadingStatuses.includes('completed') ? '완료된' : '읽고 있는'} 책이 없습니다.</p>
+            <p>{selectedReadingStatuses.includes('DONE') ? '완료된' : '읽고 있는'} 책이 없습니다.</p>
           ) : (
             <p>등록된 책이 없습니다. 새로운 책을 등록해보세요!</p>
           )}
