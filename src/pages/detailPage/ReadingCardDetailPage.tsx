@@ -57,6 +57,7 @@ function ReadingCardDetailPage() {
             content: response.result.content,
             imageUrl: response.result.imageUrl,
             createdAt: response.result.createdAt,
+            isPublic: response.result.isPublic || false,
             book: bookData ? {
               id: bookData.id,
               title: bookData.title,
@@ -145,6 +146,7 @@ function ReadingCardDetailPage() {
               content: response.result.content,
               imageUrl: response.result.imageUrl,
               createdAt: response.result.createdAt,
+              isPublic: response.result.isPublic || false,
               book: bookData ? {
                 id: bookData.id,
                 title: bookData.title,

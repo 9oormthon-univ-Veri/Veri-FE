@@ -1,5 +1,4 @@
 // src/components/CommunityPostDetailPage/CommentList.tsx
-import React from 'react';
 import type { Comment } from '../../api/communityApi';
 import CommentItem from './CommentItem';
 import './CommentList.css';
@@ -55,12 +54,12 @@ function CommentList({
             onUpdateComment={onUpdateComment}
             onCancelEdit={onCancelEdit}
             formatDate={formatDate}
-            onReply={onReply}
-            replyingToCommentId={replyingToCommentId}
-            replyContent={replyContent}
-            onReplyContentChange={onReplyContentChange}
-            onSubmitReply={onSubmitReply}
-            onCancelReply={onCancelReply}
+            {...(onReply && { onReply })}
+            {...(replyingToCommentId !== undefined && { replyingToCommentId })}
+            {...(replyContent !== undefined && { replyContent })}
+            {...(onReplyContentChange && { onReplyContentChange })}
+            {...(onSubmitReply && { onSubmitReply })}
+            {...(onCancelReply && { onCancelReply })}
           />
         ))}
       </div>

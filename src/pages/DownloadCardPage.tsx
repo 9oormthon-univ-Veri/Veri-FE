@@ -49,6 +49,7 @@ function DownloadCardPage() {
                     content: response.result.content,
                     imageUrl: response.result.imageUrl,
                     createdAt: response.result.createdAt,
+                    isPublic: response.result.isPublic || false,
                     book: response.result.book ? {
                         id: response.result.book.id,
                         title: response.result.book.title,

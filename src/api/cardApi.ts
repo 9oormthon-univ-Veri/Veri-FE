@@ -81,7 +81,8 @@ export interface GetCardDetailByIdResponse {
     id: number;
     content: string;
     imageUrl: string;
-    "createdAt": string,
+    createdAt: string;
+    isPublic: boolean;
     book: CardBookDetail | null;
   } | null;
 }
@@ -196,6 +197,7 @@ export async function getCardDetailById(cardId: number): Promise<GetCardDetailBy
         content: card.content,
         imageUrl: card.image,
         createdAt: card.created,
+        isPublic: card.isPublic,
         book: {
           id: 1,
           title: '해리포터와 마법사의 돌',
