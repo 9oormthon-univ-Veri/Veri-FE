@@ -15,6 +15,7 @@ export interface ReadingCardItemType {
     contentPreview: string;
     date: string;
     thumbnailUrl: string;
+    isPublic: boolean;
 }
 
 function ReadingCardPage() {
@@ -63,6 +64,7 @@ function ReadingCardPage() {
                     contentPreview: card.content.length > 100 ? `${card.content.substring(0, 100)}...` : card.content,
                     date: card.created,
                     thumbnailUrl: card.image,
+                    isPublic: card.isPublic,
                 }));
                 
                 setReadingCards(basicCards);
@@ -224,6 +226,7 @@ function ReadingCardPage() {
                                     contentPreview={card.contentPreview}
                                     date={card.date}
                                     thumbnailUrl={card.thumbnailUrl}
+                                    isPublic={card.isPublic}
                                 />
                             ))
                         ) : (
@@ -248,6 +251,7 @@ function ReadingCardPage() {
                                     contentPreview={card.contentPreview}
                                     date={card.date}
                                     thumbnailUrl={card.thumbnailUrl}
+                                    isPublic={card.isPublic}
                                 />
                             ))
                         ) : (

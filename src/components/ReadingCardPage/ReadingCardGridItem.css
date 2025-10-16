@@ -30,6 +30,23 @@
     display: block;
 }
 
+/* 비공개 배지 스타일 */
+.private-badge {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.private-badge .mgc_unlock_fill::before {
+    color: #ffffff !important;
+    font-size: 20px;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.8));
+}
+
 .grid-item-title {
     font-size: 0.9em;
     font-weight: bold;

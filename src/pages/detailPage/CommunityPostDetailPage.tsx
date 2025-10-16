@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPostDetail, deletePost } from '../../api/communityApi';
+import { getPostDetail, deletePost, likePost, unlikePost } from '../../api/communityApi';
 import type { PostDetail } from '../../api/communityApi';
-import { createComment, deleteComment, updateComment } from '../../api/communityCommentsApi';
+import { createComment, deleteComment, updateComment, createReply } from '../../api/communityCommentsApi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import DeleteConfirmationModal from '../../components/CommunityPostDetailPage/DeleteConfirmationModal';
+import CommentList from '../../components/CommunityPostDetailPage/CommentList';
+import CommentInput from '../../components/CommunityPostDetailPage/CommentInput';
 import Toast from '../../components/Toast';
 import './CommunityPostDetailPage.css';
 
@@ -20,7 +22,10 @@ function CommunityPostDetailPage() {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [replyingToCommentId, setReplyingToCommentId] = useState<number | null>(null);
+  const [replyContent, setReplyContent] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -79,9 +84,41 @@ function CommunityPostDetailPage() {
     navigate(-1);
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    // TODO: 좋아요 API 호출
+  const handleLike = async () => {
+    if (!postId || isLiking || !post) return;
+
+    try {
+      setIsLiking(true);
+      
+      // 현재 좋아요 상태에 따라 API 호출
+      const response = isLiked 
+        ? await unlikePost(parseInt(postId))
+        : await likePost(parseInt(postId));
+
+      if (response.isSuccess && response.result) {
+        // API 응답으로 상태 업데이트
+        setIsLiked(response.result.isLiked);
+        setPost(prev => prev ? {
+          ...prev,
+          likeCount: response.result.likeCount
+        } : null);
+      } else {
+        setToast({ 
+          message: response.message || '좋아요 처리에 실패했습니다.', 
+          type: 'error', 
+          isVisible: true 
+        });
+      }
+    } catch (err) {
+      console.error('좋아요 처리 실패:', err);
+      setToast({ 
+        message: '좋아요 처리 중 오류가 발생했습니다.', 
+        type: 'error', 
+        isVisible: true 
+      });
+    } finally {
+      setIsLiking(false);
+    }
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
@@ -90,13 +127,14 @@ function CommunityPostDetailPage() {
 
     try {
       setSubmittingComment(true);
+      
+      // 일반 댓글 작성
       const response = await createComment({
         postId: parseInt(postId),
         content: newComment.trim()
       });
 
       if (response.isSuccess) {
-        // 댓글 작성 성공 후 게시글 다시 로드
         setNewComment('');
         const updatedPost = await getPostDetail(parseInt(postId));
         if (updatedPost.isSuccess && updatedPost.result) {
@@ -111,6 +149,44 @@ function CommunityPostDetailPage() {
     } finally {
       setSubmittingComment(false);
     }
+  };
+
+  const handleReply = (commentId: number) => {
+    setReplyingToCommentId(commentId);
+    setReplyContent('');
+  };
+
+  const handleSubmitReply = async (parentCommentId: number) => {
+    if (!replyContent.trim() || !postId) return;
+
+    try {
+      setSubmittingComment(true);
+      const response = await createReply({
+        parentCommentId: parentCommentId,
+        content: replyContent.trim()
+      });
+
+      if (response.isSuccess) {
+        setReplyContent('');
+        setReplyingToCommentId(null);
+        const updatedPost = await getPostDetail(parseInt(postId));
+        if (updatedPost.isSuccess && updatedPost.result) {
+          setPost(updatedPost.result);
+        }
+      } else {
+        setToast({ message: response.message || '답글 작성에 실패했습니다.', type: 'error', isVisible: true });
+      }
+    } catch (err) {
+      console.error('답글 작성 실패:', err);
+      setToast({ message: '답글 작성 중 오류가 발생했습니다.', type: 'error', isVisible: true });
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  const handleCancelReply = () => {
+    setReplyingToCommentId(null);
+    setReplyContent('');
   };
 
   const handleDeleteComment = async (commentId: number) => {
@@ -377,7 +453,11 @@ function CommunityPostDetailPage() {
               <div className="author-name-detail">{post.author.nickname}</div>
             </div>
             <div className="post-actions">
-              <button className={`like-button ${isLiked ? 'liked' : ''}`} onClick={handleLike}>
+              <button 
+                className={`like-button ${isLiked ? 'liked' : ''}`} 
+                onClick={handleLike}
+                disabled={isLiking}
+              >
                 <span className="mgc_heart_line"></span>
                 <span>{post.likeCount}</span>
               </button>
@@ -408,121 +488,32 @@ function CommunityPostDetailPage() {
         </div>
 
         {/* 댓글 섹션 */}
-        <div className="comments-section">
-          <div className="comments-list">
-            {post.comments.map((comment, index) => (
-              <div key={comment.commentId || `deleted-${index}`} className="comment-item">
-                <div className="comment-header">
-                  <div className="comment-author-info">
-                    {comment.author && (
-                      <>
-                        <div className="comment-author-avatar">
-                          <img 
-                            src={comment.author.profileImageUrl} 
-                            alt={comment.author.nickname}
-                            onError={(e) => {
-                              e.currentTarget.src = '/images/profileSample/sample_user.png';
-                            }}
-                          />
-                        </div>
-                        <div className="comment-author">{comment.author.nickname}</div>
-                      </>
-                    )}
-                    {comment.isDeleted && (
-                      <>
-                        <div className="comment-author-avatar deleted">
-                        </div>
-                        <div className="comment-author deleted">삭제된 사용자</div>
-                      </>
-                    )}
-                  </div>
-                  <div className="comment-actions">
-                    {!comment.isDeleted && comment.commentId && (
-                      <>
-                        <button 
-                          className="comment-action-btn"
-                          onClick={() => handleEditComment(comment.commentId!, comment.content)}
-                        >
-                          수정
-                        </button>
-                        <button 
-                          className="comment-action-btn delete"
-                          onClick={() => handleDeleteComment(comment.commentId!)}
-                        >
-                          삭제
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-                
-                {!comment.isDeleted && editingCommentId === comment.commentId ? (
-                  <div className="comment-edit-form">
-                    <input
-                      type="text"
-                      value={editingContent}
-                      onChange={(e) => setEditingContent(e.target.value)}
-                      className="comment-edit-input"
-                      autoFocus
-                    />
-                    <div className="comment-edit-buttons">
-                      <button 
-                        className="comment-edit-btn cancel"
-                        onClick={handleCancelEdit}
-                      >
-                        취소
-                      </button>
-                      <button 
-                        className="comment-edit-btn save"
-                        onClick={() => handleUpdateComment(comment.commentId!)}
-                      >
-                        저장
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className={`comment-content ${comment.isDeleted ? 'deleted' : ''}`}>
-                      {comment.isDeleted ? '삭제된 댓글입니다.' : comment.content}
-                    </div>
-                    <div className={`comment-date ${comment.isDeleted ? 'deleted' : ''}`}>
-                      {formatDate(comment.createdAt)}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <CommentList
+          comments={post.comments}
+          editingCommentId={editingCommentId}
+          editingContent={editingContent}
+          onEditContentChange={setEditingContent}
+          onEditComment={handleEditComment}
+          onDeleteComment={handleDeleteComment}
+          onUpdateComment={handleUpdateComment}
+          onCancelEdit={handleCancelEdit}
+          formatDate={formatDate}
+          onReply={handleReply}
+          replyingToCommentId={replyingToCommentId}
+          replyContent={replyContent}
+          onReplyContentChange={setReplyContent}
+          onSubmitReply={handleSubmitReply}
+          onCancelReply={handleCancelReply}
+        />
       </div>
 
       {/* 댓글 입력 */}
-      <div className="comment-input-section">
-        <form onSubmit={handleCommentSubmit} className="comment-form">
-          <input
-            type="text"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="댓글을 입력해 주세요"
-            className="comment-input"
-            disabled={submittingComment}
-          />
-          <button 
-            type="submit" 
-            className="comment-submit"
-            disabled={submittingComment || !newComment.trim()}
-          >
-            {submittingComment ? (
-              <span>...</span>
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
-          </button>
-        </form>
-      </div>
+      <CommentInput
+        value={newComment}
+        onChange={setNewComment}
+        onSubmit={handleCommentSubmit}
+        isSubmitting={submittingComment}
+      />
 
       {/* Toast 알림 */}
       <Toast

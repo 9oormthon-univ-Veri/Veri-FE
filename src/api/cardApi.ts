@@ -48,6 +48,7 @@ export interface MyCardItem {
   content: string;
   image: string;
   created: string;
+  isPublic: boolean;
 }
 
 export interface Card {
@@ -56,6 +57,7 @@ export interface Card {
   imageUrl: string;
   createdAt: string,
   book: CardBookDetail | null;
+  isPublic: boolean;
 }
 
 export interface GetMyCardsResponse {
@@ -162,6 +164,7 @@ export async function getMyCards(params: GetMyCardsQueryParams = {}): Promise<Ge
       size: params.size || 10,
       totalElements: mockCards.length,
       totalPages: Math.ceil(mockCards.length / (params.size || 10)),
+      isPublic: mockCards.map(card => card.isPublic),
     }, '목 내 독서카드 조회 성공');
   }
 

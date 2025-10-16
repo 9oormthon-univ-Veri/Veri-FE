@@ -43,6 +43,8 @@ export interface Comment {
   author: AuthorInfo | null;
   createdAt: string;
   isDeleted: boolean;
+  replies?: Comment[]; // 대댓글 목록 (선택적)
+  parentCommentId?: number | null; // 부모 댓글 ID (선택적)
 }
 
 // 게시글 상세 정보 타입
@@ -58,6 +60,12 @@ export interface PostDetail {
   comments: Comment[];
   commentCount: number;
   createdAt: string;
+}
+
+// 좋아요 응답 타입
+export interface LikeResponse {
+  likeCount: number;
+  isLiked: boolean;
 }
 
 export interface PostFeedResponse {
@@ -116,6 +124,7 @@ export type GetPostDetailResponse = BaseApiResponse<PostDetail>;
 export type GetCardsResponse = BaseApiResponse<CardListResponse>;
 export type CreatePostResponse = BaseApiResponse<number>;
 export type DeletePostResponse = BaseApiResponse<Record<string, never>>;
+export type LikePostResponse = BaseApiResponse<LikeResponse>;
 
 // 쿼리 파라미터 타입들
 export interface GetPostFeedQueryParams {
@@ -435,7 +444,33 @@ export const getPostDetail = async (
             profileImageUrl: "/images/profileSample/sample_user.png"
           },
           createdAt: "2024-01-16T09:15:00Z",
-          isDeleted: false
+          isDeleted: false,
+          replies: [
+            {
+              commentId: 3,
+              content: "저도 그렇게 생각해요!",
+              author: {
+                id: 12,
+                nickname: "독서광",
+                profileImageUrl: "/images/profileSample/sample_user.png"
+              },
+              createdAt: "2024-01-16T09:30:00Z",
+              isDeleted: false,
+              parentCommentId: 1
+            },
+            {
+              commentId: 4,
+              content: "동의합니다 ㅎㅎ",
+              author: {
+                id: 13,
+                nickname: "책읽는사람",
+                profileImageUrl: "/images/profileSample/sample_user.png"
+              },
+              createdAt: "2024-01-16T09:45:00Z",
+              isDeleted: false,
+              parentCommentId: 1
+            }
+          ]
         },
         {
           commentId: 2,
@@ -446,7 +481,8 @@ export const getPostDetail = async (
             profileImageUrl: "/images/profileSample/sample_user.png"
           },
           createdAt: "2024-01-16T10:30:00Z",
-          isDeleted: false
+          isDeleted: false,
+          replies: []
         }
       ]
     };
@@ -532,5 +568,53 @@ export const deletePost = async (
 
   return makeApiRequest<DeletePostResponse>(`/api/v1/posts/${postId}`, {
     method: 'DELETE',
+  });
+};
+
+/**
+ * 게시글 좋아요
+ * 게시글에 좋아요를 추가합니다.
+ * 
+ * @param postId - 좋아요를 추가할 게시글 ID
+ * @returns 좋아요 수와 좋아요 상태
+ */
+export const likePost = async (
+  postId: number
+): Promise<LikePostResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    const randomLikeCount = Math.floor(Math.random() * 50) + 1;
+    return createMockResponse({
+      likeCount: randomLikeCount,
+      isLiked: true
+    }, '목 게시글 좋아요 성공');
+  }
+
+  return makeApiRequest<LikePostResponse>(`/api/v1/posts/like/${postId}`, {
+    method: 'POST',
+  });
+};
+
+/**
+ * 게시글 좋아요 취소
+ * 게시글의 좋아요를 취소합니다.
+ * 
+ * @param postId - 좋아요를 취소할 게시글 ID
+ * @returns 좋아요 수와 좋아요 상태
+ */
+export const unlikePost = async (
+  postId: number
+): Promise<LikePostResponse> => {
+  if (USE_MOCK_DATA) {
+    await mockDelay();
+    const randomLikeCount = Math.floor(Math.random() * 50);
+    return createMockResponse({
+      likeCount: randomLikeCount,
+      isLiked: false
+    }, '목 게시글 좋아요 취소 성공');
+  }
+
+  return makeApiRequest<LikePostResponse>(`/api/v1/posts/unlike/${postId}`, {
+    method: 'POST',
   });
 };

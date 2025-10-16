@@ -5,7 +5,7 @@ import './ReadingCardItem.css'; // CSS 파일 임포트 유지
 import { type ReadingCardItemType } from '../../pages/mainPage/ReadingCardPage'; // ReadingCardPage에서 정의된 인터페이스 임포트
 
 // 각 독서카드를 표시하는 컴포넌트
-const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, contentPreview, date, thumbnailUrl }) => {
+const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, contentPreview, date, thumbnailUrl, isPublic }) => {
     const navigate = useNavigate();
 
     // 클릭 시 독서 카드 상세 페이지로 이동
@@ -30,6 +30,11 @@ const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, contentPrev
                         e.currentTarget.src = "https://via.placeholder.com/100x150?text=No+Image";
                     }}
                 />
+                {!isPublic && (
+                    <div className="private-badge-text">
+                        <span className="mgc_unlock_fill"></span>
+                    </div>
+                )}
             </div>
             <div className="card-content">
                 <p className="card-preview">{contentPreview}</p>

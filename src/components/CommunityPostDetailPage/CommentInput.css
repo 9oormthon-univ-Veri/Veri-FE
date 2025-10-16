@@ -1,0 +1,77 @@
+/* CommentInput 스타일 */
+
+.comment-input-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-top: 1px solid #e0e0e0;
+  padding: 15px 20px;
+  z-index: 100;
+}
+
+.comment-form {
+  display: flex;
+  width: 100%;
+}
+
+.comment-input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.comment-input {
+  flex: 1;
+  width: 100%;
+  padding: 12px 55px 12px 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  background-color: #f8f9fa;
+}
+
+.comment-input:focus {
+  background-color: #fff;
+}
+
+.comment-input::placeholder {
+  color: #999;
+}
+
+.comment-submit {
+  position: absolute;
+  right: 4px;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-dark);
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.comment-submit:hover {
+  background: var(--primary-green-dark);
+}
+
+.comment-submit:disabled {
+  color: var(--text-dark-gray);
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .comment-input-section {
+    padding: 12px 15px;
+  }
+}
+

@@ -107,19 +107,22 @@ export const mockCards = [
     cardId: 1,
     content: '해리포터의 첫 번째 마법 수업에서 배운 내용입니다. "윙가르디움 레비오사!" 주문을 외우며 마법의 세계에 첫 발을 내딛는 순간이었습니다.',
     image: 'https://placehold.co/150x200?text=Card1',
-    created: '2024-01-20T14:30:00.000Z'
+    created: '2024-01-20T14:30:00.000Z',
+    isPublic: true
   },
   {
     cardId: 2,
     content: '반지의 제왕에서 가장 인상 깊었던 구절입니다. "모든 것이 끝나면, 새로운 시작이 있다"는 메시지가 마음에 남습니다.',
     image: 'https://placehold.co/150x200?text=Card2',
-    created: '2024-03-10T16:45:00.000Z'
+    created: '2024-03-10T16:45:00.000Z',
+    isPublic: true
   },
   {
     cardId: 3,
     content: '1984를 읽으며 빅브라더의 감시 사회에 대한 경각심을 느꼈습니다. 자유의 소중함을 다시 한번 깨닫게 된 순간이었습니다.',
     image: 'https://placehold.co/150x200?text=Card3',
-    created: '2024-05-05T11:20:00.000Z'
+    created: '2024-05-05T11:20:00.000Z',
+    isPublic: true  
   }
 ];
 
