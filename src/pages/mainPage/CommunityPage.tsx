@@ -143,6 +143,10 @@ function CommunityPage() {
   const handleWritePost = () => {
     navigate('/write-post');
   };
+
+  const handleCardClick = (cardId: number) => {
+    navigate(`/reading-card-detail/${cardId}`);
+  };
   
   return (
     <div className="page-container">
@@ -163,11 +167,15 @@ function CommunityPage() {
             </div>
           ) : (
             <>
-              <div className="reading-cards-grid">
+              <div className="community-reading-cards-grid">
                 {cards.map((card) => (
-                  <div key={card.cardId} className="reading-card-item">
+                  <div 
+                    key={card.cardId} 
+                    className="community-reading-card-item"
+                    onClick={() => handleCardClick(card.cardId)}
+                  >
                     <div 
-                      className="reading-card-image"
+                      className="community-reading-card-image"
                       style={{ backgroundImage: `url(${card.image})` }}
                     />
                   </div>

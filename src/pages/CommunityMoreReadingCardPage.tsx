@@ -150,15 +150,15 @@ function CommunityMoreReadingCardPage() {
 
       <div className="reading-cards-page">
         {/* 독서카드 그리드 */}
-        <div className="reading-cards-grid">
+        <div className="community-more-reading-card-grid">
           {cards.map((card) => (
             <div 
               key={card.cardId} 
-              className="reading-card-item"
+              className="community-more-reading-card-item"
               onClick={() => handleCardClick(card.cardId)}
             >
               {/* 카드 이미지 */}
-              <div className="card-image">
+              <div className="community-more-card-image">
                 <img 
                   src={card.image} 
                   alt="독서카드 이미지"
@@ -194,8 +194,8 @@ function CommunityMoreReadingCardPage() {
 
                 {/* 책 정보 */}
                 <div className="card-book">
-                  <span className="book-icon">📖</span>
-                  <span className="book-title">{card.bookTitle}</span>
+                  <span className="mgc_book_6_fill"></span>
+                  <span className="community-more-book-title">{card.bookTitle}</span>
                 </div>
               </div>
             </div>

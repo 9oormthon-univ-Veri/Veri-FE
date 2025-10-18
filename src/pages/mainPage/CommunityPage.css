@@ -27,14 +27,14 @@
   text-align: left;
 }
 
-.reading-cards-grid {
+.community-reading-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 5px;
   margin-bottom: 20px;
 }
 
-.reading-card-item {
+.community-reading-card-item {
   aspect-ratio: 1;
   border-radius: 8px;
   overflow: hidden;
@@ -42,11 +42,11 @@
   transition: transform 0.2s ease;
 }
 
-.reading-card-item:hover {
+.community-reading-card-item:hover {
   transform: scale(1.02);
 }
 
-.reading-card-image {
+.community-reading-card-image {
   width: 100%;
   height: 100%;
   background-size: cover;
