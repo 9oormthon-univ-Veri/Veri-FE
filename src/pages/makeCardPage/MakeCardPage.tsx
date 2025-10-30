@@ -47,7 +47,7 @@ const MakeCardPage: React.FC = () => {
   useEffect(() => {
     const errorMessage = location.state?.errorMessage as string | undefined;
     const errorType = location.state?.errorType as 'success' | 'error' | 'warning' | 'info' | undefined;
-    
+
     if (errorMessage) {
       showToast(errorMessage, errorType || 'warning');
       // 에러 메시지를 표시한 후 state를 정리
@@ -227,13 +227,15 @@ const MakeCardPage: React.FC = () => {
       <div className="make-card-page">
         <header className="detail-header">
           <button className="header-left-arrow" onClick={() => navigate("/reading-card")}>
-          <span
-                        className="mgc_left_fill"
-                    ></span>
+            <span
+              className="mgc_left_fill"
+            ></span>
           </button>
           <h3>독서카드 만들기</h3>
           <div className="dummy-box" />
         </header>
+
+        <div className="header-margin"></div>
 
         <div className="image-preview-card">
           {isCameraActive && stream ? (
