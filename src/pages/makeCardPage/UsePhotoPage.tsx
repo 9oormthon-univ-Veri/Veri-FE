@@ -29,7 +29,7 @@ const UsePhotoPage: React.FC = () => {
     useEffect(() => {
         const errorMessage = location.state?.errorMessage as string | undefined;
         const errorType = location.state?.errorType as 'success' | 'error' | 'warning' | 'info' | undefined;
-        
+
         if (errorMessage) {
             showToast(errorMessage, errorType || 'error');
             // 에러 메시지를 표시한 후 state를 정리
@@ -51,14 +51,16 @@ const UsePhotoPage: React.FC = () => {
     return (
         <div className="page-container">
             <div className="use-photo-wrapper">
-            <header className="detail-header">
-                <button className="header-left-arrow" onClick={handleBack}>
-                    <span
-                        className="mgc_left_fill"
-                    ></span>
-                </button>
-                <div className="dummy-box"></div>
-            </header>
+                <header className="detail-header">
+                    <button className="header-left-arrow" onClick={handleBack}>
+                        <span
+                            className="mgc_left_fill"
+                        ></span>
+                    </button>
+                    <div className="dummy-box"></div>
+                </header>
+
+                <div className="header-margin"></div>
                 <div className="use-photo-image-preview-card">
                     {image ? (
                         <img
