@@ -76,7 +76,7 @@ function CommentItem({
               )}
             </div>
             <div className="comment-actions">
-              {!comment.isDeleted && comment.commentId && (
+              {!comment.isDeleted && comment.commentId && comment.isMine && (
                 <>
                   <button
                     className="comment-action-btn"

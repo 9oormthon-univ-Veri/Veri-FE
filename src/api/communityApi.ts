@@ -45,6 +45,7 @@ export interface Comment {
   isDeleted: boolean;
   replies?: Comment[]; // 대댓글 목록 (선택적)
   parentCommentId?: number | null; // 부모 댓글 ID (선택적)
+  isMine?: boolean; // 본인 댓글 여부
 }
 
 // 게시글 상세 정보 타입
@@ -60,6 +61,7 @@ export interface PostDetail {
   comments: Comment[];
   commentCount: number;
   createdAt: string;
+  isMine?: boolean; // 본인 게시글 여부
 }
 
 // 좋아요 응답 타입

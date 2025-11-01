@@ -9,7 +9,7 @@
 /* 독서카드 섹션 */
 .reading-cards-section {
   background-color: #fff;
-  padding: 20px;
+  padding: 10px;
   margin-bottom: 20px;
 }
 
@@ -21,10 +21,12 @@
 }
 
 .recommendations-section-title {
-  font-size: 18px;
+  font-size: clamp(16px, 4vw, 18px);
   font-weight: 600;
   color: #333;
   text-align: left;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .community-reading-cards-grid {
@@ -88,12 +90,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 0px 10px 0px 10px;
+  gap: 10px;
 }
 
 .title-section {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
+  flex: 1;
 }
 
 .write-post-button {
@@ -119,8 +125,12 @@
 
 .section-subtitle {
   text-align: start;
-  font-size: 14px;
+  font-size: clamp(11px, 3vw, 14px);
   color: #666;
+  white-space: nowrap;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recommendations-list {

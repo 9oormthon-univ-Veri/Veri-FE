@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPostDetail, deletePost, likePost, unlikePost } from '../../api/communityApi';
-import type { PostDetail } from '../../api/communityApi';
+import type { PostDetail, Comment } from '../../api/communityApi';
 import { createComment, deleteComment, updateComment, createReply } from '../../api/communityCommentsApi';
+import { getCurrentUserId } from '../../api/auth';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import DeleteConfirmationModal from '../../components/CommunityPostDetailPage/DeleteConfirmationModal';
@@ -47,6 +48,24 @@ function CommunityPostDetailPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 댓글에 isMine 필드 추가하는 함수
+  const addIsMineToComments = (comments: Comment[], currentUserId: number | null): Comment[] => {
+    if (!currentUserId) return comments;
+    
+    return comments.map(comment => {
+      const commentWithIsMine: Comment = {
+        ...comment,
+        isMine: comment.author?.id === currentUserId
+      };
+      
+      if (comment.replies && comment.replies.length > 0) {
+        commentWithIsMine.replies = addIsMineToComments(comment.replies, currentUserId);
+      }
+      
+      return commentWithIsMine;
+    });
+  };
+
   // 게시글 데이터 로드
   useEffect(() => {
     const loadPostDetail = async () => {
@@ -63,8 +82,21 @@ function CommunityPostDetailPage() {
         const response = await getPostDetail(parseInt(postId));
         
         if (response.isSuccess && response.result) {
-          setPost(response.result);
-          setIsLiked(response.result.isLiked);
+          const currentUserId = getCurrentUserId();
+          const postData = response.result;
+          
+          // 게시글의 isMine 계산
+          const isMyPost = currentUserId !== null && postData.author.id === currentUserId;
+          
+          // 댓글들에 isMine 추가
+          const commentsWithIsMine = addIsMineToComments(postData.comments, currentUserId);
+          
+          setPost({
+            ...postData,
+            isMine: isMyPost,
+            comments: commentsWithIsMine
+          });
+          setIsLiked(postData.isLiked);
         } else {
           throw new Error(response.message || '게시글을 불러오는데 실패했습니다.');
         }
@@ -138,7 +170,16 @@ function CommunityPostDetailPage() {
         setNewComment('');
         const updatedPost = await getPostDetail(parseInt(postId));
         if (updatedPost.isSuccess && updatedPost.result) {
-          setPost(updatedPost.result);
+          const currentUserId = getCurrentUserId();
+          const postData = updatedPost.result;
+          const isMyPost = currentUserId !== null && postData.author.id === currentUserId;
+          const commentsWithIsMine = addIsMineToComments(postData.comments, currentUserId);
+          
+          setPost({
+            ...postData,
+            isMine: isMyPost,
+            comments: commentsWithIsMine
+          });
         }
       } else {
         setToast({ message: response.message || '댓글 작성에 실패했습니다.', type: 'error', isVisible: true });
@@ -171,7 +212,16 @@ function CommunityPostDetailPage() {
         setReplyingToCommentId(null);
         const updatedPost = await getPostDetail(parseInt(postId));
         if (updatedPost.isSuccess && updatedPost.result) {
-          setPost(updatedPost.result);
+          const currentUserId = getCurrentUserId();
+          const postData = updatedPost.result;
+          const isMyPost = currentUserId !== null && postData.author.id === currentUserId;
+          const commentsWithIsMine = addIsMineToComments(postData.comments, currentUserId);
+          
+          setPost({
+            ...postData,
+            isMine: isMyPost,
+            comments: commentsWithIsMine
+          });
         }
       } else {
         setToast({ message: response.message || '답글 작성에 실패했습니다.', type: 'error', isVisible: true });
@@ -199,7 +249,16 @@ function CommunityPostDetailPage() {
         // 댓글 삭제 성공 후 게시글 다시 로드
         const updatedPost = await getPostDetail(parseInt(postId));
         if (updatedPost.isSuccess && updatedPost.result) {
-          setPost(updatedPost.result);
+          const currentUserId = getCurrentUserId();
+          const postData = updatedPost.result;
+          const isMyPost = currentUserId !== null && postData.author.id === currentUserId;
+          const commentsWithIsMine = addIsMineToComments(postData.comments, currentUserId);
+          
+          setPost({
+            ...postData,
+            isMine: isMyPost,
+            comments: commentsWithIsMine
+          });
         }
       } else {
         setToast({ message: response.message || '댓글 삭제에 실패했습니다.', type: 'error', isVisible: true });
@@ -234,7 +293,16 @@ function CommunityPostDetailPage() {
         setEditingContent('');
         const updatedPost = await getPostDetail(parseInt(postId));
         if (updatedPost.isSuccess && updatedPost.result) {
-          setPost(updatedPost.result);
+          const currentUserId = getCurrentUserId();
+          const postData = updatedPost.result;
+          const isMyPost = currentUserId !== null && postData.author.id === currentUserId;
+          const commentsWithIsMine = addIsMineToComments(postData.comments, currentUserId);
+          
+          setPost({
+            ...postData,
+            isMine: isMyPost,
+            comments: commentsWithIsMine
+          });
         }
       } else {
         setToast({ message: response.message || '댓글 수정에 실패했습니다.', type: 'error', isVisible: true });
@@ -388,28 +456,34 @@ function CommunityPostDetailPage() {
         </button>
         <h3>{post.author.nickname} 님의 글</h3>
         <div className="header-right-wrapper">
-          <button
-            className="header-menu-button"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            disabled={isProcessing}
-          >
-            <BsThreeDotsVertical size={20} color="#333" />
-          </button>
+          {post.isMine && (
+            <>
+              <button
+                className="header-menu-button"
+                onClick={() => setMenuOpen((prev) => !prev)}
+                disabled={isProcessing}
+              >
+                <BsThreeDotsVertical size={20} color="#333" />
+              </button>
 
-          {menuOpen && (
-            <div className="header-dropdown-menu" ref={menuRef}>
-              <div className="menu-item" onClick={handleEditPost}>
-                <FiEdit2 size={16} />
-                <span>수정하기</span>
-              </div>
-              <div className="menu-item" onClick={handleDeletePost}>
-                <FiTrash2 size={16} />
-                <span>삭제하기</span>
-              </div>
-            </div>
+              {menuOpen && (
+                <div className="header-dropdown-menu" ref={menuRef}>
+                  <div className="menu-item" onClick={handleEditPost}>
+                    <FiEdit2 size={16} />
+                    <span>수정하기</span>
+                  </div>
+                  <div className="menu-item" onClick={handleDeletePost}>
+                    <FiTrash2 size={16} />
+                    <span>삭제하기</span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </header>
+
+      <div className="header-margin"></div>
 
       <div className="detail-content">
         {/* 메인 이미지 */}

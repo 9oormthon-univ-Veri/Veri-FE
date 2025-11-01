@@ -183,3 +183,28 @@ export const removeAccessToken = (): void => {
   localStorage.removeItem('accessToken');
 };
 
+// 현재 로그인한 사용자 ID 추출
+export const getCurrentUserId = (): number | null => {
+  const token = getAccessToken();
+  if (!token) return null;
+
+  const payload = decodeJwt(token);
+  if (!payload) return null;
+
+  // JWT 페이로드에서 사용자 ID 추출 (일반적인 필드명들 시도)
+  const userId = payload.sub || payload.memberId || payload.userId || payload.id;
+  
+  if (typeof userId === 'number') {
+    return userId;
+  }
+  
+  if (typeof userId === 'string') {
+    const parsed = parseInt(userId, 10);
+    if (!isNaN(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
+};
+
