@@ -198,7 +198,7 @@ function CommunityPage() {
                 <p className="section-subtitle">다른 회원들의 글을 만나보세요</p>
               </div>
               <button className="write-post-button" onClick={handleWritePost}>
-                <span className="write-icon">글 쓰기</span>
+                <span className="write-icon">글쓰기</span>
               </button>
             </div>
             {error && (
