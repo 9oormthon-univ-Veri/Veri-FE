@@ -6,9 +6,9 @@ import { getMemberProfile, type GetMemberProfileResponse, type MemberProfile } f
 import { getMyPosts, type Post } from '../api/communityApi';
 
 // 아이콘 import
-import rightLineIcon from '../assets/icons/right_line.svg';
-import scheduleFillIcon from '../assets/icons/schedule_fill.svg';
-import saleFillIcon from '../assets/icons/sale_fill.svg';
+// import rightLineIcon from '../assets/icons/right_line.svg';
+// import scheduleFillIcon from '../assets/icons/schedule_fill.svg';
+// import saleFillIcon from '../assets/icons/sale_fill.svg';
 import TopBar from '../components/TopBar';
 
 // 이미지 import
@@ -94,13 +94,13 @@ const MyPage: React.FC = () => {
     console.log('프로필 상세 페이지로 이동');
   };
 
-  const handleNoticeClick = () => {
-    console.log('공지사항 페이지로 이동');
-  };
+  // const handleNoticeClick = () => {
+  //   console.log('공지사항 페이지로 이동');
+  // };
 
-  const handleEventClick = () => {
-    console.log('이벤트 페이지로 이동');
-  };
+  // const handleEventClick = () => {
+  //   console.log('이벤트 페이지로 이동');
+  // };
 
   const goToEditMyName = (e: React.MouseEvent) => {
     e.stopPropagation();
