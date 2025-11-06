@@ -18,7 +18,6 @@ const LoginPage: React.FC = () => {
         console.log('목업 모드: 카카오 로그인 시뮬레이션');
         const accessToken = await handleSocialLoginCallback('kakao', 'mock-code');
         setAccessToken(accessToken);
-        console.log('목업 로그인 성공, 홈으로 이동합니다.');
         navigate('/');
       } catch (error) {
         console.error('목업 로그인 실패:', error);
@@ -37,7 +36,6 @@ const LoginPage: React.FC = () => {
         console.log('목업 모드: 네이버 로그인 시뮬레이션');
         const accessToken = await handleSocialLoginCallback('naver', 'mock-code');
         setAccessToken(accessToken);
-        console.log('목업 로그인 성공, 홈으로 이동합니다.');
         navigate('/');
       } catch (error) {
         console.error('목업 로그인 실패:', error);

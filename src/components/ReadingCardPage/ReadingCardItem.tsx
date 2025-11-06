@@ -1,5 +1,5 @@
 // src/components/ReadingCardPage/ReadingCardItem.tsx
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ReadingCardItem.css'; // CSS 파일 임포트 유지
 import { type ReadingCardItemType } from '../../pages/mainPage/ReadingCardPage'; // ReadingCardPage에서 정의된 인터페이스 임포트
@@ -7,6 +7,8 @@ import { type ReadingCardItemType } from '../../pages/mainPage/ReadingCardPage';
 // 각 독서카드를 표시하는 컴포넌트
 const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, contentPreview, date, thumbnailUrl, isPublic }) => {
     const navigate = useNavigate();
+    const fallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="150"%3E%3Crect width="100" height="150" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ENo Image%3C/text%3E%3C/svg%3E';
+    const hasErrorRef = useRef(false);
 
     // 클릭 시 독서 카드 상세 페이지로 이동
     const handleClick = () => {
@@ -20,15 +22,20 @@ const ReadingCardItem: React.FC<ReadingCardItemType> = ({ id, title, contentPrev
         day: '2-digit'
     }).replace(/\./g, '. ').trim(); // 마침표 뒤에 공백 추가 후 양쪽 공백 제거
 
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+        if (!hasErrorRef.current && e.currentTarget.src !== fallbackImageUrl) {
+            hasErrorRef.current = true;
+            e.currentTarget.src = fallbackImageUrl;
+        }
+    };
+
     return (
         <div className="reading-card-page-item" onClick={handleClick}>
             <div className="card-image-container">
                 <img
-                    src={thumbnailUrl || 'https://via.placeholder.com/100x150?text=No+Image'} // 폴백 이미지 추가
+                    src={thumbnailUrl || fallbackImageUrl}
                     alt={title}
-                    onError={(e) => {
-                        e.currentTarget.src = "https://via.placeholder.com/100x150?text=No+Image";
-                    }}
+                    onError={handleImageError}
                 />
                 {!isPublic && (
                     <div className="private-badge-text">

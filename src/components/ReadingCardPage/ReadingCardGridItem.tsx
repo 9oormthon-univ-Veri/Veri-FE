@@ -1,5 +1,5 @@
 // src/components/ReadingCardPage/ReadingCardGridItem.tsx
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ReadingCardGridItem.css'; // CSS 파일 임포트 유지
 import { type ReadingCardItemType } from '../../pages/mainPage/ReadingCardPage'; // ReadingCardPage에서 정의된 인터페이스 임포트
@@ -7,21 +7,28 @@ import { type ReadingCardItemType } from '../../pages/mainPage/ReadingCardPage';
 // 각 독서카드를 이미지 갤러리 형태로 표시하는 컴포넌트
 const ReadingCardGridItem: React.FC<ReadingCardItemType> = ({ id, title, thumbnailUrl, isPublic }) => {
     const navigate = useNavigate();
+    const fallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="200"%3E%3Crect width="150" height="200" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ENo Image%3C/text%3E%3C/svg%3E';
+    const hasErrorRef = useRef(false);
 
     // 클릭 시 독서 카드 상세 페이지로 이동
     const handleClick = () => {
         navigate(`/reading-card-detail/${id}`);
     };
 
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+        if (!hasErrorRef.current && e.currentTarget.src !== fallbackImageUrl) {
+            hasErrorRef.current = true;
+            e.currentTarget.src = fallbackImageUrl;
+        }
+    };
+
     return (
         <div className="reading-card-grid-item" onClick={handleClick}>
             <div className="grid-image-wrapper">
                 <img
-                    src={thumbnailUrl || 'https://via.placeholder.com/150x200?text=No+Image'} // 폴백 이미지 추가
+                    src={thumbnailUrl || fallbackImageUrl}
                     alt={title}
-                    onError={(e) => {
-                        e.currentTarget.src = "https://via.placeholder.com/150x200?text=No+Image";
-                    }}
+                    onError={handleImageError}
                 />
                 {!isPublic && (
                     <div className="private-badge">

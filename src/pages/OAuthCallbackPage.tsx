@@ -17,7 +17,6 @@ const OAuthCallbackPage: React.FC = () => {
     const processKakaoCallback = async () => {
       if (USE_MOCK_DATA) {
         // 목업 모드에서는 콜백 페이지를 거치지 않으므로 바로 홈으로 이동
-        console.log('목업 모드: 콜백 페이지에서 홈으로 이동');
         navigate('/');
         return;
       }
@@ -26,11 +25,9 @@ const OAuthCallbackPage: React.FC = () => {
       const code = params.get('code');
 
       if (code) {
-        console.log('받은 code:', code);
         try {
           const accessToken = await handleSocialLoginCallback('kakao', code);
           setAccessToken(accessToken);
-          console.log('로그인 성공, 홈으로 이동합니다.');
           navigate('/');
         } catch (error) {
           console.error('로그인 실패:', error);
