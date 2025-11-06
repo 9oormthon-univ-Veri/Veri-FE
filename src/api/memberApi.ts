@@ -25,6 +25,31 @@ export interface GetMemberProfileResponse {
     result: MemberProfile | null;
 }
 
+export interface UpdateMemberInfoRequest {
+    nickname?: string | null;
+    profileImageUrl?: string | null;
+}
+
+export interface UpdateMemberInfoResponse {
+    id: number;
+    nickname: string;
+    image: string;
+}
+
+export interface GetMemberInfoUpdateResponse {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+    result: UpdateMemberInfoResponse;
+}
+
+export interface CheckNicknameExistsResponse {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+    result: boolean;
+}
+
 export async function getMemberProfile(): Promise<GetMemberProfileResponse> {
     if (USE_MOCK_DATA) {
         await mockDelay();
@@ -46,7 +71,87 @@ export async function getMemberProfile(): Promise<GetMemberProfileResponse> {
 
         return data;
     } catch (error) {
-        console.error('프로필 데이터를 불러오는 중 오류 발생:', error);
+        throw error;
+    }
+}
+
+/**
+ * 내 정보 수정
+ * 로그인한 사용자의 닉네임과 프로필 이미지를 수정합니다. null인 값은 변경하지 않습니다.
+ * 
+ * @param updateData - 수정할 정보 (nickname, profileImageUrl)
+ * @returns 수정된 회원 정보
+ */
+export async function updateMemberInfo(
+    updateData: UpdateMemberInfoRequest
+): Promise<GetMemberInfoUpdateResponse> {
+    if (USE_MOCK_DATA) {
+        await mockDelay();
+        return createMockResponse(
+            {
+                id: 1,
+                nickname: updateData.nickname || mockUser.nickname,
+                image: updateData.profileImageUrl || mockUser.image,
+            },
+            '목 내 정보 수정 성공'
+        );
+    }
+
+    const url = `${BASE_URL}/api/v1/members/me/info`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData),
+        });
+
+        const data: GetMemberInfoUpdateResponse = await response.json();
+
+        if (!data.isSuccess) {
+            throw new Error(`내 정보 수정 실패: ${data.message || '알 수 없는 오류'}`);
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
+ * 닉네임 중복 확인
+ * 닉네임이 이미 사용 중인지 확인합니다.
+ * 
+ * @param nickname - 확인할 닉네임
+ * @returns 중복 여부 (true: 사용 중, false: 사용 가능)
+ */
+export async function checkNicknameExists(
+    nickname: string
+): Promise<CheckNicknameExistsResponse> {
+    if (USE_MOCK_DATA) {
+        await mockDelay();
+        // Mock 데이터에서는 항상 false 반환 (사용 가능)
+        return createMockResponse(false, '목 닉네임 중복 확인 성공');
+    }
+
+    const url = new URL(`${BASE_URL}/api/v1/members/nickname/exists`);
+    url.searchParams.append('nickname', nickname);
+
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+        });
+
+        const data: CheckNicknameExistsResponse = await response.json();
+
+        if (!data.isSuccess) {
+            throw new Error(`닉네임 중복 확인 실패: ${data.message || '알 수 없는 오류'}`);
+        }
+
+        return data;
+    } catch (error) {
         throw error;
     }
 }

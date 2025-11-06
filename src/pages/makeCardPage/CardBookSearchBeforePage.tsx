@@ -39,27 +39,22 @@ const CardBookSearchBeforePage: React.FC = () => {
                 </div>
 
                 <div className="card-preview-complete-card">
-                        <img 
-                            src={image} 
-                            alt="완성된 카드" 
-                            className="card-image"
-                            onError={(e) => {
-                                e.currentTarget.src = 'https://placehold.co/350x500/cccccc/333333?text=Image+Load+Failed';
-                                e.currentTarget.alt = '이미지 로드 실패';
-                                console.error('Failed to load image for display:', image);
-                            }}
-                        />
-                        <div 
-                            className="card-overlay-text" 
-                            style={{ 
-                                fontFamily: selectedFont,
-                                left: textPosition ? `${textPosition.x}px` : '16px',
-                                top: textPosition ? `${textPosition.y}px` : '100px'
-                            }}
-                        >
-                            {extractedText}
-                        </div>
-                    </div>
+                    <img 
+                        src={image} 
+                        alt="완성된 카드" 
+                        className="card-image"
+                        style={{ 
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }}
+                        onError={(e) => {
+                            e.currentTarget.src = 'https://placehold.co/350x500/cccccc/333333?text=Image+Load+Failed';
+                            e.currentTarget.alt = '이미지 로드 실패';
+                            console.error('Failed to load image for display:', image);
+                        }}
+                    />
+                </div>
 
                 <div className="action-section">
                     <button className="book-registration-button" onClick={handleBookRegistration}>

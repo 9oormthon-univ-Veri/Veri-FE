@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
 import { getMemberProfile, type GetMemberProfileResponse, type MemberProfile } from '../api/memberApi';
+import { getMyPosts, type Post } from '../api/communityApi';
 
 // 아이콘 import
 import rightLineIcon from '../assets/icons/right_line.svg';
@@ -26,6 +27,9 @@ const MyPage: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [myPosts, setMyPosts] = useState<Post[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [postsError, setPostsError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -62,6 +66,30 @@ const MyPage: React.FC = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const fetchMyPosts = async () => {
+      setIsLoadingPosts(true);
+      setPostsError(null);
+
+      try {
+        const response = await getMyPosts();
+
+        if (response.isSuccess && response.result) {
+          setMyPosts(response.result.posts);
+        } else {
+          setPostsError(response.message || '게시글을 불러오는 데 실패했습니다.');
+        }
+      } catch (err) {
+        console.error('Error fetching my posts:', err);
+        setPostsError('게시글을 불러오는 중 네트워크 오류가 발생했습니다.');
+      } finally {
+        setIsLoadingPosts(false);
+      }
+    };
+
+    fetchMyPosts();
+  }, []);
+
   const handleProfileClick = () => {
     console.log('프로필 상세 페이지로 이동');
   };
@@ -77,6 +105,27 @@ const MyPage: React.FC = () => {
   const goToEditMyName = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate('/edit-my-name');
+  };
+
+  const handleWritePost = () => {
+    navigate('/write-post');
+  };
+
+  const handlePostClick = (postId: number) => {
+    navigate(`/community/post/${postId}`);
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
+  };
+
+  const truncateContent = (content: string, maxLength: number = 100): string => {
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + '...';
   };
 
   // 로딩 상태 처리
@@ -134,19 +183,86 @@ const MyPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="my-page-news-section">
-        <h3 className="my-page-section-title">소식</h3>
-        <div className="news-item" onClick={handleNoticeClick}>
-          <img src={scheduleFillIcon} className="news-icon" alt="공지사항 아이콘" />
-          <span className="news-label">공지사항</span>
-          <img src={rightLineIcon} className="news-arrow" alt="이동" />
+      {/* 내 게시글 목록 섹션 */}
+      <div className="my-posts-section">
+        <div className="my-posts-header">
+          <h3 className="my-posts-title">
+            전체 독서기록 {myPosts.length}
+          </h3>
+          <button className="new-record-button" onClick={handleWritePost}>
+            <span className="plus-icon">+</span>
+            <span>새로 기록하기</span>
+          </button>
         </div>
-        <div className="news-item" onClick={handleEventClick}>
-          <img src={saleFillIcon} className="news-icon" alt="이벤트 아이콘" />
-          <span className="news-label">이벤트</span>
-          <img src={rightLineIcon} className="news-arrow" alt="이동" />
-        </div>
+
+        {isLoadingPosts ? (
+          <div className="posts-loading">게시글을 불러오는 중...</div>
+        ) : postsError ? (
+          <div className="posts-error">{postsError}</div>
+        ) : myPosts.length === 0 ? (
+          <div className="no-posts-message">
+            <p>아직 작성한 게시글이 없습니다.</p>
+            <p>새로운 독서 기록을 남겨보세요!</p>
+          </div>
+        ) : (
+          <div className="my-posts-list">
+            {myPosts.map((post) => (
+              <div
+                key={post.postId}
+                className="my-post-item"
+                onClick={() => handlePostClick(post.postId)}
+              >
+                {/* 게시글 이미지 */}
+                {post.thumbnail && (
+                  <div className="my-post-image">
+                    <img src={post.thumbnail} alt="게시글 이미지" />
+                  </div>
+                )}
+
+                {/* 게시글 제목과 공개/비공개 태그 */}
+                <div className="my-post-header">
+                  <h4 className="my-post-title">{post.title}</h4>
+                  <span className={`my-post-visibility ${post.isPublic ? 'public' : 'private'}`}>
+                    {post.isPublic ? '공개' : '비공개'}
+                  </span>
+                </div>
+
+                {/* 게시글 내용 */}
+                <div className="my-post-content">
+                  <p>{truncateContent(post.content)}</p>
+                </div>
+
+                {/* 날짜와 책 정보 */}
+                <div className="my-post-meta">
+                  <span className="my-post-date">{formatDate(post.createdAt)}</span>
+                  {post.book && (
+                    <div className="my-post-book">
+                      <span className="mgc_book_6_fill"></span>
+                      <span className="my-post-book-title">{post.book.title}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* 좋아요/댓글 수 (공개인 경우만) */}
+                {post.isPublic && (
+                  <div className="my-post-actions">
+                    <div className="my-post-action-item">
+                      <span className="mgc_heart_line"></span>
+                      <span>{post.likeCount}</span>
+                    </div>
+                    <div className="my-post-action-item">
+                      <span className="mgc_chat_3_line"></span>
+                      <span>{post.commentCount}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      <div className='main-page-margin'></div>
     </div>
   );
 };

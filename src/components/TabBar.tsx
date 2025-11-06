@@ -90,7 +90,6 @@ function TabBar() {
             return;
         }
         setActiveTab(tab.id);
-        console.log(`탭 "${tab.name}" 클릭됨. 경로: ${tab.path}`);
         navigate(tab.path);
     };
 

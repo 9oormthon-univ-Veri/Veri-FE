@@ -80,10 +80,7 @@ export interface PostFeedResponse {
 
 export interface MyPostsResponse {
   posts: Post[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
+  count: number;
 }
 
 // 카드 관련 타입들
@@ -135,11 +132,6 @@ export interface GetPostFeedQueryParams {
   sort?: 'newest' | 'oldest' | 'popular';
 }
 
-export interface GetMyPostsQueryParams {
-  page?: number;
-  size?: number;
-  sort?: 'newest' | 'oldest' | 'popular';
-}
 
 export interface GetCardsQueryParams {
   page?: number;
@@ -499,36 +491,20 @@ export const getPostDetail = async (
  * 내 게시글 목록 조회
  * 로그인한 사용자의 게시글 목록을 조회합니다.
  * 
- * @param params - 쿼리 파라미터 (page, size, sort)
- * @returns 내 게시글 목록과 페이지네이션 정보
+ * @returns 내 게시글 목록과 개수
  */
-export const getMyPosts = async (
-  params: GetMyPostsQueryParams = {}
-): Promise<GetMyPostsResponse> => {
+export const getMyPosts = async (): Promise<GetMyPostsResponse> => {
   if (USE_MOCK_DATA) {
     await mockDelay();
     const mockPosts = createMockPosts().slice(0, 2); // 내 게시글은 2개만 있다고 가정
-    const page = params.page || 1;
-    const size = params.size || 10;
-    const startIndex = (page - 1) * size;
-    const endIndex = startIndex + size;
-    const paginatedPosts = mockPosts.slice(startIndex, endIndex);
     
     return createMockResponse({
-      posts: paginatedPosts,
-      page: page,
-      size: size,
-      totalElements: mockPosts.length,
-      totalPages: Math.ceil(mockPosts.length / size),
-    }, '목 내 게시글 조회 성공');
+      posts: mockPosts,
+      count: mockPosts.length,
+    }, '내 게시글 조회 성공');
   }
 
-  const url = new URL('/api/v1/posts/my', BASE_URL);
-  if (params.page !== undefined) url.searchParams.append('page', String(params.page));
-  if (params.size !== undefined) url.searchParams.append('size', String(params.size));
-  if (params.sort !== undefined) url.searchParams.append('sort', params.sort);
-
-  return makeApiRequest<GetMyPostsResponse>(url.pathname + url.search);
+  return makeApiRequest<GetMyPostsResponse>('/api/v1/posts/my');
 };
 
 /**

@@ -275,9 +275,6 @@ function DownloadCardPage() {
                                 e.currentTarget.alt = "이미지 로드 실패";
                             }}
                         />
-                        <div className="download-card-image-overlay-text">
-                            {cardDetail.content}
-                        </div>
                     </div>
 
                     <div className="download-card-text-content">

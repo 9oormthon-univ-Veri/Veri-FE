@@ -52,8 +52,10 @@
 /* 메인 콘텐츠 */
 .write-post-content {
   padding: 20px;
-  padding-bottom: 100px; /* 제출 버튼 공간 확보 */
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px);
 }
 
 .form-label {
@@ -320,40 +322,44 @@
 
 /* 제출 섹션 */
 .submit-section {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #fff;
-  border-top: 1px solid #f0f0f0;
-  padding: 16px 20px;
-  z-index: 100;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .submit-button {
-  width: 100%;
-  background-color: var(--primary-green);
-  color: white;
+  flex: 1 0 0;
+  height: 50px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  background: var(--primary-green, #0CE19A);
   border: none;
-  border-radius: 12px;
-  padding: 16px;
-  font-size: 16px;
-  font-weight: 600;
+  color: #FFF;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: var(--primary-green);
   opacity: 0.9;
-  transform: translateY(-1px);
 }
 
 .submit-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-  transform: none;
+  opacity: 0.6;
 }
 
 .submit-post-button {

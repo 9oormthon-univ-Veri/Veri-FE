@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationPage.css';
 import Toast from '../../components/Toast';
+import { Sparkles } from 'lucide-react';
 
 import PicFillIconSVG from '../../assets/icons/CustomizePage/pic_fill.svg?react';
 import FontSizeFillIconSVG from '../../assets/icons/CustomizePage/font_size_fill.svg?react';
@@ -22,7 +23,7 @@ const CardCustomizationPage: React.FC = () => {
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
 
-    const [selectedTab, setSelectedTab] = useState<'image' | 'text'>('image');
+    const [selectedTab, setSelectedTab] = useState<'image' | 'text' | 'effect'>('image');
     const [isBlocked, setIsBlocked] = useState(false);
     const [toast, setToast] = useState<{
         message: string;
@@ -42,6 +43,34 @@ const CardCustomizationPage: React.FC = () => {
         setToast(prev => ({ ...prev, isVisible: false }));
     };
 
+    // 배경 카테고리별 이미지 데이터
+    const backgroundCategories = {
+        'my-photo': [
+            { label: '촬영 사진', url: image, id: 'uploaded' }
+        ],
+        'pattern': [
+            { label: '패턴1', url: ColorBackground, id: 'pattern1' },
+            { label: '패턴2', url: ColorBackground, id: 'pattern2' },
+            { label: '패턴3', url: ColorBackground, id: 'pattern3' },
+        ],
+        'landscape': [
+            { label: '하늘', url: SkyBackground, id: 'sky' },
+            { label: '여름바다', url: SummerSeaBackground, id: 'sea' },
+            { label: '강가', url: RiverBackground, id: 'river' },
+            { label: '숲속', url: ForsetBackground, id: 'forest' },
+        ],
+        'book': [
+            { label: '책1', url: SkyBackground, id: 'book1' },
+            { label: '책2', url: SummerSeaBackground, id: 'book2' },
+            { label: '책3', url: RiverBackground, id: 'book3' },
+        ],
+        'cafe': [
+            { label: '카페1', url: SkyBackground, id: 'cafe1' },
+            { label: '카페2', url: SummerSeaBackground, id: 'cafe2' },
+            { label: '카페3', url: RiverBackground, id: 'cafe3' },
+        ],
+    };
+
     const defaultBackgrounds: { label: string; url: string }[] = [
         { label: '하늘', url: SkyBackground },
         { label: '여름바다', url: SummerSeaBackground },
@@ -50,56 +79,58 @@ const CardCustomizationPage: React.FC = () => {
         { label: '색깔', url: ColorBackground },
     ];
 
-    const availableFonts: { label: string; value: string }[] = [
-        { label: '기본체', value: 'inherit' },
-        { label: '나눔펜', value: '"Nanum Pen", cursive' },
-        { label: '노토산스', value: '"Noto Sans KR", sans-serif' },
-    ];
+    // 폰트 카테고리별 데이터
+    const fontCategories = {
+        'myeongjo': [
+            { label: 'Noto', value: '"Noto Serif KR", serif', id: 'noto-serif' },
+            { label: '궁서체', value: '"Gungsuh", serif', id: 'gungsuh' },
+            { label: '바탕체', value: '"Batang", serif', id: 'batang' },
+            { label: '함초롱', value: '"Nanum Myeongjo", serif', id: 'nanum-myeongjo' },
+            { label: '본명조', value: '"Noto Serif KR", serif', id: 'bon-myeongjo' },
+        ],
+        'gothic': [
+            { label: 'Pretendard', value: 'Pretendard, sans-serif', id: 'pretendard' },
+            { label: '나눔고딕', value: '"Nanum Gothic", sans-serif', id: 'nanum-gothic' },
+            { label: '노토산스', value: '"Noto Sans KR", sans-serif', id: 'noto-sans' },
+            { label: '맑은고딕', value: '"Malgun Gothic", sans-serif', id: 'malgun-gothic' },
+            { label: '돋움', value: 'Dotum, sans-serif', id: 'dotum' },
+        ],
+        'handwriting': [
+            { label: '나눔펜', value: '"Nanum Pen Script", cursive', id: 'nanum-pen' },
+            { label: '나눔손글씨', value: '"Nanum Brush Script", cursive', id: 'nanum-brush' },
+            { label: 'KyoboHand', value: '"KyoboHand", cursive', id: 'kyobo-hand' },
+            { label: 'Cafe24', value: '"Cafe24 Ssurround", cursive', id: 'cafe24' },
+        ],
+    };
 
+    const [selectedBackgroundCategory, setSelectedBackgroundCategory] = useState<'my-photo' | 'pattern' | 'landscape' | 'book' | 'cafe'>('my-photo');
     const [selectedBackground, setSelectedBackground] = useState<'uploaded' | string>('uploaded');
-    const [selectedFont, setSelectedFont] = useState<string>('inherit');
+    const [selectedFontCategory, setSelectedFontCategory] = useState<'myeongjo' | 'gothic' | 'handwriting'>('myeongjo');
+    const [selectedFontId, setSelectedFontId] = useState<string>(fontCategories.myeongjo[0]?.id || 'noto-serif');
+    
+    // 효과 관련 상태
+    const [selectedEffect, setSelectedEffect] = useState<'none' | 'blur' | 'darkness'>('none');
+    const [effectIntensity, setEffectIntensity] = useState<number>(50);
     
     // 텍스트 드래그 관련 상태
     const [textPosition, setTextPosition] = useState({ x: 16, y: 100 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+    const cardPreviewRef = useRef<HTMLDivElement>(null);
 
     const getBackgroundImage = () => {
         if (selectedBackground === 'uploaded') return image;
+        
+        // 카테고리별로 찾기
+        const category = backgroundCategories[selectedBackgroundCategory];
+        if (category) {
+            const found = category.find((bg) => bg.id === selectedBackground);
+            if (found) return found.url;
+        }
+        
+        // 기존 방식으로도 찾기
         const found = defaultBackgrounds.find((bg) => bg.label === selectedBackground);
         return found?.url || image;
-    };
-
-    // 이미지 크기 계산 함수
-    const calculateImageDimensions = (imageUrl: string) => {
-        const img = new Image();
-        img.onload = () => {
-            const container = document.querySelector('.custom-card-preview') as HTMLElement;
-            if (container) {
-                const containerWidth = container.offsetWidth;
-                const containerHeight = container.offsetHeight;
-                
-                // 이미지 비율 계산
-                const imageRatio = img.width / img.height;
-                const containerRatio = containerWidth / containerHeight;
-                
-                let displayWidth, displayHeight;
-                
-                if (imageRatio > containerRatio) {
-                    // 이미지가 더 넓은 경우
-                    displayWidth = containerWidth;
-                    displayHeight = containerWidth / imageRatio;
-                } else {
-                    // 이미지가 더 높은 경우
-                    displayHeight = containerHeight;
-                    displayWidth = containerHeight * imageRatio;
-                }
-                
-                setImageDimensions({ width: displayWidth, height: displayHeight });
-            }
-        };
-        img.src = imageUrl;
     };
 
     useEffect(() => {
@@ -109,14 +140,6 @@ const CardCustomizationPage: React.FC = () => {
             navigate('/make-card', { replace: true });
         }
     }, [image, extractedText, navigate, isBlocked]);
-
-    // 배경 이미지가 변경될 때마다 이미지 크기 계산
-    useEffect(() => {
-        const currentImage = getBackgroundImage();
-        if (currentImage) {
-            calculateImageDimensions(currentImage);
-        }
-    }, [selectedBackground, image]);
 
     if (isBlocked) {
         return null;
@@ -133,58 +156,221 @@ const CardCustomizationPage: React.FC = () => {
     }
 
     // 텍스트 드래그 이벤트 핸들러들
-    const handleMouseDown = (e: React.MouseEvent) => {
-        const rect = e.currentTarget.getBoundingClientRect();
+    const handleStart = (clientX: number, clientY: number, target: HTMLElement) => {
+        const rect = target.getBoundingClientRect();
         setDragOffset({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
+            x: clientX - rect.left,
+            y: clientY - rect.top
         });
         setIsDragging(true);
     };
 
-    const handleMouseMove = (e: React.MouseEvent) => {
+    const handleMove = (clientX: number, clientY: number, container: HTMLElement) => {
         if (!isDragging) return;
         
-        const container = e.currentTarget.getBoundingClientRect();
-        const newX = e.clientX - container.left - dragOffset.x;
-        const newY = e.clientY - container.top - dragOffset.y;
+        const rect = container.getBoundingClientRect();
+        const newX = clientX - rect.left - dragOffset.x;
+        const newY = clientY - rect.top - dragOffset.y;
         
-        // 이미지 크기에 맞춰서 드래그 범위 제한
+        // 컨테이너 전체 영역에서 드래그 가능하도록 설정
         const textElement = document.querySelector('.overlay-text') as HTMLElement;
         const textWidth = textElement ? textElement.offsetWidth : 200;
         const textHeight = textElement ? textElement.offsetHeight : 100;
         
-        // 이미지가 표시되는 실제 영역 계산
-        const imageLeft = (container.width - imageDimensions.width) / 2;
-        const imageTop = (container.height - imageDimensions.height) / 2;
-        
-        const maxX = imageLeft + imageDimensions.width - textWidth;
-        const maxY = imageTop + imageDimensions.height - textHeight;
+        // 컨테이너 전체를 기준으로 제한
+        const maxX = rect.width - textWidth;
+        const maxY = rect.height - textHeight;
         
         setTextPosition({
-            x: Math.max(imageLeft, Math.min(newX, maxX)),
-            y: Math.max(imageTop, Math.min(newY, maxY))
+            x: Math.max(0, Math.min(newX, maxX)),
+            y: Math.max(0, Math.min(newY, maxY))
         });
     };
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
         setIsDragging(false);
     };
 
-    const handleSave = () => {
-        if (!image || !extractedText || !selectedFont) {
-            showToast('이미지와 텍스트, 폰트는 필수로 포함되어야 합니다. 저장할 수 없습니다.', 'error');
+    // 마우스 이벤트
+    const handleMouseDown = (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleStart(e.clientX, e.clientY, e.currentTarget as HTMLElement);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        handleMove(e.clientX, e.clientY, e.currentTarget as HTMLElement);
+    };
+
+    const handleMouseUp = () => {
+        handleEnd();
+    };
+
+    // 터치 이벤트
+    const handleTouchStart = (e: React.TouchEvent) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        if (touch) {
+            handleStart(touch.clientX, touch.clientY, e.currentTarget as HTMLElement);
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        if (touch) {
+            handleMove(touch.clientX, touch.clientY, e.currentTarget as HTMLElement);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        handleEnd();
+    };
+
+    const getSelectedFontValue = () => {
+        const allFonts = [
+            ...fontCategories.myeongjo,
+            ...fontCategories.gothic,
+            ...fontCategories.handwriting,
+        ];
+        const selectedFont = allFonts.find(font => font.id === selectedFontId);
+        return selectedFont?.value || 'inherit';
+    };
+
+    const handleSave = async () => {
+        if (!image || !extractedText) {
+            showToast('이미지와 텍스트는 필수로 포함되어야 합니다. 저장할 수 없습니다.', 'error');
             return;
         }
 
-        navigate('/card-book-search-before', {
-            state: {
-                image: getBackgroundImage(),
-                extractedText,
-                font: selectedFont,
-                textPosition: textPosition,
-            },
-        });
+        if (!cardPreviewRef.current) {
+            showToast('카드 미리보기를 캡쳐할 수 없습니다.', 'error');
+            return;
+        }
+
+        try {
+            showToast('카드를 생성 중입니다...', 'info');
+            
+            const cardWidth = cardPreviewRef.current.offsetWidth;
+            const cardHeight = cardWidth; // 1:1 비율
+            const scale = 2; // 고해상도
+            const canvas = document.createElement('canvas');
+            canvas.width = cardWidth * scale;
+            canvas.height = cardHeight * scale;
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) {
+                throw new Error('Canvas context를 가져올 수 없습니다.');
+            }
+
+            // 배경 이미지 로드
+            const backgroundImage = new Image();
+            backgroundImage.crossOrigin = 'anonymous';
+            
+            await new Promise<void>((resolve, reject) => {
+                backgroundImage.onload = () => resolve();
+                backgroundImage.onerror = () => reject(new Error('배경 이미지 로드 실패'));
+                backgroundImage.src = getBackgroundImage() || image;
+            });
+
+            // 배경 이미지 그리기
+            ctx.save();
+            
+            // 효과 적용
+            if (selectedEffect === 'blur') {
+                // blur 효과
+                const blurAmount = effectIntensity * 0.1 * scale;
+                ctx.filter = `blur(${blurAmount}px)`;
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            } else if (selectedEffect === 'darkness') {
+                // brightness 효과 - 픽셀 조작으로 구현
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                const brightness = 1 - effectIntensity * 0.01;
+                
+                if (data) {
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        if (r !== undefined && g !== undefined && b !== undefined) {
+                            data[i] = Math.max(0, Math.min(255, r * brightness));     // R
+                            data[i + 1] = Math.max(0, Math.min(255, g * brightness)); // G
+                            data[i + 2] = Math.max(0, Math.min(255, b * brightness)); // B
+                        }
+                    }
+                    
+                    ctx.putImageData(imageData, 0, 0);
+                }
+            } else {
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            }
+            
+            ctx.restore();
+
+            // 텍스트 렌더링
+            const textElement = cardPreviewRef.current.querySelector('.overlay-text') as HTMLElement;
+            if (textElement) {
+                const computedStyle = window.getComputedStyle(textElement);
+                const fontSize = parseFloat(computedStyle.fontSize) * scale;
+                const fontFamily = getSelectedFontValue();
+                const color = computedStyle.color;
+                const baseLineHeight = parseFloat(computedStyle.lineHeight);
+                const lineHeight = (baseLineHeight || fontSize * 1.6) * scale;
+                const padding = parseFloat(computedStyle.padding) * scale;
+                
+                ctx.save();
+                ctx.font = `${computedStyle.fontWeight || '400'} ${fontSize}px ${fontFamily}`;
+                ctx.fillStyle = color;
+                ctx.textBaseline = 'top';
+                
+                // 텍스트 위치 (scale 적용, padding 포함)
+                const textX = textPosition.x * scale + padding;
+                const textY = textPosition.y * scale + padding;
+                
+                // 텍스트 줄바꿈 처리
+                const maxWidth = (cardWidth - textPosition.x - 16) * scale - (padding * 2);
+                const words = extractedText.split(' ');
+                let line = '';
+                let y = textY;
+                
+                for (let i = 0; i < words.length; i++) {
+                    const testLine = line + words[i] + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width > maxWidth && i > 0) {
+                        ctx.fillText(line, textX, y);
+                        line = words[i] + ' ';
+                        y += lineHeight;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                ctx.fillText(line, textX, y);
+                
+                ctx.restore();
+            }
+
+            // 캡쳐된 이미지를 base64로 변환
+            const capturedImage = canvas.toDataURL('image/png');
+
+            navigate('/card-book-search-before', {
+                state: {
+                    image: capturedImage,
+                    extractedText,
+                    font: getSelectedFontValue(),
+                    textPosition: textPosition,
+                    effect: selectedEffect,
+                    effectIntensity: effectIntensity,
+                },
+            });
+        } catch (error) {
+            console.error('카드 캡쳐 실패:', error);
+            showToast('카드 캡쳐에 실패했습니다. 다시 시도해주세요.', 'error');
+        }
     };
 
     return (
@@ -199,21 +385,42 @@ const CardCustomizationPage: React.FC = () => {
                 </header>
 
                 <div
+                    ref={cardPreviewRef}
                     className="custom-card-preview"
-                    style={{ backgroundImage: `url(${getBackgroundImage()})` }}
+                    style={{ 
+                        position: 'relative',
+                        overflow: 'hidden',
+                        touchAction: 'none'
+                    }}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    onTouchCancel={handleTouchEnd}
                 >
+                    <div
+                        className="custom-card-background"
+                        style={{ 
+                            backgroundImage: `url(${getBackgroundImage()})`,
+                            filter: selectedEffect === 'blur' 
+                                ? `blur(${effectIntensity * 0.1}px)` 
+                                : selectedEffect === 'darkness' 
+                                ? `brightness(${1 - effectIntensity * 0.01})`
+                                : 'none',
+                        }}
+                    />
                     <div
                         className={`overlay-text ${isDragging ? 'dragging' : ''}`}
                         style={{ 
-                            fontFamily: selectedFont,
+                            fontFamily: getSelectedFontValue(),
                             left: `${textPosition.x}px`,
                             top: `${textPosition.y}px`,
-                            cursor: isDragging ? 'grabbing' : 'grab'
+                            cursor: isDragging ? 'grabbing' : 'grab',
+                            touchAction: 'none'
                         }}
                         onMouseDown={handleMouseDown}
+                        onTouchStart={handleTouchStart}
                     >
                         {extractedText}
                     </div>
@@ -221,57 +428,154 @@ const CardCustomizationPage: React.FC = () => {
 
                 <div className="option-panel">
                     {selectedTab === 'image' && (
-                        <div className="option-icons">
-                            <div>
-                                <div
-                                    className={`option ${selectedBackground === 'uploaded' ? 'active' : ''}`}
-                                    onClick={() => setSelectedBackground('uploaded')}
-                                    style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
+                        <div className="background-customization">
+                            <div className="background-category-tabs">
+                                <button
+                                    className={`background-category-tab ${selectedBackgroundCategory === 'my-photo' ? 'active' : ''}`}
+                                    onClick={() => setSelectedBackgroundCategory('my-photo')}
                                 >
-                                    {selectedBackground === 'uploaded' && (
-                                        <CheckFillIconSVG className="check-icon" />
-                                    )}
-                                </div>
-                                <div className="option-label">촬영 사진</div>
+                                    내 사진
+                                </button>
+                                <button
+                                    className={`background-category-tab ${selectedBackgroundCategory === 'pattern' ? 'active' : ''}`}
+                                    onClick={() => setSelectedBackgroundCategory('pattern')}
+                                >
+                                    패턴
+                                </button>
+                                <button
+                                    className={`background-category-tab ${selectedBackgroundCategory === 'landscape' ? 'active' : ''}`}
+                                    onClick={() => setSelectedBackgroundCategory('landscape')}
+                                >
+                                    풍경
+                                </button>
+                                <button
+                                    className={`background-category-tab ${selectedBackgroundCategory === 'book' ? 'active' : ''}`}
+                                    onClick={() => setSelectedBackgroundCategory('book')}
+                                >
+                                    책
+                                </button>
+                                <button
+                                    className={`background-category-tab ${selectedBackgroundCategory === 'cafe' ? 'active' : ''}`}
+                                    onClick={() => setSelectedBackgroundCategory('cafe')}
+                                >
+                                    카페
+                                </button>
                             </div>
-
-                            {defaultBackgrounds.map((bg) => (
-                                <div key={bg.label}>
-                                    <div
-                                        className={`option ${selectedBackground === bg.label ? 'active' : ''}`}
-                                        onClick={() => setSelectedBackground(bg.label)}
-                                        style={{ backgroundImage: `url(${bg.url})`, backgroundSize: 'cover' }}
-                                    >
-                                        {selectedBackground === bg.label && (
-                                            <CheckFillIconSVG className="check-icon" />
-                                        )}
-                                    </div>
-                                    <div className="option-label">{bg.label}</div>
+                            <div className="background-options-scroll">
+                                <div className="option-icons">
+                                    {selectedBackgroundCategory === 'my-photo' && image && (
+                                        <div>
+                                            <div
+                                                className={`option ${selectedBackground === 'uploaded' ? 'active' : ''}`}
+                                                onClick={() => setSelectedBackground('uploaded')}
+                                                style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
+                                            >
+                                                {selectedBackground === 'uploaded' && (
+                                                    <CheckFillIconSVG className="check-icon" />
+                                                )}
+                                            </div>
+                                            <div className="option-label">촬영 사진</div>
+                                        </div>
+                                    )}
+                                    {selectedBackgroundCategory !== 'my-photo' && backgroundCategories[selectedBackgroundCategory]?.map((bg) => (
+                                        <div key={bg.id}>
+                                            <div
+                                                className={`option ${selectedBackground === bg.id ? 'active' : ''}`}
+                                                onClick={() => setSelectedBackground(bg.id)}
+                                                style={{ backgroundImage: `url(${bg.url})`, backgroundSize: 'cover' }}
+                                            >
+                                                {selectedBackground === bg.id && (
+                                                    <CheckFillIconSVG className="check-icon" />
+                                                )}
+                                            </div>
+                                            <div className="option-label">{bg.label}</div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
                         </div>
                     )}
 
                     {selectedTab === 'text' && (
-                        <div className="option-icons">
-                            {availableFonts.map((font) => (
-                                <div key={font.label}>
-                                    <div
-                                        className={`option ${selectedFont === font.value ? 'active' : ''}`}
-                                        onClick={() => setSelectedFont(font.value)}
-                                        style={{ fontFamily: font.value, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2em' }}
-                                    >
-                                        {selectedFont === font.value && (
-                                            <CheckFillIconSVG className="check-icon" />
-                                        )}
-                                        <span style={{ color: 'black', textShadow: '0 0 2px white' }}>가</span>
-                                    </div>
-                                    <div className="option-label">{font.label}</div>
+                        <div className="font-customization">
+                            <div className="font-category-tabs">
+                                <button
+                                    className={`font-category-tab ${selectedFontCategory === 'myeongjo' ? 'active' : ''}`}
+                                    onClick={() => setSelectedFontCategory('myeongjo')}
+                                >
+                                    명조
+                                </button>
+                                <button
+                                    className={`font-category-tab ${selectedFontCategory === 'gothic' ? 'active' : ''}`}
+                                    onClick={() => setSelectedFontCategory('gothic')}
+                                >
+                                    고딕
+                                </button>
+                                <button
+                                    className={`font-category-tab ${selectedFontCategory === 'handwriting' ? 'active' : ''}`}
+                                    onClick={() => setSelectedFontCategory('handwriting')}
+                                >
+                                    손글씨
+                                </button>
+                            </div>
+                            <div className="font-options-scroll">
+                                <div className="option-icons">
+                                    {fontCategories[selectedFontCategory]?.map((font) => (
+                                        <div key={font.id}>
+                                            <div
+                                                className={`option ${selectedFontId === font.id ? 'active' : ''}`}
+                                                onClick={() => setSelectedFontId(font.id)}
+                                                style={{ fontFamily: font.value, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2em' }}
+                                            >
+                                                {selectedFontId === font.id && (
+                                                    <CheckFillIconSVG className="check-icon" />
+                                                )}
+                                                <span style={{ color: 'black', textShadow: '0 0 2px white' }}>가</span>
+                                            </div>
+                                            <div className="option-label">{font.label}</div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
                         </div>
                     )}
 
+                    {selectedTab === 'effect' && (
+                        <div className="effect-customization">
+                            <div className="effect-category-tabs">
+                                <button
+                                    className={`effect-category-tab ${selectedEffect === 'none' ? 'active' : ''}`}
+                                    onClick={() => setSelectedEffect('none')}
+                                >
+                                    없음
+                                </button>
+                                <button
+                                    className={`effect-category-tab ${selectedEffect === 'blur' ? 'active' : ''}`}
+                                    onClick={() => setSelectedEffect('blur')}
+                                >
+                                    블러
+                                </button>
+                                <button
+                                    className={`effect-category-tab ${selectedEffect === 'darkness' ? 'active' : ''}`}
+                                    onClick={() => setSelectedEffect('darkness')}
+                                >
+                                    어두움
+                                </button>
+                            </div>
+                            <div className="effect-slider-container">
+                                {selectedEffect !== 'none' && (
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value={effectIntensity}
+                                        onChange={(e) => setEffectIntensity(Number(e.target.value))}
+                                        className="effect-slider"
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                 </div>
 
@@ -293,6 +597,15 @@ const CardCustomizationPage: React.FC = () => {
                             <FontSizeFillIconSVG className={`tab-icon-svg ${selectedTab === 'text' ? 'active' : ''}`} />
                         </div>
                         <div className="tab-label">글자</div>
+                    </button>
+                    <button
+                        className={selectedTab === 'effect' ? 'tab-selected' : 'tab'}
+                        onClick={() => setSelectedTab('effect')}
+                    >
+                        <div className="tab-icon">
+                            <Sparkles className={`tab-icon-svg ${selectedTab === 'effect' ? 'active' : ''}`} size={32} />
+                        </div>
+                        <div className="tab-label">효과</div>
                     </button>
 
                 </div>

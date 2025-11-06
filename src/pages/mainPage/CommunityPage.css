@@ -2,7 +2,8 @@
 
 .community-content {
   padding: 0 20px;
-  min-height: calc(100vh - 160px);
+  height: auto;
+  min-height: 100vh;
   background-color: white;
 }
 
@@ -116,6 +117,7 @@
   gap: 6px;
   transition: all 0.2s ease;
   white-space: nowrap;
+  display: none;
 }
 
 .write-icon {

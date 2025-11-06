@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardCustomizationCompletePage.css';
-import { createCard } from '../../api/cardApi';
+import { createCard, uploadImageAndGetUrl } from '../../api/cardApi';
 import { getBookById, type GetBookByIdResponse } from '../../api/bookApi';
 import Toast from '../../components/Toast';
 import downIcon from '../../assets/icons/down.svg';
@@ -131,10 +131,46 @@ const CardCustomizationCompletePage: React.FC = () => {
         setSaveError(null);
 
         try {
+            let imageUrlToSave = image;
+
+            // base64 이미지인 경우 S3에 업로드
+            if (image.startsWith('data:image')) {
+                try {
+                    showToast('이미지를 업로드하는 중입니다...', 'info');
+                    
+                    // base64를 Blob으로 변환
+                    const base64Data = image.split(',')[1]; // data:image/png;base64, 부분 제거
+                    if (!base64Data) {
+                        throw new Error('base64 데이터를 추출할 수 없습니다.');
+                    }
+                    const byteCharacters = atob(base64Data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'image/png' });
+                    
+                    // Blob을 File로 변환
+                    const file = new File([blob], 'card-image.png', { type: 'image/png' });
+                    
+                    // S3에 업로드하고 publicUrl 받기
+                    imageUrlToSave = await uploadImageAndGetUrl(file);
+                    
+                    console.log('이미지 업로드 완료:', imageUrlToSave);
+                } catch (uploadError: any) {
+                    console.error('이미지 업로드 실패:', uploadError);
+                    setSaveError(`이미지 업로드 실패: ${uploadError.message || '알 수 없는 오류'}`);
+                    setIsSaving(false);
+                    hasSaved.current = false;
+                    return;
+                }
+            }
+
             const response = await createCard({
                 memberBookId: memberBookId,
                 content: extractedText,
-                imageUrl: image,
+                imageUrl: imageUrlToSave,
             });
 
             console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
@@ -143,6 +179,7 @@ const CardCustomizationCompletePage: React.FC = () => {
         } catch (saveError: any) {
             console.error('카드 메타데이터 저장 중 오류:', saveError);
             setSaveError(`카드 저장 실패: ${saveError.message || '알 수 없는 오류'}`);
+            hasSaved.current = false; // 에러 발생 시 다시 시도할 수 있도록
         } finally {
             setIsSaving(false);
         }
@@ -175,9 +212,9 @@ const CardCustomizationCompletePage: React.FC = () => {
     if (saveError) {
         return (
             <div className="page-container error-state">
-                <p style={{ color: 'red' }}>카드 저장에 실패했습니다.</p>
-                <p style={{ color: 'red' }}>오류: {saveError}</p>
-                <button onClick={() => navigate('/make-card')} style={{ marginTop: '20px' }}>다시 시도하기</button>
+                <p>카드 저장에 실패했습니다.</p>
+                <p>오류: {saveError}</p>
+                <button onClick={() => navigate('/make-card')}>다시 시도하기</button>
             </div>
         );
     }
@@ -214,22 +251,17 @@ const CardCustomizationCompletePage: React.FC = () => {
                             src={image} 
                             alt="완성된 카드" 
                             className="card-image"
+                            style={{ 
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                            }}
                             onError={(e) => {
                                 e.currentTarget.src = 'https://placehold.co/350x500/cccccc/333333?text=Image+Load+Failed';
                                 e.currentTarget.alt = '이미지 로드 실패';
                                 console.error('Failed to load image for display:', image);
                             }}
                         />
-                        <div 
-                            className="card-overlay-text" 
-                            style={{ 
-                                fontFamily: selectedFont,
-                                left: textPosition ? `${textPosition.x}px` : '16px',
-                                top: textPosition ? `${textPosition.y}px` : '100px'
-                            }}
-                        >
-                            {extractedText}
-                        </div>
                     </div>
 
                     <div className="card-summary-text">

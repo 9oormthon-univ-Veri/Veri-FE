@@ -156,61 +156,231 @@
   letter-spacing: -0.48px;
 }
 
-/* 소식 섹션 */
-.my-page-news-section {
-  border-radius: 12px;
-  background: #FFFFFF;
-  border: 1px solid var(--border-color);
+/* 내 게시글 목록 섹션 */
+.my-posts-section {
   margin: 20px;
-  padding: 16px 20px 20px;
-  align-items: flex-start;
+  padding: 0;
+}
+
+.my-posts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.my-posts-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+  margin: 0;
+}
+
+.new-record-button {
+  height: 25px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-record-button:hover {
+  opacity: 0.9;
+}
+
+.plus-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.posts-loading,
+.posts-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 14px;
+}
+
+.posts-error {
+  color: #e53e3e;
+}
+
+.no-posts-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.no-posts-message p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.no-posts-message p:first-child {
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+}
+
+/* 게시글 목록 */
+.my-posts-list {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
-.my-page-section-title {
-  color: var(--text-dark);
-  font-family: Pretendard;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: -0.64px;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.news-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
+.my-post-item {
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: background-color 0.2s ease;
+  border-radius: 10px;
 }
 
-.news-item:hover {
-  opacity: 0.8;
+.my-post-item:hover {
+  background-color: #f8f9fa;
 }
 
-.news-icon {
-  width: 22px;
-  height: 22px;
-  margin-right: 8px;
-  border-radius: 16px;
+/* 게시글 이미지 */
+.my-post-image {
+  width: 100%;
+  margin-bottom: 12px;
+  overflow: hidden;
 }
 
-.news-label {
-  flex-grow: 1;
-  color: var(--text-dark);
-  font-family: Pretendard;
+.my-post-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* 게시글 헤더 (제목 + 공개/비공개 태그) */
+.my-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.my-post-title {
+  text-align: start;
   font-size: 16px;
   font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.64px;
-  text-align: left;
+  color: black;
+  margin: 0;
+  flex: 1;
+  line-height: 1.4;
 }
 
-.news-arrow {
-  width: 18px;
-  height: 18px;
-  margin-left: 10px;
-  filter: invert(50%);
+.my-post-visibility {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.my-post-visibility.public {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.my-post-visibility.private {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+/* 게시글 내용 */
+.my-post-content {
+  margin-bottom: 12px;
+}
+
+.my-post-content p {
+  align-items: start;
+  font-size: 14px;
+  color: black;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 게시글 메타 정보 (날짜 + 책) */
+.my-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #999;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.my-post-date {
+  font-size: 12px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.my-post-book {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #999;
+  min-width: 0;
+  flex: 1;
+  max-width: 100%;
+}
+
+.my-post-book .mgc_book_6_fill {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.my-post-book .mgc_book_6_fill::before {
+  font-size: 14px;
+  color: #999;
+}
+
+.my-post-book-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 게시글 액션 (좋아요/댓글) */
+.my-post-actions {
+  display: flex;
+  gap: 15px;
+  padding-top: 10px;
+}
+
+.my-post-action-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+.my-post-action-item .mgc_heart_line::before,
+.my-post-action-item .mgc_chat_3_line::before {
+  font-size: 16px;
+  color: #666;
 }

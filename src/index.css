@@ -138,14 +138,48 @@ code {
   height: auto;
   background-color: #ffffff;
   min-height: 100vh;
-  box-sizing: border-box;
   opacity: 1;
-  transition: opacity 0.2s ease-in-out;
 }
 
 /* 페이지 로딩 중 투명도 조절 */
 .page-container.loading {
   opacity: 0.7;
+}
+
+/* 페이지 에러 상태 스타일 */
+.page-container.error-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  height: auto;
+  text-align: center;
+}
+
+.page-container.error-state p {
+  margin: 10px 0;
+  font-family: Pretendard;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #d32f2f;
+}
+
+.page-container.error-state button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary-purple, #391BE2);
+  color: #fff;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.page-container.error-state button:hover {
+  background: var(--dark-purple, #311CA8);
 }
 
 /* 페이지 전환 애니메이션 */

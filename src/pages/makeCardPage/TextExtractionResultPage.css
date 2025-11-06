@@ -1,7 +1,6 @@
 .text-extraction-result-wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   min-height: calc(100vh - 80px);
   padding: 20px;
 }
@@ -64,10 +63,11 @@
 }
 
 .button-group {
-  margin-top: 150px;
+  margin-top: auto;
   display: flex;
   gap: 12px;
   justify-content: center;
+  padding-top: 20px;
 }
 
 .reshoot-button {
