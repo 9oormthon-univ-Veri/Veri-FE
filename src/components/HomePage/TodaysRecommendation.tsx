@@ -18,6 +18,8 @@ interface RecommendedBookType {
 // 개별 추천 책 아이템을 렌더링하는 내부 컴포넌트
 const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ title, imageUrl, author, publisher, isbn }) => {
   const navigate = useNavigate();
+  const fallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="120"%3E%3Crect width="80" height="120" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="10"%3ENo Cover%3C/text%3E%3C/svg%3E';
+  const hasErrorRef = React.useRef(false);
 
   const handleClick = () => {
     // BookAddPage로 이동 시 state에 BookSearchResult 타입의 객체를 전달합니다.
@@ -37,20 +39,20 @@ const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ title, image
     });
   };
 
-  const fallbackImageUrl = 'https://placehold.co/80x120?text=No+Cover';
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!hasErrorRef.current && e.currentTarget.src !== fallbackImageUrl) {
+      hasErrorRef.current = true;
+      e.currentTarget.src = fallbackImageUrl;
+    }
+  };
+
   return (
     <div className="recommended-book-item" onClick={handleClick}>
       <div className="book-cover-thumbnail">
         <img
-          src={imageUrl || fallbackImageUrl} // imageUrl이 없으면 대체 이미지 사용
+          src={imageUrl || fallbackImageUrl}
           alt={title}
-          onError={(e) => {
-            if (e.currentTarget.src !== fallbackImageUrl) {
-              e.currentTarget.src = fallbackImageUrl;
-            } else {
-              console.warn(`이미지 로딩 실패: ${imageUrl}. 대체 이미지 ${fallbackImageUrl}도 실패.`);
-            }
-          }}
+          onError={handleImageError}
         />
       </div>
       <p className="book-title">{title}</p>

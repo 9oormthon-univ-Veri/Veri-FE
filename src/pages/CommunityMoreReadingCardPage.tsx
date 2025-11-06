@@ -1,9 +1,84 @@
 // src/pages/mainPage/CommunityMoreReadingCard.tsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCards } from '../api/communityApi';
 import type { Card, GetCardsQueryParams } from '../api/communityApi';
 import './CommunityMoreReadingCardPage.css';
+
+// 카드 아이템 컴포넌트
+interface CardItemProps {
+  card: Card;
+  onCardClick: (cardId: number) => void;
+  innerRef?: (node: HTMLDivElement | null) => void;
+}
+
+const CardItem: React.FC<CardItemProps> = ({ card, onCardClick, innerRef }) => {
+  const cardImageErrorRef = useRef(false);
+  const profileImageErrorRef = useRef(false);
+  
+  const cardFallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect width="200" height="200" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="14"%3ENo Image%3C/text%3E%3C/svg%3E';
+  const profileFallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24"%3E%3Ccircle cx="12" cy="12" r="12" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="10"%3E%3F%3C/text%3E%3C/svg%3E';
+
+  const handleCardImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!cardImageErrorRef.current && e.currentTarget.src !== cardFallbackImageUrl) {
+      cardImageErrorRef.current = true;
+      e.currentTarget.src = cardFallbackImageUrl;
+    }
+  };
+
+  const handleProfileImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!profileImageErrorRef.current && e.currentTarget.src !== profileFallbackImageUrl) {
+      profileImageErrorRef.current = true;
+      e.currentTarget.src = profileFallbackImageUrl;
+    }
+  };
+
+  return (
+    <div 
+      ref={innerRef}
+      className="community-more-reading-card-item"
+      onClick={() => onCardClick(card.cardId)}
+    >
+      {/* 카드 이미지 */}
+      <div className="community-more-card-image">
+        <img 
+          src={card.image || cardFallbackImageUrl}
+          alt="독서카드 이미지"
+          onError={handleCardImageError}
+        />
+      </div>
+
+      {/* 카드 정보 */}
+      <div className="card-info">
+        {/* 사용자 정보 */}
+        <div className="card-user">
+          <div className="user-avatar">
+            <img 
+              src={card.member.profileImageUrl || profileFallbackImageUrl}
+              alt={card.member.nickname}
+              onError={handleProfileImageError}
+            />
+          </div>
+          <div className="user-name">{card.member.nickname}</div>
+        </div>
+
+        {/* 인용구 */}
+        <div className="card-quote">
+          {card.content.length > 50 
+            ? card.content.substring(0, 50) + '...' 
+            : card.content
+          }
+        </div>
+
+        {/* 책 정보 */}
+        <div className="card-book">
+          <span className="mgc_book_6_fill"></span>
+          <span className="community-more-book-title">{card.bookTitle}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function CommunityMoreReadingCardPage() {
   const navigate = useNavigate();
@@ -12,12 +87,20 @@ function CommunityMoreReadingCardPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const observer = useRef<IntersectionObserver | null>(null);
 
   // 카드 데이터 로드
-  const loadCards = async (page: number = 1, reset: boolean = false) => {
+  const loadCards = useCallback(async (page: number = 1, reset: boolean = false) => {
+    // 이미 로딩 중이거나, 더 이상 데이터가 없으면 중단
+    if (loadingMore || (!reset && !hasMore)) return;
+
     try {
       if (reset) {
         setIsLoading(true);
+      } else {
+        setLoadingMore(true);
       }
       setError(null);
       
@@ -49,12 +132,37 @@ function CommunityMoreReadingCardPage() {
       console.error('독서카드 로드 실패:', err);
     } finally {
       setIsLoading(false);
+      setLoadingMore(false);
     }
-  };
+  }, [loadingMore, hasMore]);
 
   useEffect(() => {
     loadCards(1, true);
   }, []);
+
+  useEffect(() => {
+    if (currentPage > 1 && hasMore) {
+      loadCards(currentPage, false);
+    }
+  }, [currentPage, hasMore, loadCards]);
+
+  const lastCardElementRef = useCallback((node: HTMLDivElement | null) => {
+    if (loadingMore || isLoading) return;
+
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0] && entries[0].isIntersecting && hasMore) {
+        setCurrentPage(prevPage => prevPage + 1);
+      }
+    }, { threshold: 0.5 });
+
+    if (node) {
+      observer.current.observe(node);
+    }
+  }, [loadingMore, isLoading, hasMore]);
 
   const handleBack = () => {
     navigate(-1);
@@ -65,13 +173,8 @@ function CommunityMoreReadingCardPage() {
     navigate(`/reading-card-detail/${cardId}`);
   };
 
-  const handleLoadMore = () => {
-    if (!isLoading && hasMore) {
-      loadCards(currentPage + 1, false);
-    }
-  };
-
   const handleRefresh = () => {
+    setCurrentPage(1);
     loadCards(1, true);
   };
 
@@ -151,72 +254,28 @@ function CommunityMoreReadingCardPage() {
       <div className="reading-cards-page">
         {/* 독서카드 그리드 */}
         <div className="community-more-reading-card-grid">
-          {cards.map((card) => (
-            <div 
-              key={card.cardId} 
-              className="community-more-reading-card-item"
-              onClick={() => handleCardClick(card.cardId)}
-            >
-              {/* 카드 이미지 */}
-              <div className="community-more-card-image">
-                <img 
-                  src={card.image} 
-                  alt="독서카드 이미지"
-                  onError={(e) => {
-                    e.currentTarget.src = '/images/cardSample/forest.jpg';
-                  }}
-                />
-              </div>
-
-              {/* 카드 정보 */}
-              <div className="card-info">
-                {/* 사용자 정보 */}
-                <div className="card-user">
-                  <div className="user-avatar">
-                    <img 
-                      src={card.member.profileImageUrl} 
-                      alt={card.member.nickname}
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/profileSample/sample_user.png';
-                      }}
-                    />
-                  </div>
-                  <div className="user-name">{card.member.nickname}</div>
-                </div>
-
-                {/* 인용구 */}
-                <div className="card-quote">
-                  {card.content.length > 50 
-                    ? card.content.substring(0, 50) + '...' 
-                    : card.content
-                  }
-                </div>
-
-                {/* 책 정보 */}
-                <div className="card-book">
-                  <span className="mgc_book_6_fill"></span>
-                  <span className="community-more-book-title">{card.bookTitle}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+          {cards.map((card, index) => {
+            const isLastElement = cards.length === index + 1;
+            return (
+              <CardItem
+                key={card.cardId}
+                card={card}
+                onCardClick={handleCardClick}
+                {...(isLastElement && hasMore && { innerRef: lastCardElementRef })}
+              />
+            );
+          })}
         </div>
 
-        {/* 더 보기 버튼 */}
-        {hasMore && (
-          <div className="load-more-container">
-            <button 
-              className="load-more-button"
-              onClick={handleLoadMore}
-              disabled={isLoading}
-            >
-              {isLoading ? '불러오는 중...' : '더 보기'}
-            </button>
+        {/* 로딩 중 메시지 */}
+        {loadingMore && (
+          <div className="loading-more-container">
+            <p className="loading-message">더 많은 독서카드를 불러오는 중...</p>
           </div>
         )}
 
         {/* 게시글이 없는 경우 */}
-        {!isLoading && cards.length === 0 && !error && (
+        {!isLoading && !loadingMore && cards.length === 0 && !error && (
           <div className="no-cards">
             <p>아직 독서카드가 없습니다.</p>
             <p>첫 번째 독서카드를 만들어보세요!</p>

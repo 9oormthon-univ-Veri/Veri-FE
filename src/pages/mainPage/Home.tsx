@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import MyReadingCardSection from '../../components/HomePage/MyReadingCard';
 import TodaysRecommendationSection from '../../components/HomePage/TodaysRecommendation';
@@ -30,6 +30,11 @@ function LibraryPage() {
   const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // 이미지 에러 핸들링을 위한 refs
+  const heroBackgroundErrorRef = useRef(false);
+  const heroBookSampleErrorRef = useRef(false);
+  const profileImageErrorRef = useRef(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -108,6 +113,33 @@ function LibraryPage() {
     userData.image.trim() !== '' &&
     userData.image !== 'https://example.com/image.jpg';
 
+  // 이미지 에러 핸들러
+  const handleHeroBackgroundError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!heroBackgroundErrorRef.current && e.currentTarget.src !== sampleBookBackground) {
+      heroBackgroundErrorRef.current = true;
+      e.currentTarget.src = sampleBookBackground;
+    }
+  };
+
+  const handleHeroBookSampleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!heroBookSampleErrorRef.current && e.currentTarget.src !== sampleBook) {
+      heroBookSampleErrorRef.current = true;
+      e.currentTarget.src = sampleBook;
+    }
+  };
+
+  const handleProfileImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!profileImageErrorRef.current) {
+      profileImageErrorRef.current = true;
+      // 프로필 이미지 에러 시 placeholder로 전환
+      e.currentTarget.style.display = 'none';
+      const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
+      if (placeholder && placeholder.classList.contains('profile-placeholder')) {
+        placeholder.style.display = 'block';
+      }
+    }
+  };
+
   return (
     <div className="page-container">
       <div className="library-hero-section">
@@ -115,6 +147,7 @@ function LibraryPage() {
           src={heroBackgroundImageSrc}
           className="hero-background"
           alt="Hero background"
+          onError={handleHeroBackgroundError}
         />
         <header className="hero-header">
           <button 
@@ -159,7 +192,18 @@ function LibraryPage() {
             aria-label="프로필 보기"
           >
             {hasValidProfileImage ? (
-              <img src={userData.image} className="profile-image" alt="프로필 이미지" />
+              <>
+                <img 
+                  src={userData.image} 
+                  className="profile-image" 
+                  alt="프로필 이미지"
+                  onError={handleProfileImageError}
+                />
+                <div
+                  className="profile-placeholder"
+                  style={{ backgroundImage: `url(${sampleUser})`, display: 'none' }}
+                />
+              </>
             ) : (
               <div
                 className="profile-placeholder"
@@ -175,6 +219,7 @@ function LibraryPage() {
             src={heroBookSampleImageSrc}
             className="hero-book-sample"
             alt="Hero book sample"
+            onError={handleHeroBookSampleError}
           />
         </div>
       </div>

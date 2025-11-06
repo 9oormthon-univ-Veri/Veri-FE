@@ -16,22 +16,27 @@ interface BookshelfItemType {
 // 개별 책장 아이템을 렌더링하는 내부 컴포넌트
 const SingleBookshelfItem: React.FC<BookshelfItemType> = ({ id, coverUrl, title, author }) => {
   const navigate = useNavigate();
+  const fallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="150"%3E%3Crect width="100" height="150" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ENo Cover%3C/text%3E%3C/svg%3E';
+  const hasErrorRef = React.useRef(false);
+
   const handleClick = () => {
     navigate(`/book-detail/${id}`); // 클릭 시 해당 책의 상세 페이지로 이동
   };
 
-  const fallbackImageUrl = 'https://placehold.co/100x150?text=No+Cover';
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!hasErrorRef.current && e.currentTarget.src !== fallbackImageUrl) {
+      hasErrorRef.current = true;
+      e.currentTarget.src = fallbackImageUrl;
+    }
+  };
+
   return (
     <div className="bookshelf-item" onClick={handleClick}>
       <div className="book-cover-thumbnail">
         <img
           src={coverUrl || fallbackImageUrl}
           alt={title}
-          onError={(e) => {
-            if (e.currentTarget.src !== fallbackImageUrl) {
-              e.currentTarget.src = fallbackImageUrl;
-            }
-          }}
+          onError={handleImageError}
         />
       </div>
       <p className="book-title">{title}</p>

@@ -18,6 +18,8 @@ interface ReadingCardItemType {
 // 개별 독서카드 아이템을 렌더링하는 내부 컴포넌트
 const SingleReadingCard: React.FC<ReadingCardItemType> = ({ id, coverUrl, title, contentPreview }) => {
   const navigate = useNavigate();
+  const fallbackImageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="150"%3E%3Crect width="100" height="150" fill="%23E3E7ED"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ENo Image%3C/text%3E%3C/svg%3E';
+  const hasErrorRef = React.useRef(false);
 
   const handleCardClick = () => {
     // ✨ 독서 카드 상세 페이지로 이동 시 카드 ID를 전달합니다.
@@ -25,15 +27,20 @@ const SingleReadingCard: React.FC<ReadingCardItemType> = ({ id, coverUrl, title,
     navigate(`/reading-card-detail/${id}`); 
   };
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!hasErrorRef.current && e.currentTarget.src !== fallbackImageUrl) {
+      hasErrorRef.current = true;
+      e.currentTarget.src = fallbackImageUrl;
+    }
+  };
+
   return (
     <div className={styles.readingCardItem} onClick={handleCardClick}>
       <div className={styles.cardThumbnail}>
         <img
-          src={coverUrl || 'https://via.placeholder.com/100x150?text=No+Image'}
+          src={coverUrl || fallbackImageUrl}
           alt={title || '독서 카드 이미지'}
-          onError={(e) => {
-            e.currentTarget.src = "https://via.placeholder.com/100x150?text=No+Image";
-          }}
+          onError={handleImageError}
         />
       </div>
       {/* title과 readingDate는 현재 API에서 직접 제공되지 않아 표시하지 않거나,
