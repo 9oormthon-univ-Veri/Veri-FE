@@ -1,9 +1,9 @@
 // src/pages/LoginPage.tsx
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { handleSocialLoginCallback, setAccessToken } from '../api/auth';
-import { USE_MOCK_DATA } from '../api/mock';
+import {useNavigate} from 'react-router-dom';
+import {handleSocialLoginCallback, setAccessToken} from '../api/auth';
+import {USE_MOCK_DATA} from '../api/mock';
 import kakaoIcon from '../assets/icons/login/kakao_icon.svg';
 import naverIcon from '../assets/icons/login/naver_icon.svg';
 import './LoginPage.css';
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     if (USE_MOCK_DATA) {
       try {
         console.log('목업 모드: 카카오 로그인 시뮬레이션');
-        const accessToken = await handleSocialLoginCallback('kakao', 'mock-code');
+        const accessToken = await handleSocialLoginCallback('kakao', 'mock-code', 'mock-state');
         setAccessToken(accessToken);
         navigate('/');
       } catch (error) {
@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
     if (USE_MOCK_DATA) {
       try {
         console.log('목업 모드: 네이버 로그인 시뮬레이션');
-        const accessToken = await handleSocialLoginCallback('naver', 'mock-code');
+        const accessToken = await handleSocialLoginCallback('naver', 'mock-code', 'mock-state');
         setAccessToken(accessToken);
         navigate('/');
       } catch (error) {

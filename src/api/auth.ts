@@ -1,6 +1,6 @@
 // src/api/auth.ts
 
-import { USE_MOCK_DATA, mockDelay, mockTokens } from './mock';
+import {mockDelay, mockTokens, USE_MOCK_DATA} from './mock';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
@@ -33,10 +33,10 @@ const decodeJwt = (token: string): JwtPayload | null => {
       console.error("유효하지 않은 JWT 형식");
       return null;
     }
-    
+
     const base64Url = parts[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    
+
     // 더 안전한 디코딩 방법
     let jsonPayload: string;
     try {
@@ -56,7 +56,7 @@ const decodeJwt = (token: string): JwtPayload | null => {
         return null;
       }
     }
-    
+
     return JSON.parse(jsonPayload);
   } catch (error) {
     console.error("JWT 디코딩 실패:", error);
@@ -69,7 +69,7 @@ const isTokenExpired = (token: string): boolean => {
   if (USE_MOCK_DATA) {
     return false;
   }
-  
+
   const payload = decodeJwt(token);
   if (!payload?.exp || typeof payload.exp !== 'number') {
     return true; // exp가 없으면 만료된 것으로 간주
@@ -89,7 +89,7 @@ const handleApiResponse = async (response: Response): Promise<AuthResponse> => {
   }
 
   const data: AuthResponse = await response.json();
-  
+
   if (!data.isSuccess || !data.result?.accessToken) {
     throw new Error('유효하지 않은 응답: 액세스 토큰이 없습니다.');
   }
@@ -105,6 +105,7 @@ const makeApiRequest = async (endpoint: string, options: RequestInit = {}): Prom
         ...options.headers,
       },
       ...options,
+      credentials: 'include'
     });
 
     const data = await handleApiResponse(response);
@@ -117,12 +118,12 @@ const makeApiRequest = async (endpoint: string, options: RequestInit = {}): Prom
 };
 
 // 공개 API 함수들
-export const handleSocialLoginCallback = async (provider: string, code: string): Promise<string> => {
+export const handleSocialLoginCallback = async (provider: string, code: string, state: string): Promise<string> => {
   if (USE_MOCK_DATA) {
     await mockDelay();
     return mockTokens.accessToken;
   }
-  return makeApiRequest(`/api/v1/oauth2/${provider}?code=${code}`);
+  return makeApiRequest(`/api/v1/oauth2/${provider}?code=${code}&state=${state}`);
 };
 
 export const fetchTestToken = async (): Promise<string> => {
@@ -135,7 +136,7 @@ export const fetchTestToken = async (): Promise<string> => {
 
 export const getAccessToken = (): string | null => {
   if (typeof window === 'undefined') return null;
-  
+
   // 목업 모드에서는 기본 토큰 반환
   if (USE_MOCK_DATA) {
     const token = localStorage.getItem('accessToken');
@@ -146,17 +147,17 @@ export const getAccessToken = (): string | null => {
     }
     return token;
   }
-  
+
   try {
     const token = localStorage.getItem('accessToken');
     if (!token) return null;
-    
+
     if (isTokenExpired(token)) {
       console.warn('액세스 토큰이 만료되었습니다.');
       removeAccessToken();
       throw new Error('TOKEN_EXPIRED');
     }
-    
+
     return token;
   } catch (error) {
     console.error('토큰 검증 중 오류:', error);
@@ -167,7 +168,7 @@ export const getAccessToken = (): string | null => {
 
 export const setAccessToken = (token: string): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     if (token) {
       localStorage.setItem('accessToken', token);
@@ -193,11 +194,11 @@ export const getCurrentUserId = (): number | null => {
 
   // JWT 페이로드에서 사용자 ID 추출 (일반적인 필드명들 시도)
   const userId = payload.sub || payload.memberId || payload.userId || payload.id;
-  
+
   if (typeof userId === 'number') {
     return userId;
   }
-  
+
   if (typeof userId === 'string') {
     const parsed = parseInt(userId, 10);
     if (!isNaN(parsed)) {
