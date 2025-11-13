@@ -23,10 +23,11 @@ const OAuthCallbackPage: React.FC = () => {
 
       const params = new URLSearchParams(location.search);
       const code = params.get('code');
+      const state = params.get('state') || '';
 
       if (code) {
         try {
-          const accessToken = await handleSocialLoginCallback('kakao', code);
+          const accessToken = await handleSocialLoginCallback('kakao', code, state);
           setAccessToken(accessToken);
           navigate('/');
         } catch (error) {
