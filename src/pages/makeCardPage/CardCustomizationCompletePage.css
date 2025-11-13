@@ -7,6 +7,10 @@
 
 .customization-complete-page-wapper{
   margin: 20px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: white;
 }
 
 .complete-header {
@@ -81,13 +85,18 @@
 
 .card-preview-complete {
   height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .card-preview-complete-card {
   border-radius: 16px;
   position: relative;
+  width: 350px;
   height: 350px;
-  margin: 14px;
   overflow: hidden;
   background-size: cover;
   background-position: center;
@@ -114,8 +123,8 @@
 }
 
 .card-summary-text {
+  width: 350px;
   margin-top: 20px;
-  padding: 16px;
   text-align: left;
   display: block;
 }

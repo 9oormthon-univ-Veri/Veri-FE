@@ -70,7 +70,7 @@ function BookAddPage() {
                 setSubmitSuccess(true);
                 alert('책이 성공적으로 등록되었습니다!');
                 // 등록 성공 후, 마이 북셀프 페이지로 이동
-                navigate('/my-bookshelf');
+                navigate('/library');
             } else {
                 setSubmitError(response.message || '책 등록에 실패했습니다.');
             }

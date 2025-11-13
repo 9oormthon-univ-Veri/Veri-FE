@@ -202,7 +202,7 @@ const CardCustomizationCompletePage: React.FC = () => {
 
     if (isSaving) {
         return (
-            <div className="page-container loading-state">
+            <div className="loading-page-container">
                 <p>독서카드를 저장 중입니다...</p>
                 {saveError && <p style={{ color: 'red' }}>오류: {saveError}</p>}
             </div>

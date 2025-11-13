@@ -266,7 +266,9 @@ const BookSearchPage: React.FC = () => {
                                     className="book-item"
                                     onClick={() => handleBookItemClick(book)}
                                 >
-                                    <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
+                                    <div className="book-cover-thumbnail">
+                                        <img src={book.imageUrl} alt={book.title} />
+                                    </div>
                                     <div className="book-details">
                                         <p className="book-title">{book.title}</p>
                                         <p className="book-author">{book.author}</p>

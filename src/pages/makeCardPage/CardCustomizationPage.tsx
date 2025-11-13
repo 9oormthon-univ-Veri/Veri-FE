@@ -8,6 +8,9 @@ import PicFillIconSVG from '../../assets/icons/CustomizePage/pic_fill.svg?react'
 import FontSizeFillIconSVG from '../../assets/icons/CustomizePage/font_size_fill.svg?react';
 import CheckFillIconSVG from '../../assets/icons/CustomizePage/check_fill.svg?react';
 
+import CameraIcon from '../../assets/icons/camera.svg';
+import GalleryIcon from '../../assets/icons/gallery.svg';
+
 import SkyBackground from '../../assets/images/cardSample/sky.jpg';
 import SummerSeaBackground from '../../assets/images/cardSample/sea.jpg';
 import RiverBackground from '../../assets/images/cardSample/river.jpg';
@@ -46,7 +49,9 @@ const CardCustomizationPage: React.FC = () => {
     // 배경 카테고리별 이미지 데이터
     const backgroundCategories = {
         'my-photo': [
-            { label: '촬영 사진', url: image, id: 'uploaded' }
+            { label: '촬영 사진', url: image, id: 'uploaded' },
+            { label: '카메라열기', url: CameraIcon, id: 'camera' },
+            { label: '갤러리열기', url: GalleryIcon, id: 'gallery' }
         ],
         'pattern': [
             { label: '패턴1', url: ColorBackground, id: 'pattern1' },
@@ -117,9 +122,19 @@ const CardCustomizationPage: React.FC = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const cardPreviewRef = useRef<HTMLDivElement>(null);
+    
+    // 카메라/갤러리 관련 ref
+    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
+    
+    // 선택한 이미지 상태 (카메라/갤러리에서 가져온 이미지)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const getBackgroundImage = () => {
         if (selectedBackground === 'uploaded') return image;
+        if (selectedBackground === 'camera' || selectedBackground === 'gallery') {
+            return selectedImage || image;
+        }
         
         // 카테고리별로 찾기
         const category = backgroundCategories[selectedBackgroundCategory];
@@ -131,6 +146,38 @@ const CardCustomizationPage: React.FC = () => {
         // 기존 방식으로도 찾기
         const found = defaultBackgrounds.find((bg) => bg.label === selectedBackground);
         return found?.url || image;
+    };
+
+    // 카메라 열기
+    const handleCameraClick = () => {
+        cameraInputRef.current?.click();
+    };
+
+    // 갤러리 열기
+    const handleGalleryClick = () => {
+        galleryInputRef.current?.click();
+    };
+
+    // 파일 선택 처리
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, source: 'camera' | 'gallery') => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                if (result) {
+                    setSelectedImage(result);
+                    setSelectedBackground(source);
+                    showToast(`${source === 'camera' ? '카메라' : '갤러리'}에서 이미지를 가져왔습니다.`, 'success');
+                }
+            };
+            reader.onerror = () => {
+                showToast('이미지를 읽는 중 오류가 발생했습니다.', 'error');
+            };
+            reader.readAsDataURL(file);
+        }
+        // 같은 파일을 다시 선택할 수 있도록 value 초기화
+        e.target.value = '';
     };
 
     useEffect(() => {
@@ -240,7 +287,8 @@ const CardCustomizationPage: React.FC = () => {
     };
 
     const handleSave = async () => {
-        if (!image || !extractedText) {
+        const currentImage = getBackgroundImage();
+        if (!currentImage || !extractedText) {
             showToast('이미지와 텍스트는 필수로 포함되어야 합니다. 저장할 수 없습니다.', 'error');
             return;
         }
@@ -272,7 +320,7 @@ const CardCustomizationPage: React.FC = () => {
             await new Promise<void>((resolve, reject) => {
                 backgroundImage.onload = () => resolve();
                 backgroundImage.onerror = () => reject(new Error('배경 이미지 로드 실패'));
-                backgroundImage.src = getBackgroundImage() || image;
+                backgroundImage.src = currentImage;
             });
 
             // 배경 이미지 그리기
@@ -429,53 +477,98 @@ const CardCustomizationPage: React.FC = () => {
                 <div className="option-panel">
                     {selectedTab === 'image' && (
                         <div className="background-customization">
-                            <div className="background-category-tabs">
+                            <div className="category-tabs">
                                 <button
-                                    className={`background-category-tab ${selectedBackgroundCategory === 'my-photo' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedBackgroundCategory === 'my-photo' ? 'active' : ''}`}
                                     onClick={() => setSelectedBackgroundCategory('my-photo')}
                                 >
                                     내 사진
                                 </button>
                                 <button
-                                    className={`background-category-tab ${selectedBackgroundCategory === 'pattern' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedBackgroundCategory === 'pattern' ? 'active' : ''}`}
                                     onClick={() => setSelectedBackgroundCategory('pattern')}
                                 >
                                     패턴
                                 </button>
                                 <button
-                                    className={`background-category-tab ${selectedBackgroundCategory === 'landscape' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedBackgroundCategory === 'landscape' ? 'active' : ''}`}
                                     onClick={() => setSelectedBackgroundCategory('landscape')}
                                 >
                                     풍경
                                 </button>
                                 <button
-                                    className={`background-category-tab ${selectedBackgroundCategory === 'book' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedBackgroundCategory === 'book' ? 'active' : ''}`}
                                     onClick={() => setSelectedBackgroundCategory('book')}
                                 >
                                     책
                                 </button>
                                 <button
-                                    className={`background-category-tab ${selectedBackgroundCategory === 'cafe' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedBackgroundCategory === 'cafe' ? 'active' : ''}`}
                                     onClick={() => setSelectedBackgroundCategory('cafe')}
                                 >
                                     카페
                                 </button>
                             </div>
-                            <div className="background-options-scroll">
+                            <div className="options-scroll">
                                 <div className="option-icons">
-                                    {selectedBackgroundCategory === 'my-photo' && image && (
-                                        <div>
-                                            <div
-                                                className={`option ${selectedBackground === 'uploaded' ? 'active' : ''}`}
-                                                onClick={() => setSelectedBackground('uploaded')}
-                                                style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
-                                            >
-                                                {selectedBackground === 'uploaded' && (
-                                                    <CheckFillIconSVG className="check-icon" />
-                                                )}
+                                    {selectedBackgroundCategory === 'my-photo' && (
+                                        <>
+                                            {image && (
+                                                <div>
+                                                    <div
+                                                        className={`option ${selectedBackground === 'uploaded' ? 'active' : ''}`}
+                                                        onClick={() => setSelectedBackground('uploaded')}
+                                                        style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
+                                                    >
+                                                        {selectedBackground === 'uploaded' && (
+                                                            <CheckFillIconSVG className="check-icon" />
+                                                        )}
+                                                    </div>
+                                                    <div className="option-label">촬영 사진</div>
+                                                </div>
+                                            )}
+                                            <div>
+                                                <div
+                                                    className={`option ${selectedBackground === 'camera' ? 'active' : ''}`}
+                                                    onClick={handleCameraClick}
+                                                    style={{ 
+                                                        backgroundColor: '#E7E9EF'
+                                                    }}
+                                                >
+                                                    <span className="mgc_camera_2_ai_fill"></span>
+                                                    {selectedBackground === 'camera' && (
+                                                        <CheckFillIconSVG className="check-icon" />
+                                                    )}
+                                                </div>
+                                                <div className="option-label">카메라열기</div>
                                             </div>
-                                            <div className="option-label">촬영 사진</div>
-                                        </div>
+                                            <div>
+                                                <div
+                                                    className={`option ${selectedBackground === 'gallery' ? 'active' : ''}`}
+                                                    onClick={handleGalleryClick}
+                                                    style={{ 
+                                                        backgroundColor: '#E7E9EF'
+                                                    }}
+                                                >
+                                                    <span className="mgc_pic_fill"></span>
+                                                    {selectedBackground === 'gallery' && (
+                                                        <CheckFillIconSVG className="check-icon" />
+                                                    )}
+                                                </div>
+                                                <div className="option-label">갤러리열기</div>
+                                            </div>
+                                            {selectedImage && (selectedBackground === 'camera' || selectedBackground === 'gallery') && (
+                                                <div>
+                                                    <div
+                                                        className="option active"
+                                                        style={{ backgroundImage: `url(${selectedImage})`, backgroundSize: 'cover' }}
+                                                    >
+                                                        <CheckFillIconSVG className="check-icon" />
+                                                    </div>
+                                                    <div className="option-label">선택한 이미지</div>
+                                                </div>
+                                            )}
+                                        </>
                                     )}
                                     {selectedBackgroundCategory !== 'my-photo' && backgroundCategories[selectedBackgroundCategory]?.map((bg) => (
                                         <div key={bg.id}>
@@ -493,32 +586,48 @@ const CardCustomizationPage: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
+                            {/* 숨겨진 파일 입력 요소들 */}
+                            <input
+                                type="file"
+                                ref={cameraInputRef}
+                                accept="image/*"
+                                capture="environment"
+                                style={{ display: 'none' }}
+                                onChange={(e) => handleFileChange(e, 'camera')}
+                            />
+                            <input
+                                type="file"
+                                ref={galleryInputRef}
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={(e) => handleFileChange(e, 'gallery')}
+                            />
                         </div>
                     )}
 
                     {selectedTab === 'text' && (
                         <div className="font-customization">
-                            <div className="font-category-tabs">
+                            <div className="category-tabs">
                                 <button
-                                    className={`font-category-tab ${selectedFontCategory === 'myeongjo' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedFontCategory === 'myeongjo' ? 'active' : ''}`}
                                     onClick={() => setSelectedFontCategory('myeongjo')}
                                 >
                                     명조
                                 </button>
                                 <button
-                                    className={`font-category-tab ${selectedFontCategory === 'gothic' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedFontCategory === 'gothic' ? 'active' : ''}`}
                                     onClick={() => setSelectedFontCategory('gothic')}
                                 >
                                     고딕
                                 </button>
                                 <button
-                                    className={`font-category-tab ${selectedFontCategory === 'handwriting' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedFontCategory === 'handwriting' ? 'active' : ''}`}
                                     onClick={() => setSelectedFontCategory('handwriting')}
                                 >
                                     손글씨
                                 </button>
                             </div>
-                            <div className="font-options-scroll">
+                            <div className="options-scroll">
                                 <div className="option-icons">
                                     {fontCategories[selectedFontCategory]?.map((font) => (
                                         <div key={font.id}>
@@ -542,21 +651,21 @@ const CardCustomizationPage: React.FC = () => {
 
                     {selectedTab === 'effect' && (
                         <div className="effect-customization">
-                            <div className="effect-category-tabs">
+                            <div className="category-tabs">
                                 <button
-                                    className={`effect-category-tab ${selectedEffect === 'none' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedEffect === 'none' ? 'active' : ''}`}
                                     onClick={() => setSelectedEffect('none')}
                                 >
                                     없음
                                 </button>
                                 <button
-                                    className={`effect-category-tab ${selectedEffect === 'blur' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedEffect === 'blur' ? 'active' : ''}`}
                                     onClick={() => setSelectedEffect('blur')}
                                 >
                                     블러
                                 </button>
                                 <button
-                                    className={`effect-category-tab ${selectedEffect === 'darkness' ? 'active' : ''}`}
+                                    className={`category-tab ${selectedEffect === 'darkness' ? 'active' : ''}`}
                                     onClick={() => setSelectedEffect('darkness')}
                                 >
                                     어두움

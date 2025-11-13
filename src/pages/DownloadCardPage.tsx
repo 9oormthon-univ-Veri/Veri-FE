@@ -24,11 +24,38 @@ function DownloadCardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [imageBlobUrl, setImageBlobUrl] = useState<string | null>(null);
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
 
+    // 이미지를 fetch로 가져와서 blob URL로 변환 (CORS 문제 해결)
+    const loadImageAsBlob = useCallback(async (imageUrl: string): Promise<string> => {
+        // S3 URL인 경우 blob으로 변환 시도
+        if (imageUrl.includes('s3.amazonaws.com') || imageUrl.includes('s3.ap-northeast-2.amazonaws.com')) {
+            try {
+                const response = await fetch(imageUrl, {
+                    mode: 'cors',
+                    credentials: 'omit',
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    return blobUrl;
+                }
+            } catch (err: any) {
+                console.warn('이미지를 blob으로 변환 실패 (CORS 오류일 수 있음), 원본 URL 사용:', err);
+            }
+        }
+        // CORS 오류가 발생하거나 S3 URL이 아닌 경우 원본 URL 반환
+        return imageUrl;
+    }, []);
 
-    const getImageUrl = useCallback(() => 
-        cardDetail?.imageUrl || DEFAULT_IMAGE_URL, [cardDetail?.imageUrl]
-    );
+    const getImageUrl = useCallback(() => {
+        if (imageBlobUrl) {
+            return imageBlobUrl;
+        }
+        return cardDetail?.imageUrl || DEFAULT_IMAGE_URL;
+    }, [imageBlobUrl, cardDetail?.imageUrl]);
 
     const getBookTitle = useCallback(() => 
         cardDetail?.book?.title || '제목없음', [cardDetail?.book?.title]
@@ -69,10 +96,20 @@ function DownloadCardPage() {
     }, []);
 
     const handleDownload = useCallback(async () => {
-        if (!cardContentRef.current || isLoading || isProcessing) return;
+        if (!cardContentRef.current || isLoading || isProcessing || !isImageLoaded) return;
         
         setIsProcessing(true);
         try {
+            // 이미지가 완전히 로드될 때까지 대기
+            const imgElement = cardContentRef.current.querySelector('.download-card-main-image') as HTMLImageElement;
+            if (imgElement && !imgElement.complete) {
+                await new Promise((resolve, reject) => {
+                    imgElement.onload = resolve;
+                    imgElement.onerror = reject;
+                    setTimeout(reject, 10000); // 10초 타임아웃
+                });
+            }
+
             // 카드 미리보기 컨테이너만 캡처 (블러 배경 제외)
             const cardPreviewElement = cardContentRef.current.querySelector('.download-card-preview-container');
             if (!cardPreviewElement) {
@@ -88,8 +125,8 @@ function DownloadCardPage() {
 
             const canvas = await html2canvas(cardPreviewElement as HTMLElement, {
                 scale: 2,
-                useCORS: true,
-                allowTaint: true,
+                useCORS: false, // blob URL 사용 시 false
+                allowTaint: false, // blob URL 사용 시 false
                 backgroundColor: '#ffffff',
                 foreignObjectRendering: false,
                 imageTimeout: 15000,
@@ -121,13 +158,23 @@ function DownloadCardPage() {
         } finally {
             setIsProcessing(false);
         }
-    }, [cardDetail, isLoading, isProcessing, getFileName]);
+    }, [cardDetail, isLoading, isProcessing, isImageLoaded, getFileName]);
 
     const handleShare = useCallback(async () => {
-        if (!cardContentRef.current || isLoading || isProcessing) return;
+        if (!cardContentRef.current || isLoading || isProcessing || !isImageLoaded) return;
         
         setIsProcessing(true);
         try {
+            // 이미지가 완전히 로드될 때까지 대기
+            const imgElement = cardContentRef.current.querySelector('.download-card-main-image') as HTMLImageElement;
+            if (imgElement && !imgElement.complete) {
+                await new Promise((resolve, reject) => {
+                    imgElement.onload = resolve;
+                    imgElement.onerror = reject;
+                    setTimeout(reject, 10000); // 10초 타임아웃
+                });
+            }
+
             // 카드 미리보기 컨테이너만 캡처 (블러 배경 제외)
             const cardPreviewElement = cardContentRef.current.querySelector('.download-card-preview-container');
             if (!cardPreviewElement) {
@@ -143,8 +190,8 @@ function DownloadCardPage() {
 
             const canvas = await html2canvas(cardPreviewElement as HTMLElement, { 
                 scale: 2,
-                useCORS: true,
-                allowTaint: true,
+                useCORS: false, // blob URL 사용 시 false
+                allowTaint: false, // blob URL 사용 시 false
                 backgroundColor: '#ffffff',
                 foreignObjectRendering: false,
                 imageTimeout: 15000,
@@ -191,28 +238,64 @@ function DownloadCardPage() {
             alert(`독서카드 공유 준비에 실패했습니다: ${err.message}`);
             setIsProcessing(false);
         }
-    }, [cardDetail, isLoading, isProcessing, getFileName, getBookTitle]);
+    }, [cardDetail, isLoading, isProcessing, isImageLoaded, getFileName, getBookTitle]);
 
     useEffect(() => {
         const loadCardData = async () => {
             setIsLoading(true);
             setError(null);
+            setIsImageLoaded(false);
 
             const state = location.state as LocationState;
 
             if (state?.cardDetail) {
                 setCardDetail(state.cardDetail);
+                // 이미지를 blob으로 변환
+                if (state.cardDetail.imageUrl) {
+                    try {
+                        const blobUrl = await loadImageAsBlob(state.cardDetail.imageUrl);
+                        setImageBlobUrl(blobUrl);
+                        setIsImageLoaded(true);
+                    } catch (err) {
+                        console.error('이미지 로드 실패:', err);
+                        setIsImageLoaded(true); // 실패해도 계속 진행
+                    }
+                } else {
+                    setIsImageLoaded(true);
+                }
                 setIsLoading(false);
             } else if (state?.cardId) {
                 await handleCardDataLoad(state.cardId);
             } else {
                 setError("다운로드할 독서 카드 정보가 제공되지 않았습니다. 이전 페이지에서 다시 시도해주세요.");
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
 
         loadCardData();
-    }, [location.state, handleCardDataLoad]);
+    }, [location.state, handleCardDataLoad, loadImageAsBlob]);
+
+    // cardDetail이 변경되면 이미지 다시 로드
+    useEffect(() => {
+        if (cardDetail?.imageUrl && !imageBlobUrl) {
+            loadImageAsBlob(cardDetail.imageUrl).then(blobUrl => {
+                setImageBlobUrl(blobUrl);
+                setIsImageLoaded(true);
+            }).catch(err => {
+                console.error('이미지 로드 실패:', err);
+                setIsImageLoaded(true);
+            });
+        }
+    }, [cardDetail?.imageUrl, imageBlobUrl, loadImageAsBlob]);
+
+    // 컴포넌트 언마운트 시 blob URL 정리
+    useEffect(() => {
+        return () => {
+            if (imageBlobUrl) {
+                URL.revokeObjectURL(imageBlobUrl);
+            }
+        };
+    }, [imageBlobUrl]);
 
     if (isLoading || isProcessing) {
         return (
@@ -269,10 +352,11 @@ function DownloadCardPage() {
                             src={getImageUrl()}
                             alt={`독서 카드: ${getBookTitle()}`}
                             className="download-card-main-image"
-                            crossOrigin="anonymous"
+                            onLoad={() => setIsImageLoaded(true)}
                             onError={(e) => {
                                 e.currentTarget.src = DEFAULT_IMAGE_URL;
                                 e.currentTarget.alt = "이미지 로드 실패";
+                                setIsImageLoaded(true);
                             }}
                         />
                     </div>

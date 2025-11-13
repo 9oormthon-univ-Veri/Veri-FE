@@ -182,7 +182,6 @@ section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
-    padding-bottom: 8px;
     -ms-overflow-style: none;
     scrollbar-width: none;
     min-height: 150px; /* 컨테이너 최소 높이 추가 */
@@ -318,17 +317,18 @@ section {
     text-align: center;
 }
 
-.todays-recommendation .recommended-book-item .book-cover-thumbnail {
+.todays-recommendation .recommended-book-item .recommended-book-item-cover-thumbnail {
+    height: 150px;
     width: 100%;
     position: relative;
     background-color: #f0f0f0;
     border-radius: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     overflow: hidden;
     border: 1px solid #e0e0e0;
 }
 
-.todays-recommendation .recommended-book-item .book-cover-thumbnail img {
+.todays-recommendation .recommended-book-item .recommended-book-item-cover-thumbnail img {
     position: absolute;
     top: 0;
     left: 0;
@@ -337,23 +337,27 @@ section {
     object-fit: cover;
 }
 
-.todays-recommendation .recommended-book-item .book-title {
+.todays-recommendation .recommended-book-item .book-item-title {
+    height: 25px;
     font-size: 13px;
     font-weight: bold;
     color: #333;
-    margin: 0 0 4px 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
+    margin: 0;
 }
 
-.todays-recommendation .recommended-book-item .book-author {
+.todays-recommendation .recommended-book-item .book-item-author {
+    height: 20px;
     font-size: 11px;
     color: #888;
-    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
+    margin: 0;
 }
 
 /* 추천 섹션 헤더 */

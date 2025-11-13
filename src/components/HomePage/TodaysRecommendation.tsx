@@ -48,15 +48,15 @@ const SingleRecommendedBookItem: React.FC<RecommendedBookType> = ({ title, image
 
   return (
     <div className="recommended-book-item" onClick={handleClick}>
-      <div className="book-cover-thumbnail">
+      <div className="recommended-book-item-cover-thumbnail">
         <img
           src={imageUrl || fallbackImageUrl}
           alt={title}
           onError={handleImageError}
         />
       </div>
-      <p className="book-title">{title}</p>
-      <p className="book-author">{author}</p>
+      <p className="book-item-title">{title}</p>
+      <p className="book-item-author">{author}</p>
     </div>
   );
 };

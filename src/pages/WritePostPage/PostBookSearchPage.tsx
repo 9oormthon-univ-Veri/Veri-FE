@@ -7,6 +7,8 @@ import { removeAccessToken } from '../../api/auth';
 import { getAllBooks, type Book } from '../../api/bookApi';
 import Toast from '../../components/Toast';
 import type { BookItem } from '../../api/bookSearchApi';
+import BookIcon from '../../assets/icons/book.svg';
+import BookActiveIcon from '../../assets/icons/book_active.svg';
 
 // 선택된 책 정보 타입 (memberBookId 포함)
 interface SelectedBookInfo extends BookItem {
@@ -120,7 +122,9 @@ const PostBookSearchPage: React.FC = () => {
                                         className={`book-item ${isSelected ? 'book-item-selected' : ''}`}
                                         onClick={() => handleSelectMyBook(book)}
                                     >
-                                        <img src={book.imageUrl} alt={book.title} className="book-cover-thumbnail" />
+                                        <div className="book-cover-thumbnail">
+                                            <img src={book.imageUrl} alt={book.title} />
+                                        </div>
                                         <div className="book-details">
                                             <p className="book-title">{book.title}</p>
                                             <p className="book-author">{book.author}</p>
@@ -155,9 +159,11 @@ const PostBookSearchPage: React.FC = () => {
                 {selectedBook ? (
                     <div className="selected-book-info">
                         <div className="selected-book-details">
+                            <div className="no-selection-icon">
+                                <img src={BookActiveIcon} alt="book icon" />
+                            </div>
                             <div className="selected-book-text">
-                                <p className="selected-book-title">{selectedBook.title}</p>
-                                <p className="selected-book-author">{selectedBook.author}</p>
+                                <p className="no-selection-text">{selectedBook.title}</p>
                             </div>
                         </div>
                         <button 
@@ -169,7 +175,9 @@ const PostBookSearchPage: React.FC = () => {
                     </div>
                 ) : (
                     <div className="no-selection-info">
-                        <div className="no-selection-icon">📚</div>
+                        <div className="no-selection-icon">
+                            <img src={BookIcon} alt="book icon" />
+                        </div>
                         <p className="no-selection-text">선택된 책이 없어요</p>
                         <button className="disabled-button" disabled>
                             선택완료
