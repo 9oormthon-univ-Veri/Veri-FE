@@ -135,16 +135,6 @@
     color: #d9534f;
 }
 
-.book-cover-thumbnail {
-    height: 220px;
-    width: 100%;
-    position: relative;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    overflow: hidden;
-}
-
 .book-details {
     width: 100%;
 }

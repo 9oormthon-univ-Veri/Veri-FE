@@ -8,8 +8,9 @@
   align-items: center;
   justify-content: space-between;
   border-radius: 16px;
+  gap: 10px;
   background: #FFFFFF;
-  margin: 20px 20px 0px 20px;
+  margin: 15px 15px 0px 15px;
 }
 
 /* 좌측 프로필 묶음 */
@@ -25,7 +26,7 @@
   height: 60px;
   background-color: #ffffff;
   border-radius: 50%;
-  margin-right: 15px;
+  margin-right: 5px;
   flex-shrink: 0;
 }
 
@@ -48,6 +49,7 @@
   flex-grow: 1;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .profile-name {
@@ -58,15 +60,20 @@
   text-align: left;
   line-height: normal;
   letter-spacing: -0.64px;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .icon-button {
+  border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
   border-radius: 50%;
+  margin-left: 5px;
   background: #fff;
   cursor: pointer;
 }

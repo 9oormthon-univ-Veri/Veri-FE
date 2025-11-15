@@ -141,19 +141,6 @@
     color: #d9534f;
 }
 
-.book-item {
-    display: flex;
-    flex-direction: column;
-    /* 이미지와 텍스트를 세로로 정렬 */
-    align-items: center;
-    /* 내용을 가로 중앙 정렬 */
-    text-align: center;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-}
-
 .book-details {
     width: 100%;
     /* 부모 요소의 너비를 채우도록 */
