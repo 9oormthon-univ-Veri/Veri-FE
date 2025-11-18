@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TopBar.css';
 import profileIcon from '../assets/icons/TopBar/profile.svg';
 import unionIcon from '../assets/icons/TopBar/union_fill.svg';
+import { getMemberProfile } from '../api/memberApi';
 
 interface TopBarProps {
   showProfile?: boolean;
@@ -18,6 +19,38 @@ const TopBar: React.FC<TopBarProps> = ({
   onProfileClick
 }) => {
   const navigate = useNavigate();
+  const [profileImage, setProfileImage] = useState<string | null>(() => {
+    // localStorage에서 프로필 이미지 가져오기
+    const storedImage = localStorage.getItem('profileImage');
+    return storedImage || null;
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await getMemberProfile();
+        if (response.isSuccess && response.result?.image) {
+          const imageUrl = response.result.image;
+          setProfileImage(imageUrl);
+          // localStorage에 프로필 이미지 저장
+          localStorage.setItem('profileImage', imageUrl);
+        } else {
+          // 프로필 이미지가 없으면 localStorage에서도 제거
+          localStorage.removeItem('profileImage');
+          setProfileImage(null);
+        }
+      } catch (error) {
+        console.error('프로필 이미지 로드 실패:', error);
+      }
+    };
+
+    if (showProfile) {
+      // localStorage에 이미지가 없을 때만 API 호출
+      if (!localStorage.getItem('profileImage')) {
+        fetchProfile();
+      }
+    }
+  }, [showProfile]);
 
   const handleSearchClick = () => {
     if (onSearchClick) {
@@ -76,7 +109,11 @@ const TopBar: React.FC<TopBarProps> = ({
             aria-label="프로필 보기"
             onClick={handleProfileClick}
           >
-            <img src={profileIcon} alt="프로필" />
+            {profileImage ? (
+              <img src={profileImage} alt="프로필" className="profile-image" />
+            ) : (
+              <img src={profileIcon} alt="프로필" />
+            )}
           </button>
         )}
       </div>

@@ -30,6 +30,11 @@ function LibraryPage() {
   const [bookImageUrl, setBookImageUrl] = useState<string | null>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(() => {
+    // localStorage에서 프로필 이미지 가져오기
+    const storedImage = localStorage.getItem('profileImage');
+    return storedImage || null;
+  });
   
   // 이미지 에러 핸들링을 위한 refs
   const heroBackgroundErrorRef = useRef(false);
@@ -41,13 +46,22 @@ function LibraryPage() {
       try {
         const userResponse = await getMemberProfile();
         if (userResponse.isSuccess && userResponse.result) {
+          const imageUrl = userResponse.result.image;
           setUserData({
             email: userResponse.result.email,
             nickname: userResponse.result.nickname,
-            image: userResponse.result.image,
+            image: imageUrl,
             numOfReadBook: userResponse.result.numOfReadBook,
             numOfCard: userResponse.result.numOfCard,
           });
+          // localStorage에 프로필 이미지 저장
+          if (imageUrl) {
+            localStorage.setItem('profileImage', imageUrl);
+            setProfileImage(imageUrl);
+          } else {
+            localStorage.removeItem('profileImage');
+            setProfileImage(null);
+          }
         } else {
           setError(userResponse.message || "사용자 프로필을 가져오는데 실패했습니다.");
         }
@@ -58,6 +72,9 @@ function LibraryPage() {
         setIsUserDataLoading(false);
       }
     };
+
+    // userData는 항상 가져오되, 프로필 이미지는 localStorage에서 우선 사용
+    fetchUserProfile();
 
     const fetchRecentBook = async () => {
       try {
@@ -180,7 +197,11 @@ function LibraryPage() {
               aria-label="프로필 보기"
               onClick={handleProfileClick}
             >
-              <img src={profileIcon} alt="프로필" />
+              {profileImage ? (
+                <img src={profileImage} alt="프로필" className="profile-image" />
+              ) : (
+                <img src={profileIcon} alt="프로필" />
+              )}
             </button>
           </div>
         </header>

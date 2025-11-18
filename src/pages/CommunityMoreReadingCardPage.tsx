@@ -205,7 +205,6 @@ function CommunityMoreReadingCardPage() {
         <div className="reading-cards-page">
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p>독서카드를 불러오는 중...</p>
           </div>
         </div>
       </div>
