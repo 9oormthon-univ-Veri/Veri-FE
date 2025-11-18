@@ -21,10 +21,10 @@ const LibraryPageGrid: React.FC<LibraryPageGridProps> = ({ books }) => {
       {books.map((book) => (
         <div 
           key={book.memberBookId} 
-          className="bookshelf-item"
+          className="library-bookshelf-item"
           onClick={() => handleBookClick(book)}
         >
-          <div className="book-cover-thumbnail">
+          <div className="library-book-cover-thumbnail">
             <img 
               src={book.imageUrl || fallbackImageUrl} 
               alt={book.title}
@@ -35,8 +35,8 @@ const LibraryPageGrid: React.FC<LibraryPageGridProps> = ({ books }) => {
               }}
             />
           </div>
-          <p className="book-title">{book.title}</p>
-          <p className="book-author">{book.author}</p>
+          <p className="library-book-title">{book.title}</p>
+          <p className="library-book-author">{book.author}</p>
         </div>
       ))}
     </div>
