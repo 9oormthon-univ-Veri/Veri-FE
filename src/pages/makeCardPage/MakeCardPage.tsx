@@ -20,7 +20,6 @@ const MakeCardPage: React.FC = () => {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: 'success' | 'error' | 'warning' | 'info';
@@ -103,7 +102,6 @@ const MakeCardPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       setIsUploading(true);
-      setUploadError(null);
       try {
         const uploadedUrl = await uploadImage(file);
         console.log('갤러리 이미지 업로드 성공:', uploadedUrl);
@@ -113,7 +111,6 @@ const MakeCardPage: React.FC = () => {
         });
       } catch (err: any) {
         showToast(`갤러리 이미지 업로드 실패: ${err.message}`, 'error');
-        setUploadError(`갤러리 이미지 업로드 실패: ${err.message}`);
         setIsUploading(false);
       }
     }
@@ -192,7 +189,6 @@ const MakeCardPage: React.FC = () => {
         const photoFile = new File([imageBlob], `captured_photo_${Date.now()}.png`, { type: 'image/png' });
 
         setIsUploading(true);
-        setUploadError(null);
         try {
           const uploadedUrl = await uploadImage(photoFile);
           stopCameraStream();
@@ -204,7 +200,7 @@ const MakeCardPage: React.FC = () => {
           });
         } catch (err: any) {
           console.error('촬영된 사진 업로드 실패:', err);
-          setUploadError(`사진 업로드 실패: ${err.message}`);
+          showToast(`사진 업로드 실패: ${err.message}`, 'error');
           setIsUploading(false);
         }
       }

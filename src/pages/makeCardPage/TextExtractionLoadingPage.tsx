@@ -205,7 +205,7 @@ const TextExtractionLoadingPage: React.FC = () => {
                                 </div>
                             </div>
                         ) : (
-                            <p>앱 사용에 대한 간단한 설명</p>
+                            <p>오늘도 화이팅!</p>
                         )}
                     </div>
                 </div>
