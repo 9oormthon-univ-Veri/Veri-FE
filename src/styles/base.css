@@ -1,0 +1,26 @@
+/* 기본 스타일 */
+
+body {
+  margin: 0;
+  font-family: Pretendard;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f0f0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Webkit 브라우저(Chrome, Safari)용 스크롤바 숨기기 */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+code {
+  font-family: Pretendard;
+}
+
+.dummy-box {
+  width: 30px;
+  height: 20px;
+}
+

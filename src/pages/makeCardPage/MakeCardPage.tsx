@@ -214,9 +214,7 @@ const MakeCardPage: React.FC = () => {
   if (isUploading) {
     return (
       <div className="loading-page-container">
-        <div className="loading-overlay">
-          <p>이미지 업로드 중...</p>
-          {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
+        <div className="loading-spinner">
         </div>
       </div>
     );

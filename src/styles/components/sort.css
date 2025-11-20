@@ -1,0 +1,49 @@
+/* 정렬 옵션 관련 스타일 */
+
+.sort-options {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 5px 0;
+  margin: 5px;
+  gap: 5px;
+}
+
+.sort-options .sort-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 15px;
+  padding: 5px;
+  gap: 4px;
+  border-radius: 15px;
+  border: 0.5px solid var(--border-light);
+  background: none;
+  color: var(--text-dark);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  cursor: pointer;
+}
+
+.sort-options .sort-button:hover {
+  background-color: #eee;
+}
+
+.sort-options .sort-button::after {
+  content: attr(data-arrow);
+  font-size: 10px;
+}
+
+.sort-button .mgc_down_fill,
+.sort-button .mgc_up_fill {
+  font-size: 15px;
+}
+
+.sort-button .mgc_down_fill::before,
+.sort-button .mgc_up_fill::before {
+  font-size: 15px;
+  color: #9BA2B1 !important;
+}
+

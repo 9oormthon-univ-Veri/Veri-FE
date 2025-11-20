@@ -1,0 +1,38 @@
+/* CSS 변수 및 폰트 정의 */
+
+/* 테마 색상 변수 정의 */
+:root {
+  --primary-green: #0CE19A;
+  --primary-purple: #391BE2;
+  --dark-purple: #311CA8;
+  --light-purple: #9B90E9;
+  --very-light-purple: #D6D1F6;
+  --light-gray: #DBDFE4;
+  --light-gray-2: #F4F5F7;
+
+  /* 기본 테마 (보라색 계열) */
+  --main-color: var(--primary-purple);
+  --secondary-color: var(--light-purple);
+  --accent-color: var(--primary-green);
+  --background-light: var(--very-light-purple);
+  --text-dark: #333;
+  --text-dark-gray: #6A717B;
+  --text-light: #666;
+  --border-color: #eee;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+@font-face {
+  font-family: Pretendard;
+  src: url('/fonts/NanumPen.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Pretendard;
+  src: url('/fonts/NotoSansKR.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+

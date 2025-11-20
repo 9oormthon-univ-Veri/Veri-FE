@@ -11,11 +11,33 @@ import CheckFillIconSVG from '../../assets/icons/CustomizePage/check_fill.svg?re
 import CameraIcon from '../../assets/icons/camera.svg';
 import GalleryIcon from '../../assets/icons/gallery.svg';
 
-import SkyBackground from '../../assets/images/cardSample/sky.jpg';
-import SummerSeaBackground from '../../assets/images/cardSample/sea.jpg';
-import RiverBackground from '../../assets/images/cardSample/river.jpg';
-import ForsetBackground from '../../assets/images/cardSample/forest.jpg';
-import ColorBackground from '../../assets/images/cardSample/color.jpg';
+// Book images
+import Book1 from '../../assets/images/cardSample/Book/book1.png';
+import Book2 from '../../assets/images/cardSample/Book/book2.png';
+
+// Cafe images
+import Cafe1 from '../../assets/images/cardSample/Cafe/cafe1.png';
+import Cafe2 from '../../assets/images/cardSample/Cafe/cafe2.png';
+import Cafe3 from '../../assets/images/cardSample/Cafe/cafe3.png';
+
+// Landscape images
+import Landscape1 from '../../assets/images/cardSample/Landscape/landscape1.png';
+import Landscape2 from '../../assets/images/cardSample/Landscape/landscape2.png';
+import Landscape3 from '../../assets/images/cardSample/Landscape/landscape3.png';
+import Landscape4 from '../../assets/images/cardSample/Landscape/landscape4.png';
+import Landscape5 from '../../assets/images/cardSample/Landscape/landscape5.png';
+import Landscape6 from '../../assets/images/cardSample/Landscape/landscape6.png';
+import Landscape7 from '../../assets/images/cardSample/Landscape/landscape7.png';
+import Landscape8 from '../../assets/images/cardSample/Landscape/landscape8.png';
+import Landscape9 from '../../assets/images/cardSample/Landscape/landscape9.png';
+
+// SolidColor images
+import SolidColor1 from '../../assets/images/cardSample/SolidColor/solidcolor1.png';
+import SolidColor2 from '../../assets/images/cardSample/SolidColor/solidcolor2.png';
+import SolidColor3 from '../../assets/images/cardSample/SolidColor/solidcolor3.png';
+import SolidColor4 from '../../assets/images/cardSample/SolidColor/solidcolor4.png';
+import SolidColor5 from '../../assets/images/cardSample/SolidColor/solidcolor5.png';
+import SolidColor6 from '../../assets/images/cardSample/SolidColor/solidcolor6.png';
 
 const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
@@ -54,35 +76,35 @@ const CardCustomizationPage: React.FC = () => {
             { label: '갤러리열기', url: GalleryIcon, id: 'gallery' }
         ],
         'pattern': [
-            { label: '패턴1', url: ColorBackground, id: 'pattern1' },
-            { label: '패턴2', url: ColorBackground, id: 'pattern2' },
-            { label: '패턴3', url: ColorBackground, id: 'pattern3' },
+            { label: '패턴1', url: SolidColor1, id: 'pattern1' },
+            { label: '패턴2', url: SolidColor2, id: 'pattern2' },
+            { label: '패턴3', url: SolidColor3, id: 'pattern3' },
+            { label: '패턴4', url: SolidColor4, id: 'pattern4' },
+            { label: '패턴5', url: SolidColor5, id: 'pattern5' },
+            { label: '패턴6', url: SolidColor6, id: 'pattern6' },
         ],
         'landscape': [
-            { label: '하늘', url: SkyBackground, id: 'sky' },
-            { label: '여름바다', url: SummerSeaBackground, id: 'sea' },
-            { label: '강가', url: RiverBackground, id: 'river' },
-            { label: '숲속', url: ForsetBackground, id: 'forest' },
+            { label: '풍경1', url: Landscape1, id: 'landscape1' },
+            { label: '풍경2', url: Landscape2, id: 'landscape2' },
+            { label: '풍경3', url: Landscape3, id: 'landscape3' },
+            { label: '풍경4', url: Landscape4, id: 'landscape4' },
+            { label: '풍경5', url: Landscape5, id: 'landscape5' },
+            { label: '풍경6', url: Landscape6, id: 'landscape6' },
+            { label: '풍경7', url: Landscape7, id: 'landscape7' },
+            { label: '풍경8', url: Landscape8, id: 'landscape8' },
+            { label: '풍경9', url: Landscape9, id: 'landscape9' },
         ],
         'book': [
-            { label: '책1', url: SkyBackground, id: 'book1' },
-            { label: '책2', url: SummerSeaBackground, id: 'book2' },
-            { label: '책3', url: RiverBackground, id: 'book3' },
+            { label: '책1', url: Book1, id: 'book1' },
+            { label: '책2', url: Book2, id: 'book2' },
         ],
         'cafe': [
-            { label: '카페1', url: SkyBackground, id: 'cafe1' },
-            { label: '카페2', url: SummerSeaBackground, id: 'cafe2' },
-            { label: '카페3', url: RiverBackground, id: 'cafe3' },
+            { label: '카페1', url: Cafe1, id: 'cafe1' },
+            { label: '카페2', url: Cafe2, id: 'cafe2' },
+            { label: '카페3', url: Cafe3, id: 'cafe3' },
         ],
     };
 
-    const defaultBackgrounds: { label: string; url: string }[] = [
-        { label: '하늘', url: SkyBackground },
-        { label: '여름바다', url: SummerSeaBackground },
-        { label: '강가', url: RiverBackground },
-        { label: '숲속', url: ForsetBackground },
-        { label: '색깔', url: ColorBackground },
-    ];
 
     // 폰트 카테고리별 데이터
     const fontCategories = {
@@ -110,7 +132,6 @@ const CardCustomizationPage: React.FC = () => {
 
     const [selectedBackgroundCategory, setSelectedBackgroundCategory] = useState<'my-photo' | 'pattern' | 'landscape' | 'book' | 'cafe'>('my-photo');
     const [selectedBackground, setSelectedBackground] = useState<'uploaded' | string>('uploaded');
-    const [selectedFontCategory, setSelectedFontCategory] = useState<'myeongjo' | 'gothic' | 'handwriting'>('myeongjo');
     const [selectedFontId, setSelectedFontId] = useState<string>(fontCategories.myeongjo[0]?.id || 'noto-serif');
     
     // 효과 관련 상태
@@ -143,9 +164,7 @@ const CardCustomizationPage: React.FC = () => {
             if (found) return found.url;
         }
         
-        // 기존 방식으로도 찾기
-        const found = defaultBackgrounds.find((bg) => bg.label === selectedBackground);
-        return found?.url || image;
+        return image;
     };
 
     // 카메라 열기
@@ -607,29 +626,14 @@ const CardCustomizationPage: React.FC = () => {
 
                     {selectedTab === 'text' && (
                         <div className="font-customization">
-                            <div className="category-tabs">
-                                <button
-                                    className={`category-tab ${selectedFontCategory === 'myeongjo' ? 'active' : ''}`}
-                                    onClick={() => setSelectedFontCategory('myeongjo')}
-                                >
-                                    명조
-                                </button>
-                                <button
-                                    className={`category-tab ${selectedFontCategory === 'gothic' ? 'active' : ''}`}
-                                    onClick={() => setSelectedFontCategory('gothic')}
-                                >
-                                    고딕
-                                </button>
-                                <button
-                                    className={`category-tab ${selectedFontCategory === 'handwriting' ? 'active' : ''}`}
-                                    onClick={() => setSelectedFontCategory('handwriting')}
-                                >
-                                    손글씨
-                                </button>
-                            </div>
+                            <div className="category-tabs"></div>
                             <div className="options-scroll">
                                 <div className="option-icons">
-                                    {fontCategories[selectedFontCategory]?.map((font) => (
+                                    {[
+                                        ...fontCategories.myeongjo,
+                                        ...fontCategories.gothic,
+                                        ...fontCategories.handwriting,
+                                    ].map((font) => (
                                         <div key={font.id}>
                                             <div
                                                 className={`option ${selectedFontId === font.id ? 'active' : ''}`}

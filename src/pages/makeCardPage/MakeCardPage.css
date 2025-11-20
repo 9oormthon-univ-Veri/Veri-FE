@@ -137,3 +137,13 @@
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.no-image-message {
+  padding: 20px;
+  text-align: center;
+}
+
+.camera-error-message {
+  padding: 20px;
+  text-align: center;
+}

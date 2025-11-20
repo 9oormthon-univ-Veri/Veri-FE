@@ -1,0 +1,104 @@
+/* 책 목록 관련 스타일 */
+
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.book-item {
+  height: auto;
+  min-height: 250px;
+  max-height: 250px;
+  width: auto;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 5px;
+}
+
+.book-cover-thumbnail {
+  height: 220px;
+  width: 100%;
+  position: relative;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.book-cover-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.book-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.book-item-selected {
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.book-item-selected .book-cover-thumbnail {
+  background-color: var(--primary-green);
+  position: relative;
+}
+
+.book-item-selected .book-cover-thumbnail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(12, 225, 154, 0.6);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.book-item-selected .book-cover-thumbnail img {
+  position: relative;
+  z-index: 0;
+}
+
+.check-mark {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+  animation: checkMarkAppear 0.3s ease-in-out;
+}
+
+.check-mark svg circle {
+  fill: #FFFFFF;
+}
+
+.check-mark svg path {
+  stroke: var(--primary-green);
+}
+
+@keyframes checkMarkAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

@@ -1,0 +1,115 @@
+/* 페이지 레이아웃 관련 */
+
+.page-container {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  background-color: #ffffff;
+  min-height: 100vh;
+  opacity: 1;
+}
+
+/* 페이지 로딩 중 투명도 조절 */
+.page-container.loading {
+  opacity: 0.7;
+}
+
+/* 페이지 에러 상태 스타일 */
+.page-container.error-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  height: auto;
+  text-align: center;
+}
+
+.page-container.error-state p {
+  margin: 10px 0;
+  font-family: Pretendard;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #d32f2f;
+}
+
+.page-container.error-state button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary-purple, #391BE2);
+  color: #fff;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.page-container.error-state button:hover {
+  background: var(--dark-purple, #311CA8);
+}
+
+/* 페이지 전환 애니메이션 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.loading-page-container {
+  justify-self: center;
+  max-width: 100%;
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  background-color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.loading-page-container p {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 20px;
+}
+
+.loading-page-container button {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+}
+
+.main-page-margin {
+  height: 100px;
+}
+
+.header-margin {
+  height: 80px;
+  width: 100%;
+  background-color: #fff;
+}
+
