@@ -73,7 +73,7 @@ function LibraryPage() {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest' | 'rating'>('newest');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedReadingStatuses, setSelectedReadingStatuses] = useState<string[]>(['READING', 'DONE']);
+  const [selectedReadingStatuses, setSelectedReadingStatuses] = useState<string[]>([]);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const statusButtonRef = useRef<HTMLButtonElement>(null);
@@ -274,8 +274,8 @@ function LibraryPage() {
         <div className="no-books-message">
           {searchQuery ? (
             <p>검색 결과가 없습니다.</p>
-          ) : selectedReadingStatuses.length < 2 ? (
-            <p>{selectedReadingStatuses.includes('DONE') ? '완료된' : '읽고 있는'} 책이 없습니다.</p>
+          ) : selectedReadingStatuses.length > 0 ? (
+            <p>선택한 독서상태의 책이 없습니다.</p>
           ) : (
             <p>등록된 책이 없습니다. 새로운 책을 등록해보세요!</p>
           )}
