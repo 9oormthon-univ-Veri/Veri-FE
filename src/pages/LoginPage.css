@@ -13,7 +13,7 @@
 
 .login-buttons-container {
     display: inline-flex;
-    height: 100px;
+    min-height: 100px;
     width: 300px;
     padding: 0px 14px;
     justify-content: center;
@@ -21,8 +21,8 @@
     flex-shrink: 0;
     flex-direction: column;
     gap: 12px;
-    padding-bottom: 50px;
     margin-bottom: 20px;
+    /* padding-bottom은 동적으로 계산되어 인라인 스타일로 적용됨 */
 }
 
 /* 소셜 로그인 버튼 공통 스타일 */

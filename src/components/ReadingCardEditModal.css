@@ -245,18 +245,21 @@
     cursor: pointer;
     border: none;
     border-radius: 8px;
-    background: rgba(66, 225, 173, 0.25);
-    color: #0CE19A;
+    background: var(--accent-color, var(--primary-green));
+    color: #FFFFFF;
     font-family: Pretendard;
     font-size: 18px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(12, 225, 154, 0.3);
 }
 
 .complete-button:hover:not(:disabled) {
-    background: rgba(66, 225, 173, 0.35);
+    background: var(--primary-green);
+    box-shadow: 0 4px 12px rgba(12, 225, 154, 0.4);
+    transform: translateY(-1px);
 }
 
 .complete-button:disabled {

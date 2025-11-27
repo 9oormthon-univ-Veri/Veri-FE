@@ -1,7 +1,7 @@
 /* Community Page 스타일 */
 
 .community-content {
-  padding: 0 20px;
+  padding: 0 10px;
   height: auto;
   min-height: 100vh;
   background-color: white;
@@ -16,7 +16,7 @@
 
 .reading-cards-section-title {
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
   text-align: left;
 }

@@ -24,6 +24,7 @@ const CardCustomizationCompletePage: React.FC = () => {
     const [saveError, setSaveError] = useState<string | null>(null);
     const [bookTitle, setBookTitle] = useState<string>('책 제목 불러오는 중...');
     const [bookDetail, setBookDetail] = useState<GetBookByIdResponse['result'] | null>(null);
+    const [savedCardId, setSavedCardId] = useState<number | null>(null);
     const [toast, setToast] = useState<{
         message: string;
         type: 'success' | 'error' | 'warning' | 'info';
@@ -174,6 +175,7 @@ const CardCustomizationCompletePage: React.FC = () => {
             });
 
             console.log('카드가 성공적으로 저장되었어요! 카드 ID:', response.result.cardId);
+            setSavedCardId(response.result.cardId);
             showToast('독서카드가 성공적으로 생성 및 저장되었습니다!', 'success');
 
         } catch (saveError: any) {
@@ -222,7 +224,16 @@ const CardCustomizationCompletePage: React.FC = () => {
     return (
         <div className="page-container">
             <header className="detail-header">
-                <button className="header-left-arrow" onClick={() => navigate('/reading-card')}>
+                <button 
+                    className="header-left-arrow" 
+                    onClick={() => {
+                        if (savedCardId) {
+                            navigate(`/reading-card-detail/${savedCardId}`);
+                        } else {
+                            navigate(-1);
+                        }
+                    }}
+                >
                 <span
                         className="mgc_left_fill"
                     ></span>

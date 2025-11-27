@@ -26,6 +26,7 @@ function DownloadCardPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [imageBlobUrl, setImageBlobUrl] = useState<string | null>(null);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [action, setAction] = useState<'download' | 'share'>('download');
 
     // 이미지를 fetch로 가져와서 blob URL로 변환 (CORS 문제 해결)
     const loadImageAsBlob = useCallback(async (imageUrl: string): Promise<string> => {
@@ -248,6 +249,13 @@ function DownloadCardPage() {
 
             const state = location.state as LocationState;
 
+            // action 설정 (기본값: 'download')
+            if (state?.action) {
+                setAction(state.action);
+            } else {
+                setAction('download');
+            }
+
             if (state?.cardDetail) {
                 setCardDetail(state.cardDetail);
                 // 이미지를 blob으로 변환
@@ -322,6 +330,8 @@ function DownloadCardPage() {
         );
     }
 
+    const headerTitle = action === 'share' ? '독서카드 공유하기' : '독서카드 다운로드';
+
     return (
         <div className="page-container">
             <header className="download-header">
@@ -330,7 +340,7 @@ function DownloadCardPage() {
                         className="mgc_left_fill"
                     ></span>
                 </button>
-                <h3>독서카드 다운로드</h3>
+                <h3>{headerTitle}</h3>
                 <div className="header-right-placeholder"></div>
             </header>
 
@@ -372,22 +382,25 @@ function DownloadCardPage() {
             </div>
 
             <div className="action-buttons-container-revised">
-                <button 
-                    className="action-button-revised download-button-revised" 
-                    onClick={handleDownload} 
-                    disabled={isProcessing || isLoading}
-                >
-                    <FiDownload size={24} />
-                    <span>다운로드</span>
-                </button>
-                <button 
-                    className="action-button-revised share-button-revised" 
-                    onClick={handleShare} 
-                    disabled={isProcessing || isLoading}
-                >
-                    <FiShare2 size={24} />
-                    <span>공유하기</span>
-                </button>
+                {action === 'download' ? (
+                    <button 
+                        className="action-button-revised download-button-revised" 
+                        onClick={handleDownload} 
+                        disabled={isProcessing || isLoading}
+                    >
+                        <FiDownload size={24} />
+                        <span>다운로드</span>
+                    </button>
+                ) : (
+                    <button 
+                        className="action-button-revised share-button-revised" 
+                        onClick={handleShare} 
+                        disabled={isProcessing || isLoading}
+                    >
+                        <FiShare2 size={24} />
+                        <span>공유하기</span>
+                    </button>
+                )}
             </div>
         </div>
     );

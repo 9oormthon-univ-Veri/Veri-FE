@@ -122,6 +122,15 @@ const EditMyNamePage: React.FC = () => {
             return;
         }
 
+        // 변경 사항 확인: 닉네임과 이미지 모두 변경되지 않았으면 API 호출하지 않음
+        const isNicknameChanged = trimmedNickname !== originalNickname;
+        const isImageChanged = selectedFile !== null;
+        
+        if (!isNicknameChanged && !isImageChanged) {
+            showToast('변경된 내용이 없습니다.', 'info');
+            return;
+        }
+
         setIsLoading(true);
 
         try {

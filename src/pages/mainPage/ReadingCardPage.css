@@ -44,7 +44,6 @@
 .reading-card-text-view {
   display: flex;
   flex-direction: column;
-  gap: 20px;
   padding: 10px 0 20px;
   overflow-y: auto;
   width: 100%;
@@ -119,7 +118,7 @@
   color: var(--text-light);
   font-family: Pretendard;
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 350;
   line-height: 140%;
   cursor: pointer;
   position: relative;

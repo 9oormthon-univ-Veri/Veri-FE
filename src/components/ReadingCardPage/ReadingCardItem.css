@@ -2,7 +2,8 @@
     height: 100px;
     display: flex;
     justify-content: space-between;
-    /* Flexbox의 시작점으로 정렬 */
+    padding: 10px;
+    border-bottom: 1px solid var(--border-gray);
     background-color: #fff;
     align-items: flex-start;
     flex-direction: row;
