@@ -41,13 +41,6 @@ function WritePostPage() {
     setToast(prev => ({ ...prev, isVisible: false }));
   };
 
-  // base64를 File 객체로 변환하는 헬퍼 함수
-  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
-    const response = await fetch(base64);
-    const blob = await response.blob();
-    return new File([blob], filename, { type: blob.type });
-  };
-
   // 컴포넌트 마운트 시 데이터 복원
   useEffect(() => {
     const restoreDraft = async () => {
