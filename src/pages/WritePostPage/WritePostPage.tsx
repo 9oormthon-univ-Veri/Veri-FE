@@ -18,7 +18,8 @@ function WritePostPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [selectedBook, setSelectedBook] = useState<SelectedBookInfo | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -74,17 +75,13 @@ function WritePostPage() {
           if (draft.images && draft.images.length > 0) {
             setImages(draft.images);
             
-            // base64 이미지를 File 객체로 복원
-            const restoredFiles: File[] = [];
-            for (let i = 0; i < draft.images.length; i++) {
-              try {
-                const file = await base64ToFile(draft.images[i], `restored-image-${i}.jpg`);
-                restoredFiles.push(file);
-              } catch (error) {
-                console.error('이미지 복원 실패:', error);
-              }
+            // 업로드된 URL이 있으면 복원 (새로 업로드된 이미지인 경우)
+            if (draft.uploadedImageUrls && draft.uploadedImageUrls.length > 0) {
+              setUploadedImageUrls(draft.uploadedImageUrls);
+            } else {
+              // 기존 base64 이미지는 업로드되지 않은 상태로 간주
+              setUploadedImageUrls([]);
             }
-            setImageFiles(restoredFiles);
           }
         }
         
@@ -109,6 +106,7 @@ function WritePostPage() {
           title,
           content,
           images,
+          uploadedImageUrls,
           selectedBook
         };
         localStorage.setItem('writePostDraft', JSON.stringify(draft));
@@ -116,7 +114,7 @@ function WritePostPage() {
         console.error('임시 저장 실패:', error);
       }
     }
-  }, [title, content, images, selectedBook, isInitialLoad]);
+  }, [title, content, images, uploadedImageUrls, selectedBook, isInitialLoad]);
 
   const handleBookSelection = () => {
     // 책 검색 페이지로 이동
@@ -124,40 +122,68 @@ function WritePostPage() {
   };
 
   // 이미지 파일 선택 핸들러
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
-    const newFiles: File[] = [];
-    const newImages: string[] = [];
     const maxImages = 10; // 최대 10개 이미지
+    const filesToProcess = Array.from(files).slice(0, maxImages - images.length);
 
-    for (let i = 0; i < Math.min(files.length, maxImages - imageFiles.length); i++) {
-      const file = files[i];
-      if (file && file.type.startsWith('image/')) {
-        newFiles.push(file);
+    if (filesToProcess.length === 0) {
+      showToast('최대 10개까지 이미지를 업로드할 수 있습니다.', 'warning');
+      return;
+    }
 
-        // 미리보기를 위한 base64 변환
-        const reader = new FileReader();
+    setIsUploadingImages(true);
+
+    // 미리보기용 base64 변환 및 즉시 업로드
+    const newImages: string[] = [];
+    const newUploadedUrls: string[] = [];
+
+    for (const file of filesToProcess) {
+      if (!file.type.startsWith('image/')) {
+        continue;
+      }
+
+      // 미리보기를 위한 base64 변환
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve) => {
         reader.onload = (e) => {
           if (e.target?.result) {
-            newImages.push(e.target.result as string);
-            if (newImages.length === newFiles.length) {
-              setImages(prev => [...prev, ...newImages]);
-            }
+            resolve(e.target.result as string);
           }
         };
         reader.readAsDataURL(file);
+      });
+
+      const base64 = await base64Promise;
+      newImages.push(base64);
+
+      // 즉시 업로드
+      try {
+        const uploadedUrl = await uploadImage(file);
+        newUploadedUrls.push(uploadedUrl);
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        showToast('일부 이미지 업로드에 실패했습니다.', 'error');
+        // 업로드 실패한 이미지는 미리보기에서도 제거
+        newImages.pop();
       }
     }
 
-    setImageFiles(prev => [...prev, ...newFiles]);
+    setImages(prev => [...prev, ...newImages]);
+    setUploadedImageUrls(prev => [...prev, ...newUploadedUrls]);
+    setIsUploadingImages(false);
+
+    if (newUploadedUrls.length > 0) {
+      showToast(`${newUploadedUrls.length}개의 이미지가 업로드되었습니다.`, 'success');
+    }
   };
 
   // 이미지 제거 핸들러
   const handleRemoveImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setUploadedImageUrls(prev => prev.filter((_, i) => i !== index));
   };
 
   // 책 선택 제거 핸들러
@@ -182,23 +208,16 @@ function WritePostPage() {
       return;
     }
 
+    // 이미지가 아직 업로드 중인 경우
+    if (isUploadingImages) {
+      showToast('이미지 업로드 중입니다. 잠시만 기다려주세요.', 'info');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // 이미지 업로드
-      const uploadedImageUrls: string[] = [];
-      
-      for (const file of imageFiles) {
-        try {
-          const imageUrl = await uploadImage(file);
-          uploadedImageUrls.push(imageUrl);
-        } catch (error) {
-          console.error('이미지 업로드 실패:', error);
-          showToast('이미지 업로드 중 오류가 발생했습니다.', 'error');
-        }
-      }
-
-      // 게시글 작성 - bookId 포함
+      // 게시글 작성 - bookId 포함 (이미 업로드된 URL 사용)
       const postData: any = {
         title: title.trim(),
         content: content.trim(),
@@ -348,9 +367,9 @@ function WritePostPage() {
           <button 
             className="submit-button"
             onClick={handleSubmit}
-            disabled={isSubmitting || !title.trim() || !content.trim() || !selectedBook}
+            disabled={isSubmitting || isUploadingImages || !title.trim() || !content.trim() || !selectedBook}
           >
-            {isSubmitting ? '작성 중...' : '글 올리기'}
+            {isSubmitting ? '작성 중...' : isUploadingImages ? '이미지 업로드 중...' : '글 올리기'}
           </button>
         </div>
       </div>

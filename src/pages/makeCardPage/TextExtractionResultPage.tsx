@@ -20,7 +20,9 @@ const TextExtractionResultPage: React.FC = () => {
             state: {
                 image,
                 extractedText: editableText,
+                fromTextExtraction: true,
             },
+            replace: true, // 히스토리에서 현재 페이지를 교체하여 뒤로가기 제스처로 돌아올 수 있도록
         });
     };
 

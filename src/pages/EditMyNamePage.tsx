@@ -12,7 +12,8 @@ const EditMyNamePage: React.FC = () => {
     const [nickname, setNickname] = useState('');
     const [originalNickname, setOriginalNickname] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isCheckingNickname, setIsCheckingNickname] = useState(false);
     const [toast, setToast] = useState<{
@@ -56,7 +57,7 @@ const EditMyNamePage: React.FC = () => {
 
     const openFilePicker = () => fileInputRef.current?.click();
     
-    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             // 파일 크기 제한 (5MB)
@@ -71,9 +72,29 @@ const EditMyNamePage: React.FC = () => {
                 return;
             }
 
+            // 미리보기용 URL 생성
             const url = URL.createObjectURL(file);
             setPreviewUrl(url);
-            setSelectedFile(file);
+
+            // 즉시 업로드 시작
+            setIsUploadingImage(true);
+            try {
+                const uploadedUrl = await uploadImage(file);
+                setUploadedImageUrl(uploadedUrl);
+                // 업로드 완료 후 미리보기 URL을 업로드된 URL로 교체
+                URL.revokeObjectURL(url);
+                setPreviewUrl(uploadedUrl);
+                showToast('이미지가 업로드되었습니다.', 'success');
+            } catch (error: any) {
+                console.error('이미지 업로드 실패:', error);
+                showToast('이미지 업로드에 실패했습니다.', 'error');
+                // 업로드 실패 시 미리보기도 제거
+                URL.revokeObjectURL(url);
+                setPreviewUrl(null);
+                setUploadedImageUrl(null);
+            } finally {
+                setIsUploadingImage(false);
+            }
         }
     };
 
@@ -124,10 +145,16 @@ const EditMyNamePage: React.FC = () => {
 
         // 변경 사항 확인: 닉네임과 이미지 모두 변경되지 않았으면 API 호출하지 않음
         const isNicknameChanged = trimmedNickname !== originalNickname;
-        const isImageChanged = selectedFile !== null;
+        const isImageChanged = uploadedImageUrl !== null;
         
         if (!isNicknameChanged && !isImageChanged) {
             showToast('변경된 내용이 없습니다.', 'info');
+            return;
+        }
+
+        // 이미지가 선택되었지만 아직 업로드 중인 경우
+        if (isImageChanged && !uploadedImageUrl && isUploadingImage) {
+            showToast('이미지 업로드 중입니다. 잠시만 기다려주세요.', 'info');
             return;
         }
 
@@ -137,15 +164,9 @@ const EditMyNamePage: React.FC = () => {
             // 최종 보낼 이미지 URL (필수)
             let finalImageUrl: string | null = null;
 
-            // 새 파일을 선택했다면 업로드하여 URL 획득
-            if (selectedFile) {
-                try {
-                    finalImageUrl = await uploadImage(selectedFile);
-                } catch (error) {
-                    showToast('이미지 업로드에 실패했습니다.', 'error');
-                    setIsLoading(false);
-                    return;
-                }
+            // 업로드된 이미지 URL이 있으면 사용, 없으면 기존 이미지 URL 사용
+            if (uploadedImageUrl) {
+                finalImageUrl = uploadedImageUrl;
             } else if (previewUrl) {
                 // 파일을 새로 선택하지 않은 경우 기존 이미지 URL 사용
                 finalImageUrl = previewUrl;
@@ -238,13 +259,13 @@ const EditMyNamePage: React.FC = () => {
             </form>
 
             <div className="bottom-actions">
-                <button 
+                    <button 
                     type="submit" 
                     form="edit-profile-form" 
                     className="save-button"
-                    disabled={isLoading || isCheckingNickname}
+                    disabled={isLoading || isCheckingNickname || isUploadingImage}
                 >
-                    {isLoading ? '저장 중...' : '저장하기'}
+                    {isLoading ? '저장 중...' : isUploadingImage ? '이미지 업로드 중...' : '저장하기'}
                 </button>
             </div>
 

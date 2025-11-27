@@ -43,8 +43,6 @@ const CardCustomizationPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-
-
     const image = location.state?.image as string | undefined;
     const extractedText = location.state?.extractedText as string | undefined;
 
@@ -444,7 +442,16 @@ const CardCustomizationPage: React.FC = () => {
         <div className="page-container">
             <div className="card-customization-wrapper">
                 <header className="customization-header">
-                    <button className="customization-cancel-btn" onClick={() => navigate('/make-card')}>취소</button>
+                    <button 
+                        className="customization-cancel-btn" 
+                        onClick={() => {
+                            // 텍스트 수정 페이지에서 왔을 때는 뒤로가기 제스처로만 돌아갈 수 있도록
+                            // 취소는 항상 make-card로 이동
+                            navigate('/make-card');
+                        }}
+                    >
+                        취소
+                    </button>
                     <span className="spacer" />
                     <button className="save-btn" onClick={handleSave}>
                         저장
